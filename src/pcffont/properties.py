@@ -113,7 +113,7 @@ class PcfProperties(UserDict[str, str | int | None]):
         prop_infos = []
         for _ in range(props_count):
             key_offset = buffer.read_int(byte_order)
-            is_string_prop = buffer.read_byte() != b'\x00'
+            is_string_prop = buffer.read(1) != b'\x00'
             value = buffer.read_int(byte_order)
             prop_infos.append((key_offset, is_string_prop, value))
 
