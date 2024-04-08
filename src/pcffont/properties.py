@@ -2,8 +2,9 @@ import re
 from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
+from pcffont.header import PcfTableType
 from pcffont.internal.stream import ByteOrder, Buffer
-
+from pcffont.table import PcfTable
 
 _KEY_FOUNDRY = 'FOUNDRY'
 _KEY_FAMILY_NAME = 'FAMILY_NAME'
@@ -105,7 +106,7 @@ def _check_value(key: str, value: str | int):
             raise PcfPropValueError(key, value, f"contains illegal characters '{matched.group()}'")
 
 
-class PcfProperties(UserDict[str, str | int | None]):
+class PcfProperties(PcfTable, UserDict[str, str | int | None]):
     @staticmethod
     def parse(buffer: Buffer, byte_order: ByteOrder) -> 'PcfProperties':
         props_count = buffer.read_int(byte_order)
@@ -152,6 +153,10 @@ class PcfProperties(UserDict[str, str | int | None]):
         else:
             _check_value(key, value)
             super().__setitem__(key, value)
+
+    @property
+    def table_type(self) -> PcfTableType:
+        return PcfTableType.PROPERTIES
 
     @property
     def foundry(self) -> str | None:
@@ -337,3 +342,46 @@ class PcfProperties(UserDict[str, str | int | None]):
                 else:
                     value = int(token)
             self[key] = value
+
+    def dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
+        prop_infos = []
+        strings = bytearray()
+        for key, value in self.items():
+            key_offset = len(strings)
+            strings.extend(key.encode('utf-8'))
+            strings.extend(b'\x00')
+
+            value_offset = len(strings)
+            if isinstance(value, str):
+                strings.extend(value.encode('utf-8'))
+                strings.extend(b'\x00')
+
+            prop_infos.append((key, key_offset, value, value_offset))
+
+        table_format = 0b1110
+        props_count = len(self)
+        padding_size = 0
+        if (props_count & 3) != 0:
+            # Pad to next int32 boundary
+            padding_size = 4 - (props_count & 3)
+        strings_size = len(strings)
+        padding2_size = 4 - strings_size % 4
+        table_size = 4 + 4 + (4 + 1 + 4) * props_count + padding_size + 4 + strings_size + padding2_size
+
+        buffer.seek(table_offset)
+        buffer.write_int_le(table_format)
+        buffer.write_int_be(props_count)
+        for key, key_offset, value, value_offset in prop_infos:
+            buffer.write_int_be(key_offset)
+            if isinstance(value, str):
+                buffer.write(b'\x01')
+                buffer.write_int_be(value_offset)
+            else:
+                buffer.write(b'\x00')
+                buffer.write_int_be(value)
+        buffer.skip(padding_size)
+        buffer.write_int_be(strings_size)
+        buffer.write(strings)
+        buffer.skip(padding2_size)
+
+        return table_format, table_size

@@ -1,6 +1,5 @@
 from enum import IntEnum, IntFlag
 
-from pcffont.error import PcfError
 from pcffont.internal.stream import Buffer
 
 
@@ -33,22 +32,24 @@ class PcfTableFormatMask(IntFlag):
 class PcfHeader:
     @staticmethod
     def parse(buffer: Buffer) -> list['PcfHeader']:
-        if buffer.read(4) != b'\x01fcp':
-            raise PcfError('Not PCF format')
-
         tables_count = buffer.read_int_le()
-
         headers = []
         for _ in range(tables_count):
             table_type = PcfTableType(buffer.read_int_le())
             table_format = buffer.read_int_le()
-            size = buffer.read_int_le()
-            offset = buffer.read_int_le()
-            headers.append(PcfHeader(table_type, table_format, size, offset))
+            table_size = buffer.read_int_le()
+            table_offset = buffer.read_int_le()
+            headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
         return headers
 
-    def __init__(self, table_type: PcfTableType, table_format: int, size: int, offset: int):
+    def __init__(self, table_type: PcfTableType, table_format: int, table_size: int, table_offset: int):
         self.table_type = table_type
         self.table_format = table_format
-        self.size = size
-        self.offset = offset
+        self.table_size = table_size
+        self.table_offset = table_offset
+
+    def dump(self, buffer: Buffer):
+        buffer.write_int_le(self.table_type)
+        buffer.write_int_le(self.table_format)
+        buffer.write_int_le(self.table_size)
+        buffer.write_int_le(self.table_offset)
