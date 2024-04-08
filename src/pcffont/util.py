@@ -1,7 +1,9 @@
 from typing import BinaryIO, Literal
 
+type ByteOrder = Literal['little', 'big']
 
-def read_int32(buffer: BinaryIO, byte_order: Literal['little', 'big']) -> int:
+
+def read_int32(buffer: BinaryIO, byte_order: ByteOrder) -> int:
     return int.from_bytes(buffer.read(4), byte_order)
 
 
