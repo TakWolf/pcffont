@@ -379,9 +379,9 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
             else:
                 buffer.write(b'\x00')
                 buffer.write_int_be(value)
-        buffer.skip(padding_size)
+        buffer.write_by_null(padding_size)
         buffer.write_int_be(strings_size)
         buffer.write(strings)
-        buffer.skip(padding2_size)
+        buffer.write_by_null(padding2_size)
 
         return table_format, table_size

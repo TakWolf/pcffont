@@ -40,6 +40,11 @@ class Buffer:
     def write_int_be(self, i: int) -> int:
         return self.write_int(i, 'big')
 
+    def write_by_null(self, n: int) -> int:
+        for _ in range(n):
+            self.write(b'\x00')
+        return n
+
     def skip(self, n: int):
         self.seek(self.tell() + n)
 
