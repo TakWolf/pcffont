@@ -1,7 +1,6 @@
 from enum import IntEnum, IntFlag
-from typing import BinaryIO
 
-from pcffont import util
+from pcffont.internal.stream import Buffer
 
 
 class PcfTableType(IntEnum):
@@ -32,17 +31,17 @@ class PcfTableFormatMask(IntFlag):
 
 class PcfHeader:
     @staticmethod
-    def parse(buffer: BinaryIO) -> list['PcfHeader']:
+    def parse(buffer: Buffer) -> list['PcfHeader']:
         assert buffer.read(4) == b'\x01fcp', 'Not PCF format'
 
-        tables_count = util.read_int32_le(buffer)
+        tables_count = buffer.read_int_le()
 
         headers = []
         for _ in range(tables_count):
-            table_type = PcfTableType(util.read_int32_le(buffer))
-            table_format = util.read_int32_le(buffer)
-            size = util.read_int32_le(buffer)
-            offset = util.read_int32_le(buffer)
+            table_type = PcfTableType(buffer.read_int_le())
+            table_format = buffer.read_int_le()
+            size = buffer.read_int_le()
+            offset = buffer.read_int_le()
             headers.append(PcfHeader(table_type, table_format, size, offset))
         return headers
 
