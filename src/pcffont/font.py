@@ -1,6 +1,7 @@
 import os
 from typing import BinaryIO
 
+from pcffont.error import PcfError
 from pcffont.header import PcfTableType, PcfTableFormatMask, PcfHeader
 from pcffont.internal.stream import ByteOrder, Buffer
 from pcffont.properties import PcfProperties
@@ -16,11 +17,13 @@ class PcfFont:
 
         tables = {}
         for i, header in enumerate(headers):
-            assert header.table_type not in tables, f"Duplicate table: {header.table_type}"
+            if header.table_type in tables:
+                raise PcfError(f"Duplicate table '{header.table_type.name}'")
 
             buffer.seek(header.offset)
             table_format = buffer.read_int_le()
-            assert table_format == header.table_format, f"Table format declaration error: type '{header.table_type.name}', index {i}, offset {header.offset}"
+            if table_format != header.table_format:
+                raise PcfError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', header index {i}, offset {header.offset}")
 
             byte_order: ByteOrder = 'little'
             if (table_format & (PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT)) > 0:

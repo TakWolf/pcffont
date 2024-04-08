@@ -1,5 +1,6 @@
 from enum import IntEnum, IntFlag
 
+from pcffont.error import PcfError
 from pcffont.internal.stream import Buffer
 
 
@@ -32,7 +33,8 @@ class PcfTableFormatMask(IntFlag):
 class PcfHeader:
     @staticmethod
     def parse(buffer: Buffer) -> list['PcfHeader']:
-        assert buffer.read(4) == b'\x01fcp', 'Not PCF format'
+        if buffer.read(4) != b'\x01fcp':
+            raise PcfError('Not PCF format')
 
         tables_count = buffer.read_int_le()
 
