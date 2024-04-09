@@ -1,5 +1,7 @@
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
+from pcffont.t_accelerators import PcfAccelerators
+from pcffont.t_bitmaps import PcfBitmaps
 from pcffont.t_encodings import PcfBdfEncodings
 from pcffont.t_glyph_names import PcfGlyphNames
 from pcffont.t_metrics import PcfMetrics
@@ -9,14 +11,14 @@ from pcffont.table import PcfTable
 
 TYPE_REGISTRY = {
     PcfTableType.PROPERTIES: PcfProperties,
-    PcfTableType.ACCELERATORS: None,
+    PcfTableType.ACCELERATORS: PcfAccelerators,
     PcfTableType.METRICS: PcfMetrics,
-    PcfTableType.BITMAPS: None,
+    PcfTableType.BITMAPS: PcfBitmaps,
     PcfTableType.INK_METRICS: PcfMetrics,
     PcfTableType.BDF_ENCODINGS: PcfBdfEncodings,
     PcfTableType.SWIDTHS: PcfScalableWidths,
     PcfTableType.GLYPH_NAMES: PcfGlyphNames,
-    PcfTableType.BDF_ACCELERATORS: None,
+    PcfTableType.BDF_ACCELERATORS: PcfAccelerators,
 }
 
 

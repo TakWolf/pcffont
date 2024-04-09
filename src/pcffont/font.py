@@ -6,6 +6,8 @@ from pcffont import table_registry
 from pcffont.error import PcfError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
+from pcffont.t_accelerators import PcfAccelerators
+from pcffont.t_bitmaps import PcfBitmaps
 from pcffont.t_encodings import PcfBdfEncodings
 from pcffont.t_glyph_names import PcfGlyphNames
 from pcffont.t_metrics import PcfMetrics
@@ -54,12 +56,28 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         self[PcfTableType.PROPERTIES] = table
 
     @property
+    def accelerators(self) -> PcfAccelerators | None:
+        return self.get(PcfTableType.ACCELERATORS, None)
+
+    @accelerators.setter
+    def accelerators(self, table: PcfAccelerators | None):
+        self[PcfTableType.ACCELERATORS] = table
+
+    @property
     def metrics(self) -> PcfMetrics | None:
         return self.get(PcfTableType.METRICS, None)
 
     @metrics.setter
     def metrics(self, table: PcfMetrics | None):
         self[PcfTableType.METRICS] = table
+
+    @property
+    def bitmaps(self) -> PcfBitmaps | None:
+        return self.get(PcfTableType.BITMAPS, None)
+
+    @bitmaps.setter
+    def bitmaps(self, table: PcfBitmaps | None):
+        self[PcfTableType.BITMAPS] = table
 
     @property
     def ink_metrics(self) -> PcfMetrics | None:
@@ -92,6 +110,14 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
     @glyph_names.setter
     def glyph_names(self, table: PcfGlyphNames | None):
         self[PcfTableType.GLYPH_NAMES] = table
+
+    @property
+    def bdf_accelerators(self) -> PcfAccelerators | None:
+        return self.get(PcfTableType.BDF_ACCELERATORS, None)
+
+    @bdf_accelerators.setter
+    def bdf_accelerators(self, table: PcfAccelerators | None):
+        self[PcfTableType.BDF_ACCELERATORS] = table
 
     def dump(self, stream: BinaryIO):
         buffer = Buffer(stream)
