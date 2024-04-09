@@ -30,7 +30,7 @@ class PcfGlyphNames(PcfTable, UserList[str]):
     def table_type(self) -> PcfTableType:
         return PcfTableType.GLYPH_NAMES
 
-    def dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
+    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
         table_format = 0b1110
         glyphs_count = len(self)
 

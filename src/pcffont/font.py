@@ -82,9 +82,9 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         headers = []
         table_offset = 8 + 16 * len(self)
         for table in self.values():
-            table_format, table_size = table.dump(buffer, table_offset)
-            headers.append(PcfHeader(table.table_type, table_format, table_size, table_offset))
-            table_offset += table_size
+            header = table.dump(buffer, table_offset)
+            headers.append(header)
+            table_offset += header.table_size
 
         buffer.seek(0)
         buffer.write(_MAGIC_STRING)

@@ -22,7 +22,7 @@ class PcfScalableWidths(PcfTable, UserList[int]):
     def table_type(self) -> PcfTableType:
         return PcfTableType.SWIDTHS
 
-    def dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
+    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
         table_format = 0b1110
         glyphs_count = len(self)
         table_size = 4 + 4 + 4 * glyphs_count

@@ -346,7 +346,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
                     value = int(token)
             self[key] = value
 
-    def dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
+    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
         table_format = 0b1110
         props_count = len(self)
 
@@ -367,8 +367,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
                 strings_size += buffer.write_string(value)
             prop_infos.append((key, key_offset, value, value_offset))
 
-        padding2 = 4 - strings_size % 4
-        table_size = strings_start - table_offset + strings_size + padding2
+        table_size = strings_start - table_offset + strings_size
 
         buffer.seek(table_offset)
         buffer.write_int32_le(table_format)
@@ -384,6 +383,5 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         buffer.write_nulls(padding)
         buffer.write_int32_be(strings_size)
         buffer.skip(strings_size)
-        buffer.write_nulls(padding2)
 
         return table_format, table_size
