@@ -2,8 +2,8 @@ import os
 from typing import BinaryIO
 
 from pcffont.error import PcfError
-from pcffont.header import PcfTableType, PcfTableFormatMask, PcfHeader
-from pcffont.internal.stream import ByteOrder, Buffer
+from pcffont.header import PcfTableType, PcfHeader
+from pcffont.internal.stream import Buffer
 from pcffont.properties import PcfProperties
 from pcffont.table import PcfTable
 
@@ -19,23 +19,13 @@ class PcfFont:
         if buffer.read(4) != _MAGIC_STRING:
             raise PcfError('Not PCF format')
 
-        tables = {}
         headers = PcfHeader.parse(buffer)
-        for i, header in enumerate(headers):
-            if header.table_type in tables:
-                raise PcfError(f"Duplicate table '{header.table_type.name}'")
 
-            buffer.seek(header.table_offset)
-            table_format = buffer.read_int_le()
-            if table_format != header.table_format:
-                raise PcfError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', index {i}, offset {header.table_offset}")
+        tables = {}
+        for table_type, header in headers.items():
+            if table_type == PcfTableType.PROPERTIES:
+                tables[table_type] = PcfProperties.parse(buffer, header)
 
-            byte_order: ByteOrder = 'little'
-            if (table_format & (PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT)) > 0:
-                byte_order = 'big'
-
-            if header.table_type == PcfTableType.PROPERTIES:
-                tables[header.table_type] = PcfProperties.parse(buffer, byte_order)
         return PcfFont(tables)
 
     @staticmethod

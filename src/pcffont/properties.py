@@ -2,7 +2,7 @@ import re
 from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
-from pcffont.header import PcfTableType
+from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import ByteOrder, Buffer
 from pcffont.table import PcfTable
 
@@ -108,7 +108,9 @@ def _check_value(key: str, value: str | int):
 
 class PcfProperties(PcfTable, UserDict[str, str | int | None]):
     @staticmethod
-    def parse(buffer: Buffer, byte_order: ByteOrder) -> 'PcfProperties':
+    def parse(buffer: Buffer, header: PcfHeader) -> 'PcfProperties':
+        _, byte_order = header.get_and_check_table_format(buffer)
+
         props_count = buffer.read_int(byte_order)
 
         prop_infos = []
@@ -135,6 +137,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
             else:
                 value = int(value)
             data[key] = value
+
         return PcfProperties(data)
 
     def __init__(self, data: dict[str, str | int | None] = None):
