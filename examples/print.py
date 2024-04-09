@@ -5,8 +5,8 @@ from pcffont import PcfFont
 
 
 def _print_pcf(file_name: str):
-    font = PcfFont.load(os.path.join(assets_dir, file_name))
     print(f'##### {file_name}')
+    font = PcfFont.load(os.path.join(assets_dir, file_name))
     # TODO
 
 
