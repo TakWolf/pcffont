@@ -1,6 +1,9 @@
-from typing import BinaryIO, Literal
+from typing import BinaryIO, Literal, TypeAlias
 
-type ByteOrder = Literal['little', 'big']
+# TODO
+# In 3.12
+# type ByteOrder = Literal['little', 'big']
+ByteOrder: TypeAlias = Literal['little', 'big']
 
 
 class Buffer:
