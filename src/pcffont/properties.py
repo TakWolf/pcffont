@@ -347,29 +347,28 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
             self[key] = value
 
     def dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
-        prop_infos = []
-        strings = bytearray()
-        for key, value in self.items():
-            key_offset = len(strings)
-            strings.extend(key.encode('utf-8'))
-            strings.extend(b'\x00')
-
-            value_offset = len(strings)
-            if isinstance(value, str):
-                strings.extend(value.encode('utf-8'))
-                strings.extend(b'\x00')
-
-            prop_infos.append((key, key_offset, value, value_offset))
-
         table_format = 0b1110
         props_count = len(self)
-        padding_size = 0
+
         # Pad to next int32 boundary
+        padding = 0
         if (props_count & 3) != 0:
-            padding_size = 4 - (props_count & 3)
-        strings_size = len(strings)
-        padding2_size = 4 - strings_size % 4
-        table_size = 4 + 4 + (4 + 1 + 4) * props_count + padding_size + 4 + strings_size + padding2_size
+            padding = 4 - (props_count & 3)
+
+        strings_start = table_offset + 4 + 4 + (4 + 1 + 4) * props_count + padding + 4
+        strings_size = 0
+        prop_infos = []
+        buffer.seek(strings_start)
+        for key, value in self.items():
+            key_offset = strings_size
+            strings_size += buffer.write_string(key)
+            value_offset = strings_size
+            if isinstance(value, str):
+                strings_size += buffer.write_string(value)
+            prop_infos.append((key, key_offset, value, value_offset))
+
+        padding2 = 4 - strings_size % 4
+        table_size = strings_start - table_offset + strings_size + padding2
 
         buffer.seek(table_offset)
         buffer.write_int_le(table_format)
@@ -382,9 +381,9 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
             else:
                 buffer.write_bool(False)
                 buffer.write_int_be(value)
-        buffer.write_nulls(padding_size)
+        buffer.write_nulls(padding)
         buffer.write_int_be(strings_size)
-        buffer.write(strings)
-        buffer.write_nulls(padding2_size)
+        buffer.skip(strings_size)
+        buffer.write_nulls(padding2)
 
         return table_format, table_size
