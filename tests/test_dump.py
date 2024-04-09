@@ -8,8 +8,8 @@ from pcffont.internal.stream import Buffer
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
-def test_dump():
-    file_path = os.path.join(project_root_dir, 'assets', 'unifont', 'unifont-15.1.05.pcf')
+def _execute_dump(file_name: str):
+    file_path = os.path.join(project_root_dir, 'assets', file_name)
     with open(file_path, 'rb') as file:
         buffer_in = Buffer(file)
         buffer_in.skip(4)
@@ -39,3 +39,19 @@ def test_dump():
             table_data_in = buffer_in.read(header_in.table_size)
             table_data_out = buffer_out.read(header_out.table_size)
             assert table_data_in == table_data_out
+
+
+def test_unifont():
+    _execute_dump('unifont/unifont-15.1.05.pcf')
+
+
+def test_anorexia():
+    _execute_dump('artwiz/anorexia.pcf')
+
+
+def test_kates():
+    _execute_dump('artwiz/kates.pcf')
+
+
+def test_dweep():
+    _execute_dump('dweep/dweep.pcf')
