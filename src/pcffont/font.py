@@ -2,6 +2,7 @@ import os
 from typing import BinaryIO
 
 from pcffont.error import PcfError
+from pcffont.glyph_names import PcfGlyphNames
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
 from pcffont.properties import PcfProperties
@@ -25,6 +26,8 @@ class PcfFont:
         for table_type, header in headers.items():
             if table_type == PcfTableType.PROPERTIES:
                 tables[table_type] = PcfProperties.parse(buffer, header)
+            elif table_type == PcfTableType.GLYPH_NAMES:
+                tables[table_type] = PcfGlyphNames.parse(buffer, header)
 
         return PcfFont(tables)
 
@@ -45,6 +48,14 @@ class PcfFont:
     @properties.setter
     def properties(self, table: PcfProperties | None):
         self.tables[PcfTableType.PROPERTIES] = table
+
+    @property
+    def glyph_names(self) -> PcfGlyphNames | None:
+        return self.tables.get(PcfTableType.GLYPH_NAMES, None)
+
+    @glyph_names.setter
+    def glyph_names(self, table: PcfGlyphNames | None):
+        self.tables[PcfTableType.GLYPH_NAMES] = table
 
     def dump(self, stream: BinaryIO):
         buffer = Buffer(stream)

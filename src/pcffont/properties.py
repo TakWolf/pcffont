@@ -3,7 +3,7 @@ from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
 from pcffont.header import PcfTableType, PcfHeader
-from pcffont.internal.stream import ByteOrder, Buffer
+from pcffont.internal.stream import Buffer
 from pcffont.table import PcfTable
 
 _KEY_FOUNDRY = 'FOUNDRY'
@@ -116,12 +116,12 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         prop_infos = []
         for _ in range(props_count):
             key_offset = buffer.read_int(byte_order)
-            is_string_prop = buffer.read(1) != b'\x00'
+            is_string_prop = buffer.read_bool()
             value = buffer.read_int(byte_order)
             prop_infos.append((key_offset, is_string_prop, value))
 
+        # Pad to next int32 boundary
         if (props_count & 3) != 0:
-            # Pad to next int32 boundary
             buffer.skip(4 - (props_count & 3))
 
         buffer.skip_int()  # strings_size
@@ -130,10 +130,10 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         data = {}
         for key_offset, is_string_prop, value in prop_infos:
             buffer.seek(strings_start + key_offset)
-            key = buffer.read_until(b'\x00').decode('utf-8')
+            key = buffer.read_string()
             if is_string_prop:
                 buffer.seek(strings_start + value)
-                value = buffer.read_until(b'\x00').decode('utf-8')
+                value = buffer.read_string()
             else:
                 value = int(value)
             data[key] = value
@@ -364,8 +364,8 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         table_format = 0b1110
         props_count = len(self)
         padding_size = 0
+        # Pad to next int32 boundary
         if (props_count & 3) != 0:
-            # Pad to next int32 boundary
             padding_size = 4 - (props_count & 3)
         strings_size = len(strings)
         padding2_size = 4 - strings_size % 4
@@ -377,14 +377,14 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         for key, key_offset, value, value_offset in prop_infos:
             buffer.write_int_be(key_offset)
             if isinstance(value, str):
-                buffer.write(b'\x01')
+                buffer.write_bool(True)
                 buffer.write_int_be(value_offset)
             else:
-                buffer.write(b'\x00')
+                buffer.write_bool(False)
                 buffer.write_int_be(value)
-        buffer.write_by_null(padding_size)
+        buffer.write_nulls(padding_size)
         buffer.write_int_be(strings_size)
         buffer.write(strings)
-        buffer.write_by_null(padding2_size)
+        buffer.write_nulls(padding2_size)
 
         return table_format, table_size
