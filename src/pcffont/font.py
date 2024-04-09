@@ -6,9 +6,9 @@ from pcffont import table_registry
 from pcffont.error import PcfError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
-from pcffont.t_bitmaps import PcfBitmaps
 from pcffont.t_glyph_names import PcfGlyphNames
 from pcffont.t_properties import PcfProperties
+from pcffont.t_scalable_widths import PcfScalableWidths
 from pcffont.table import PcfTable
 
 _MAGIC_STRING = b'\x01fcp'
@@ -50,6 +50,14 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
     @properties.setter
     def properties(self, table: PcfProperties | None):
         self[PcfTableType.PROPERTIES] = table
+
+    @property
+    def scalable_widths(self) -> PcfScalableWidths | None:
+        return self.get(PcfTableType.SWIDTHS, None)
+
+    @scalable_widths.setter
+    def scalable_widths(self, table: PcfScalableWidths | None):
+        self[PcfTableType.SWIDTHS] = table
 
     @property
     def glyph_names(self) -> PcfGlyphNames | None:
