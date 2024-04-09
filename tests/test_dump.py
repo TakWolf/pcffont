@@ -28,7 +28,7 @@ def test_dump():
         assert headers_data_in == headers_data_out
 
         for header_in in headers.values():
-            table = table_registry.parse(buffer_in, header_in)
+            table = table_registry.parse_table(buffer_in, header_in)
             if table is None:
                 continue
             header_out = table.dump(buffer_out, header_in.table_type, header_in.table_offset)

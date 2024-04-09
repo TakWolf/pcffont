@@ -26,7 +26,7 @@ class PcfMetric:
 class PcfMetrics(PcfTable, UserList[PcfMetric]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfMetrics':
-        table_format, byte_order = header.get_and_check_table_format(buffer)
+        table_format, byte_order = header.read_and_check_table_format(buffer)
 
         metrics = []
         is_compressed = table_format & PcfTableFormat.COMPRESSED_METRICS > 0

@@ -54,7 +54,7 @@ class PcfHeader:
         self.table_size = table_size
         self.table_offset = table_offset
 
-    def get_and_check_table_format(self, buffer: Buffer) -> tuple[int, ByteOrder]:
+    def read_and_check_table_format(self, buffer: Buffer) -> tuple[int, ByteOrder]:
         buffer.seek(self.table_offset)
         table_format = buffer.read_int32_le()
         if table_format != self.table_format:

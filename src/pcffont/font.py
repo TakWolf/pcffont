@@ -6,6 +6,7 @@ from pcffont import table_registry
 from pcffont.error import PcfError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
+from pcffont.t_encodings import PcfBdfEncodings
 from pcffont.t_glyph_names import PcfGlyphNames
 from pcffont.t_metrics import PcfMetrics
 from pcffont.t_properties import PcfProperties
@@ -25,7 +26,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
             raise PcfError('Not PCF format')
 
         headers = PcfHeader.parse(buffer)
-        tables = {table_type: table_registry.parse(buffer, header) for table_type, header in headers.items()}
+        tables = {table_type: table_registry.parse_table(buffer, header) for table_type, header in headers.items()}
 
         return PcfFont(tables)
 
@@ -59,6 +60,22 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
     @metrics.setter
     def metrics(self, table: PcfMetrics | None):
         self[PcfTableType.METRICS] = table
+
+    @property
+    def ink_metrics(self) -> PcfMetrics | None:
+        return self.get(PcfTableType.INK_METRICS, None)
+
+    @ink_metrics.setter
+    def ink_metrics(self, table: PcfMetrics | None):
+        self[PcfTableType.INK_METRICS] = table
+
+    @property
+    def bdf_encodings(self) -> PcfBdfEncodings | None:
+        return self.get(PcfTableType.BDF_ENCODINGS, None)
+
+    @bdf_encodings.setter
+    def bdf_encodings(self, table: PcfBdfEncodings | None):
+        self[PcfTableType.BDF_ENCODINGS] = table
 
     @property
     def scalable_widths(self) -> PcfScalableWidths | None:

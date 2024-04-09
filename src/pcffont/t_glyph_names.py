@@ -8,7 +8,7 @@ from pcffont.table import PcfTable
 class PcfGlyphNames(PcfTable, UserList[str]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfGlyphNames':
-        _, byte_order = header.get_and_check_table_format(buffer)
+        _, byte_order = header.read_and_check_table_format(buffer)
 
         glyphs_count = buffer.read_int32(byte_order)
         name_offsets = [buffer.read_int32(byte_order) for _ in range(glyphs_count)]
