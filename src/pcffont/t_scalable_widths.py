@@ -10,8 +10,8 @@ class PcfScalableWidths(PcfTable, UserList[int]):
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfScalableWidths':
         _, byte_order = header.get_and_check_table_format(buffer)
 
-        glyphs_count = buffer.read_int(byte_order)
-        scalable_widths = [buffer.read_int(byte_order) for _ in range(glyphs_count)]
+        glyphs_count = buffer.read_int32(byte_order)
+        scalable_widths = [buffer.read_int32(byte_order) for _ in range(glyphs_count)]
 
         return PcfScalableWidths(scalable_widths)
 
@@ -28,9 +28,9 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         table_size = 4 + 4 + 4 * glyphs_count
 
         buffer.seek(table_offset)
-        buffer.write_int_le(table_format)
-        buffer.write_int_be(glyphs_count)
+        buffer.write_int32_le(table_format)
+        buffer.write_int32_be(glyphs_count)
         for scalable_width in self:
-            buffer.write_int_be(scalable_width)
+            buffer.write_int32_be(scalable_width)
 
         return table_format, table_size

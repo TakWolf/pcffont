@@ -111,13 +111,13 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfProperties':
         _, byte_order = header.get_and_check_table_format(buffer)
 
-        props_count = buffer.read_int(byte_order)
+        props_count = buffer.read_int32(byte_order)
 
         prop_infos = []
         for _ in range(props_count):
-            key_offset = buffer.read_int(byte_order)
+            key_offset = buffer.read_int32(byte_order)
             is_string_prop = buffer.read_bool()
-            value = buffer.read_int(byte_order)
+            value = buffer.read_int32(byte_order)
             prop_infos.append((key_offset, is_string_prop, value))
 
         # Pad to next int32 boundary
@@ -371,18 +371,18 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         table_size = strings_start - table_offset + strings_size + padding2
 
         buffer.seek(table_offset)
-        buffer.write_int_le(table_format)
-        buffer.write_int_be(props_count)
+        buffer.write_int32_le(table_format)
+        buffer.write_int32_be(props_count)
         for key, key_offset, value, value_offset in prop_infos:
-            buffer.write_int_be(key_offset)
+            buffer.write_int32_be(key_offset)
             if isinstance(value, str):
                 buffer.write_bool(True)
-                buffer.write_int_be(value_offset)
+                buffer.write_int32_be(value_offset)
             else:
                 buffer.write_bool(False)
-                buffer.write_int_be(value)
+                buffer.write_int32_be(value)
         buffer.write_nulls(padding)
-        buffer.write_int_be(strings_size)
+        buffer.write_int32_be(strings_size)
         buffer.skip(strings_size)
         buffer.write_nulls(padding2)
 

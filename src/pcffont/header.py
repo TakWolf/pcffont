@@ -33,14 +33,14 @@ class PcfTableFormatMask(IntFlag):
 class PcfHeader:
     @staticmethod
     def parse(buffer: Buffer) -> dict[PcfTableType, 'PcfHeader']:
-        tables_count = buffer.read_int_le()
+        tables_count = buffer.read_int32_le()
 
         headers = {}
         for _ in range(tables_count):
-            table_type = PcfTableType(buffer.read_int_le())
-            table_format = buffer.read_int_le()
-            table_size = buffer.read_int_le()
-            table_offset = buffer.read_int_le()
+            table_type = PcfTableType(buffer.read_int32_le())
+            table_format = buffer.read_int32_le()
+            table_size = buffer.read_int32_le()
+            table_offset = buffer.read_int32_le()
 
             if table_type in headers:
                 raise PcfError(f"Duplicate table '{table_type.name}'")
@@ -56,18 +56,18 @@ class PcfHeader:
 
     def get_and_check_table_format(self, buffer: Buffer) -> tuple[int, ByteOrder]:
         buffer.seek(self.table_offset)
-        table_format = buffer.read_int_le()
+        table_format = buffer.read_int32_le()
         if table_format != self.table_format:
             raise PcfError(f"The table format definition is inconsistent with the header: type '{self.table_type.name}', offset {self.table_offset}")
 
         byte_order: ByteOrder = 'little'
-        if (table_format & (PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT)) > 0:
+        if table_format & (PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT) > 0:
             byte_order = 'big'
 
         return table_format, byte_order
 
     def dump(self, buffer: Buffer):
-        buffer.write_int_le(self.table_type)
-        buffer.write_int_le(self.table_format)
-        buffer.write_int_le(self.table_size)
-        buffer.write_int_le(self.table_offset)
+        buffer.write_int32_le(self.table_type)
+        buffer.write_int32_le(self.table_format)
+        buffer.write_int32_le(self.table_size)
+        buffer.write_int32_le(self.table_offset)

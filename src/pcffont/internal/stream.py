@@ -10,14 +10,14 @@ class Buffer:
     def read(self, n: int) -> bytes:
         return self.stream.read(n)
 
-    def read_int(self, byte_order: ByteOrder) -> int:
-        return int.from_bytes(self.read(4), byte_order)
+    def read_int32(self, byte_order: ByteOrder) -> int:
+        return int.from_bytes(self.read(4), byte_order, signed=True)
 
-    def read_int_le(self) -> int:
-        return self.read_int('little')
+    def read_int32_le(self) -> int:
+        return self.read_int32('little')
 
-    def read_int_be(self) -> int:
-        return self.read_int('big')
+    def read_int32_be(self) -> int:
+        return self.read_int32('big')
 
     def read_bool(self) -> bool:
         return self.read(1) != b'\x00'
@@ -34,14 +34,14 @@ class Buffer:
     def write(self, s: bytes) -> int:
         return self.stream.write(s)
 
-    def write_int(self, i: int, byte_order: ByteOrder) -> int:
-        return self.write(i.to_bytes(4, byte_order))
+    def write_int32(self, i: int, byte_order: ByteOrder) -> int:
+        return self.write(i.to_bytes(4, byte_order, signed=True))
 
-    def write_int_le(self, i: int) -> int:
-        return self.write_int(i, 'little')
+    def write_int32_le(self, i: int) -> int:
+        return self.write_int32(i, 'little')
 
-    def write_int_be(self, i: int) -> int:
-        return self.write_int(i, 'big')
+    def write_int32_be(self, i: int) -> int:
+        return self.write_int32(i, 'big')
 
     def write_bool(self, b: bool) -> int:
         return self.write(b'\x01' if b else b'\x00')

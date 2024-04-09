@@ -7,6 +7,7 @@ from pcffont.error import PcfError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
 from pcffont.t_glyph_names import PcfGlyphNames
+from pcffont.t_metrics import PcfMetrics
 from pcffont.t_properties import PcfProperties
 from pcffont.t_scalable_widths import PcfScalableWidths
 from pcffont.table import PcfTable
@@ -52,6 +53,14 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         self[PcfTableType.PROPERTIES] = table
 
     @property
+    def metrics(self) -> PcfMetrics | None:
+        return self.get(PcfTableType.METRICS, None)
+
+    @metrics.setter
+    def metrics(self, table: PcfMetrics | None):
+        self[PcfTableType.METRICS] = table
+
+    @property
     def scalable_widths(self) -> PcfScalableWidths | None:
         return self.get(PcfTableType.SWIDTHS, None)
 
@@ -79,7 +88,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
 
         buffer.seek(0)
         buffer.write(_MAGIC_STRING)
-        buffer.write_int_le(len(self))
+        buffer.write_int32_le(len(self))
         for header in headers:
             header.dump(buffer)
 

@@ -17,7 +17,7 @@ def test_dump():
         buffer_out.write(font._MAGIC_STRING)
 
         headers = PcfHeader.parse(buffer_in)
-        buffer_out.write_int_le(len(headers))
+        buffer_out.write_int32_le(len(headers))
         for header in headers.values():
             header.dump(buffer_out)
         headers_size = 4 + 4 + (4 * 4) * len(headers)
