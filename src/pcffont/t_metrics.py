@@ -1,6 +1,6 @@
 from collections import UserList
 
-from pcffont.header import PcfTableType, PcfTableFormat, PcfHeader
+from pcffont.header import PcfTableFormat, PcfHeader
 from pcffont.internal.stream import Buffer
 from pcffont.table import PcfTable
 
@@ -68,10 +68,6 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
     def __init__(self, metrics: list[PcfMetric] = None, is_compressed: bool = True):
         super().__init__(metrics)
         self.is_compressed = is_compressed
-
-    @property
-    def table_type(self) -> PcfTableType:
-        return PcfTableType.METRICS
 
     def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
         table_format = 0b1110

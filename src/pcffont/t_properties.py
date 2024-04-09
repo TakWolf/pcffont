@@ -2,7 +2,7 @@ import re
 from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
-from pcffont.header import PcfTableType, PcfHeader
+from pcffont.header import PcfHeader
 from pcffont.internal.stream import Buffer
 from pcffont.table import PcfTable
 
@@ -156,10 +156,6 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         else:
             _check_value(key, value)
             super().__setitem__(key, value)
-
-    @property
-    def table_type(self) -> PcfTableType:
-        return PcfTableType.PROPERTIES
 
     @property
     def foundry(self) -> str | None:

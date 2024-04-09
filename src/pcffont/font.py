@@ -41,7 +41,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         if table is None:
             self.pop(table_type, None)
         else:
-            assert table_type == table.table_type
+            assert isinstance(table, table_registry.TYPE_REGISTRY[table_type])
             super().__setitem__(table_type, table)
 
     @property
@@ -81,8 +81,8 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
 
         headers = []
         table_offset = 8 + 16 * len(self)
-        for table in self.values():
-            header = table.dump(buffer, table_offset)
+        for table_type, table in self:
+            header = table.dump(buffer, table_type, table_offset)
             headers.append(header)
             table_offset += header.table_size
 

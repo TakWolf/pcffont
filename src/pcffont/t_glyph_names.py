@@ -1,6 +1,6 @@
 from collections import UserList
 
-from pcffont.header import PcfTableType, PcfHeader
+from pcffont.header import PcfHeader
 from pcffont.internal.stream import Buffer
 from pcffont.table import PcfTable
 
@@ -25,10 +25,6 @@ class PcfGlyphNames(PcfTable, UserList[str]):
 
     def __init__(self, names: list[str] = None):
         super().__init__(names)
-
-    @property
-    def table_type(self) -> PcfTableType:
-        return PcfTableType.GLYPH_NAMES
 
     def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
         table_format = 0b1110

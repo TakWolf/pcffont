@@ -1,6 +1,6 @@
 from collections import UserList
 
-from pcffont.header import PcfTableType, PcfHeader
+from pcffont.header import PcfHeader
 from pcffont.internal.stream import Buffer
 from pcffont.table import PcfTable
 
@@ -17,10 +17,6 @@ class PcfScalableWidths(PcfTable, UserList[int]):
 
     def __init__(self, scalable_widths: list[int] = None):
         super().__init__(scalable_widths)
-
-    @property
-    def table_type(self) -> PcfTableType:
-        return PcfTableType.SWIDTHS
 
     def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
         table_format = 0b1110

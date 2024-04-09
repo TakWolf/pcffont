@@ -31,8 +31,7 @@ def test_dump():
             table = table_registry.parse(buffer_in, header_in)
             if table is None:
                 continue
-            assert table.table_type == header_in.table_type
-            header_out = table.dump(buffer_out, header_in.table_offset)
+            header_out = table.dump(buffer_out, header_in.table_type, header_in.table_offset)
             assert header_in.table_format == header_out.table_format
             assert header_in.table_size == header_out.table_size
             buffer_in.seek(header_in.table_offset)

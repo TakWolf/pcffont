@@ -6,12 +6,12 @@ from pcffont.t_properties import PcfProperties
 from pcffont.t_scalable_widths import PcfScalableWidths
 from pcffont.table import PcfTable
 
-_table_registry = {
+TYPE_REGISTRY = {
     PcfTableType.PROPERTIES: PcfProperties,
     PcfTableType.ACCELERATORS: None,
     PcfTableType.METRICS: PcfMetrics,
     PcfTableType.BITMAPS: None,
-    PcfTableType.INK_METRICS: None,
+    PcfTableType.INK_METRICS: PcfMetrics,
     PcfTableType.BDF_ENCODINGS: None,
     PcfTableType.SWIDTHS: PcfScalableWidths,
     PcfTableType.GLYPH_NAMES: PcfGlyphNames,
@@ -20,7 +20,7 @@ _table_registry = {
 
 
 def parse(buffer: Buffer, header: PcfHeader) -> PcfTable | None:
-    clz = _table_registry.get(header.table_type, None)
+    clz = TYPE_REGISTRY.get(header.table_type, None)
     if clz is not None:
         return clz.parse(buffer, header)
     return None
