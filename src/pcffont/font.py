@@ -4,10 +4,11 @@ from typing import BinaryIO
 
 from pcffont import table_registry
 from pcffont.error import PcfError
-from pcffont.glyph_names import PcfGlyphNames
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Buffer
-from pcffont.properties import PcfProperties
+from pcffont.t_bitmaps import PcfBitmaps
+from pcffont.t_glyph_names import PcfGlyphNames
+from pcffont.t_properties import PcfProperties
 from pcffont.table import PcfTable
 
 _MAGIC_STRING = b'\x01fcp'
