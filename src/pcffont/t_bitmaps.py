@@ -1,4 +1,4 @@
-from pcffont.header import PcfHeader
+from pcffont.header import PcfTableFormat, PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
@@ -19,7 +19,7 @@ class PcfBitmaps(PcfTable):
 
     def __init__(
             self,
-            table_format: int = 0b1110,
+            table_format: int = PcfTableFormat.BYTE_ORDER_BIG,
     ):
         PcfTable.__init__(self, table_format)
 

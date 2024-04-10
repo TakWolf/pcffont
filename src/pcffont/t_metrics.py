@@ -24,7 +24,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
 
     def __init__(
             self,
-            table_format: int = 0b1110 | PcfTableFormat.COMPRESSED_METRICS,
+            table_format: int = PcfTableFormat.BYTE_ORDER_BIG | PcfTableFormat.COMPRESSED_METRICS,
             metrics: list[PcfMetric] = None,
     ):
         PcfTable.__init__(self, table_format)
