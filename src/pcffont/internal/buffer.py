@@ -45,7 +45,7 @@ class Buffer:
         data = bytearray()
         while True:
             b = self.read(1)
-            if b is None or b == b'\x00':
+            if b == b'\x00' or b == b'':
                 break
             data.extend(b)
         return data.decode('utf-8')
