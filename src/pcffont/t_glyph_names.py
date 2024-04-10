@@ -1,14 +1,16 @@
 from collections import UserList
 
 from pcffont.header import PcfHeader
-from pcffont.internal.stream import Buffer
+from pcffont.internal import util
+from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
 
 class PcfGlyphNames(PcfTable, UserList[str]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfGlyphNames':
-        _, byte_order = header.read_and_check_table_format(buffer)
+        table_format = util.read_and_check_table_format(buffer, header)
+        byte_order = util.get_table_byte_order(table_format)
 
         glyphs_count = buffer.read_int32(byte_order)
         name_offsets = [buffer.read_int32(byte_order) for _ in range(glyphs_count)]
@@ -21,13 +23,19 @@ class PcfGlyphNames(PcfTable, UserList[str]):
             name = buffer.read_string()
             names.append(name)
 
-        return PcfGlyphNames(names)
+        return PcfGlyphNames(table_format, names)
 
-    def __init__(self, names: list[str] = None):
-        super().__init__(names)
+    def __init__(
+            self,
+            table_format: int = 0b1110,
+            names: list[str] = None,
+    ):
+        PcfTable.__init__(self, table_format)
+        UserList.__init__(self, names)
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
-        table_format = 0b1110
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+        byte_order = util.get_table_byte_order(self.table_format)
+
         glyphs_count = len(self)
 
         strings_start = table_offset + 4 + 4 + 4 * glyphs_count + 4
@@ -41,10 +49,10 @@ class PcfGlyphNames(PcfTable, UserList[str]):
         table_size = strings_start - table_offset + strings_size
 
         buffer.seek(table_offset)
-        buffer.write_int32_le(table_format)
-        buffer.write_int32_be(glyphs_count)
+        buffer.write_int32_le(self.table_format)
+        buffer.write_int32(glyphs_count, byte_order)
         for name_offset in name_offsets:
-            buffer.write_int32_be(name_offset)
-        buffer.write_int32_be(strings_size)
+            buffer.write_int32(name_offset, byte_order)
+        buffer.write_int32(strings_size, byte_order)
 
-        return table_format, table_size
+        return table_size

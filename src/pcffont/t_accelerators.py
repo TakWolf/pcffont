@@ -1,15 +1,31 @@
 from pcffont.header import PcfHeader
-from pcffont.internal.stream import Buffer
+from pcffont.internal import util
+from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
 
+# TODO
 class PcfAccelerators(PcfTable):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfAccelerators':
-        pass
+        table_format = util.read_and_check_table_format(buffer, header)
+        byte_order = util.get_table_byte_order(table_format)
 
-    def __init__(self):
-        pass
+        # TODO
+        obj = PcfAccelerators(table_format)
+        buffer.seek(header.table_offset)
+        obj.chuck = buffer.read(header.table_size)
+        obj.table_size = header.table_size
+        return obj
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
-        pass
+    def __init__(
+            self,
+            table_format: int = 0b1110,
+    ):
+        PcfTable.__init__(self, table_format)
+
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+        # TODO
+        buffer.seek(table_offset)
+        buffer.write(self.chuck)
+        return self.table_size

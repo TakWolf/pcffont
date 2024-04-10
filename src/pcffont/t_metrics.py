@@ -1,7 +1,8 @@
 from collections import UserList
 
 from pcffont.header import PcfTableFormat, PcfHeader
-from pcffont.internal.stream import Buffer
+from pcffont.internal import util
+from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
 
@@ -26,7 +27,8 @@ class PcfMetric:
 class PcfMetrics(PcfTable, UserList[PcfMetric]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfMetrics':
-        table_format, byte_order = header.read_and_check_table_format(buffer)
+        table_format = util.read_and_check_table_format(buffer, header)
+        byte_order = util.get_table_byte_order(table_format)
 
         metrics = []
         is_compressed = table_format & PcfTableFormat.COMPRESSED_METRICS > 0
@@ -63,40 +65,45 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
                     character_attributes,
                 ))
 
-        return PcfMetrics(metrics, is_compressed)
+        return PcfMetrics(table_format, metrics)
 
-    def __init__(self, metrics: list[PcfMetric] = None, is_compressed: bool = True):
-        super().__init__(metrics)
-        self.is_compressed = is_compressed
+    def __init__(
+            self,
+            table_format: int = 0b1110 | PcfTableFormat.COMPRESSED_METRICS,
+            metrics: list[PcfMetric] = None,
+    ):
+        PcfTable.__init__(self, table_format)
+        UserList.__init__(self, metrics)
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
-        table_format = 0b1110
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+        byte_order = util.get_table_byte_order(self.table_format)
+        is_compressed = self.table_format & PcfTableFormat.COMPRESSED_METRICS > 0
+
         metrics_count = len(self)
 
-        if self.is_compressed:
-            table_format = table_format | PcfTableFormat.COMPRESSED_METRICS
+        if is_compressed:
             table_size = 4 + 2 + 5 * metrics_count
         else:
             table_size = 4 + 4 + 2 * 6 * metrics_count
 
         buffer.seek(table_offset)
-        buffer.write_int32_le(table_format)
-        if self.is_compressed:
-            buffer.write_int16_be(metrics_count)
+        buffer.write_int32_le(self.table_format)
+        if is_compressed:
+            buffer.write_int16(metrics_count, byte_order)
             for metric in self:
-                buffer.write_int8_be(metric.left_sided_bearing)
-                buffer.write_int8_be(metric.right_side_bearing)
-                buffer.write_int8_be(metric.character_width)
-                buffer.write_int8_be(metric.character_ascent)
-                buffer.write_int8_be(metric.character_descent)
+                buffer.write_int8(metric.left_sided_bearing, byte_order)
+                buffer.write_int8(metric.right_side_bearing, byte_order)
+                buffer.write_int8(metric.character_width, byte_order)
+                buffer.write_int8(metric.character_ascent, byte_order)
+                buffer.write_int8(metric.character_descent, byte_order)
         else:
-            buffer.write_int32_be(metrics_count)
+            buffer.write_int32(metrics_count, byte_order)
             for metric in self:
-                buffer.write_int16_be(metric.left_sided_bearing)
-                buffer.write_int16_be(metric.right_side_bearing)
-                buffer.write_int16_be(metric.character_width)
-                buffer.write_int16_be(metric.character_ascent)
-                buffer.write_int16_be(metric.character_descent)
-                buffer.write_int16_be(metric.character_attributes)
+                buffer.write_int16(metric.left_sided_bearing, byte_order)
+                buffer.write_int16(metric.right_side_bearing, byte_order)
+                buffer.write_int16(metric.character_width, byte_order)
+                buffer.write_int16(metric.character_ascent, byte_order)
+                buffer.write_int16(metric.character_descent, byte_order)
+                buffer.write_int16(metric.character_attributes, byte_order)
 
-        return table_format, table_size
+        return table_size

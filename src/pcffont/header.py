@@ -1,7 +1,9 @@
 from enum import IntEnum, IntFlag
 
 from pcffont.error import PcfError
-from pcffont.internal.stream import ByteOrder, Buffer
+from pcffont.internal.buffer import Buffer
+
+_MAGIC_STRING = b'\x01fcp'
 
 
 class PcfTableType(IntEnum):
@@ -32,42 +34,37 @@ class PcfTableFormatMask(IntFlag):
 
 class PcfHeader:
     @staticmethod
-    def parse(buffer: Buffer) -> dict[PcfTableType, 'PcfHeader']:
+    def parse(buffer: Buffer) -> list['PcfHeader']:
+        buffer.seek(0)
+        if buffer.read(4) != _MAGIC_STRING:
+            raise PcfError('Not PCF format')
+
         tables_count = buffer.read_int32_le()
 
-        headers = {}
+        headers = []
         for _ in range(tables_count):
             table_type = PcfTableType(buffer.read_int32_le())
             table_format = buffer.read_int32_le()
             table_size = buffer.read_int32_le()
             table_offset = buffer.read_int32_le()
-
-            if table_type in headers:
-                raise PcfError(f"Duplicate table '{table_type.name}'")
-            headers[table_type] = PcfHeader(table_type, table_format, table_size, table_offset)
+            headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
 
         return headers
+
+    @staticmethod
+    def dump(buffer: Buffer, headers: list['PcfHeader']):
+        buffer.seek(0)
+        buffer.write(_MAGIC_STRING)
+
+        buffer.write_int32_le(len(headers))
+        for header in headers:
+            buffer.write_int32_le(header.table_type)
+            buffer.write_int32_le(header.table_format)
+            buffer.write_int32_le(header.table_size)
+            buffer.write_int32_le(header.table_offset)
 
     def __init__(self, table_type: PcfTableType, table_format: int, table_size: int, table_offset: int):
         self.table_type = table_type
         self.table_format = table_format
         self.table_size = table_size
         self.table_offset = table_offset
-
-    def read_and_check_table_format(self, buffer: Buffer) -> tuple[int, ByteOrder]:
-        buffer.seek(self.table_offset)
-        table_format = buffer.read_int32_le()
-        if table_format != self.table_format:
-            raise PcfError(f"The table format definition is inconsistent with the header: type '{self.table_type.name}', offset {self.table_offset}")
-
-        byte_order: ByteOrder = 'little'
-        if table_format & (PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT) > 0:
-            byte_order = 'big'
-
-        return table_format, byte_order
-
-    def dump(self, buffer: Buffer):
-        buffer.write_int32_le(self.table_type)
-        buffer.write_int32_le(self.table_format)
-        buffer.write_int32_le(self.table_size)
-        buffer.write_int32_le(self.table_offset)

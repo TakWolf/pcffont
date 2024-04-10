@@ -3,7 +3,8 @@ from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
 from pcffont.header import PcfHeader
-from pcffont.internal.stream import Buffer
+from pcffont.internal import util
+from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
 _KEY_FOUNDRY = 'FOUNDRY'
@@ -109,7 +110,8 @@ def _check_value(key: str, value: str | int):
 class PcfProperties(PcfTable, UserDict[str, str | int | None]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfProperties':
-        _, byte_order = header.read_and_check_table_format(buffer)
+        table_format = util.read_and_check_table_format(buffer, header)
+        byte_order = util.get_table_byte_order(table_format)
 
         props_count = buffer.read_int32(byte_order)
 
@@ -138,10 +140,15 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
                 value = int(value)
             data[key] = value
 
-        return PcfProperties(data)
+        return PcfProperties(table_format, data)
 
-    def __init__(self, data: dict[str, str | int | None] = None):
-        super().__init__(data)
+    def __init__(
+            self,
+            table_format: int = 0b1110,
+            data: dict[str, str | int | None] = None,
+    ):
+        PcfTable.__init__(self, table_format)
+        UserDict.__init__(self, data)
 
     def __getitem__(self, key: str) -> str | int:
         key = key.upper()
@@ -342,8 +349,9 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
                     value = int(token)
             self[key] = value
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> tuple[int, int]:
-        table_format = 0b1110
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+        byte_order = util.get_table_byte_order(self.table_format)
+
         props_count = len(self)
 
         # Pad to next int32 boundary
@@ -366,18 +374,18 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
         table_size = strings_start - table_offset + strings_size
 
         buffer.seek(table_offset)
-        buffer.write_int32_le(table_format)
-        buffer.write_int32_be(props_count)
+        buffer.write_int32_le(self.table_format)
+        buffer.write_int32(props_count, byte_order)
         for key, key_offset, value, value_offset in prop_infos:
-            buffer.write_int32_be(key_offset)
+            buffer.write_int32(key_offset, byte_order)
             if isinstance(value, str):
                 buffer.write_bool(True)
-                buffer.write_int32_be(value_offset)
+                buffer.write_int32(value_offset, byte_order)
             else:
                 buffer.write_bool(False)
-                buffer.write_int32_be(value)
+                buffer.write_int32(value, byte_order)
         buffer.write_nulls(padding)
-        buffer.write_int32_be(strings_size)
+        buffer.write_int32(strings_size, byte_order)
         buffer.skip(strings_size)
 
-        return table_format, table_size
+        return table_size

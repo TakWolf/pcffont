@@ -1,7 +1,6 @@
 from typing import BinaryIO, Literal, TypeAlias
 
-# TODO
-# In 3.12
+# TODO in python 3.12
 # type ByteOrder = Literal['little', 'big']
 ByteOrder: TypeAlias = Literal['little', 'big']
 

@@ -2,10 +2,10 @@ import os
 from collections import UserDict
 from typing import BinaryIO
 
-from pcffont import table_registry
 from pcffont.error import PcfError
 from pcffont.header import PcfTableType, PcfHeader
-from pcffont.internal.stream import Buffer
+from pcffont.internal import util
+from pcffont.internal.buffer import Buffer
 from pcffont.t_accelerators import PcfAccelerators
 from pcffont.t_bitmaps import PcfBitmaps
 from pcffont.t_encodings import PcfBdfEncodings
@@ -15,20 +15,19 @@ from pcffont.t_properties import PcfProperties
 from pcffont.t_scalable_widths import PcfScalableWidths
 from pcffont.table import PcfTable
 
-_MAGIC_STRING = b'\x01fcp'
-
 
 class PcfFont(UserDict[PcfTableType, PcfTable]):
     @staticmethod
     def parse(stream: BinaryIO) -> 'PcfFont':
         buffer = Buffer(stream)
 
-        buffer.seek(0)
-        if buffer.read(4) != _MAGIC_STRING:
-            raise PcfError('Not PCF format')
-
         headers = PcfHeader.parse(buffer)
-        tables = {table_type: table_registry.parse_table(buffer, header) for table_type, header in headers.items()}
+
+        tables = {}
+        for header in headers:
+            if header.table_type in tables:
+                raise PcfError(f"Duplicate table '{header.table_type.name}'")
+            tables[header.table_type] = util.parse_table(buffer, header)
 
         return PcfFont(tables)
 
@@ -44,7 +43,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         if table is None:
             self.pop(table_type, None)
         else:
-            assert isinstance(table, table_registry.TYPE_REGISTRY[table_type])
+            assert isinstance(table, util.TABLE_TYPE_REGISTRY[table_type])
             super().__setitem__(table_type, table)
 
     @property
@@ -123,17 +122,13 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         buffer = Buffer(stream)
 
         headers = []
-        table_offset = 8 + 16 * len(self)
-        for table_type, table in self:
-            header = table.dump(buffer, table_type, table_offset)
-            headers.append(header)
-            table_offset += header.table_size
+        table_offset = 4 + 4 + (4 * 4) * len(self)
+        for table_type, table in self.items():
+            table_size = table.dump(buffer, table_offset)
+            headers.append(PcfHeader(table_type, table.table_format, table_size, table_offset))
+            table_offset += table_size
 
-        buffer.seek(0)
-        buffer.write(_MAGIC_STRING)
-        buffer.write_int32_le(len(self))
-        for header in headers:
-            header.dump(buffer)
+        PcfHeader.dump(buffer, headers)
 
     def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         with open(file_path, 'wb') as file:
