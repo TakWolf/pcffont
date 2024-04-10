@@ -69,11 +69,9 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
 
-        min_code_point = min(self)
         max_code_point = max(self)
-
         if max_code_point <= 0xFF:
-            min_char_or_byte2 = min_code_point
+            min_char_or_byte2 = min(self)
             max_char_or_byte2 = max_code_point
             min_byte1 = 0
             max_byte1 = 0
@@ -82,8 +80,6 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
             max_char_or_byte2 = 0xFF
             min_byte1 = 0
             max_byte1 = 0xFF
-
-        glyph_indices_count = (max_char_or_byte2 - min_char_or_byte2 + 1) * (max_byte1 - min_byte1 + 1)
 
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
