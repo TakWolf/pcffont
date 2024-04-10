@@ -2,7 +2,7 @@ import hashlib
 import io
 import os
 
-from pcffont.header import PcfTableType, PcfHeader
+from pcffont.header import PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 
@@ -34,9 +34,7 @@ def _test_dump(file_name: str):
                 continue
             table_offset = header.table_offset
             table_size = table.dump(buffer_out, table_offset)
-            # TODO
-            if header.table_type != PcfTableType.BDF_ACCELERATORS:
-                assert table_size == header.table_size
+            assert table_size == header.table_size
             buffer_in.seek(table_offset)
             buffer_out.seek(table_offset)
             table_data_in = buffer_in.read(table_size)
