@@ -14,8 +14,7 @@ class PcfAccelerators(PcfTable):
         # TODO
         obj = PcfAccelerators(table_format)
         buffer.seek(header.table_offset)
-        obj.chuck = buffer.read(header.table_size)
-        obj.table_size = header.table_size
+        obj.chunk = buffer.read(header.table_size)
         return obj
 
     def __init__(
@@ -27,5 +26,4 @@ class PcfAccelerators(PcfTable):
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         # TODO
         buffer.seek(table_offset)
-        buffer.write(self.chuck)
-        return self.table_size
+        return buffer.write(self.chunk)

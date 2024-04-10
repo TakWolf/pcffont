@@ -14,7 +14,7 @@ class PcfBitmaps(PcfTable):
         # TODO
         obj = PcfBitmaps(table_format)
         buffer.seek(header.table_offset)
-        obj.chuck = buffer.read(header.table_size)
+        obj.chunk = buffer.read(header.table_size)
         return obj
 
     def __init__(
@@ -26,4 +26,4 @@ class PcfBitmaps(PcfTable):
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         # TODO
         buffer.seek(table_offset)
-        return buffer.write(self.chuck)
+        return buffer.write(self.chunk)
