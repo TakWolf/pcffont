@@ -1,3 +1,4 @@
+import hashlib
 import io
 import os
 
@@ -6,6 +7,10 @@ from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+
+def _sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
 
 
 def _test_dump(file_name: str):
@@ -21,7 +26,7 @@ def _test_dump(file_name: str):
         headers_data_size = 4 + 4 + (4 * 4) * len(headers_in)
         headers_data_in = buffer_in.read(headers_data_size)
         headers_data_out = buffer_out.read(headers_data_size)
-        assert headers_data_in == headers_data_out
+        assert _sha256(headers_data_in) == _sha256(headers_data_out)
 
         for header_in in headers_in:
             table = util.parse_table(buffer_in, header_in)
@@ -34,7 +39,7 @@ def _test_dump(file_name: str):
             buffer_out.seek(table_offset)
             table_data_in = buffer_in.read(table_size)
             table_data_out = buffer_out.read(table_size)
-            assert table_data_in == table_data_out
+            assert _sha256(table_data_in) == _sha256(table_data_out)
 
 
 def test_unifont():
