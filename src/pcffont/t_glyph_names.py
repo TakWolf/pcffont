@@ -46,13 +46,13 @@ class PcfGlyphNames(PcfTable, UserList[str]):
             name_offsets.append(strings_size)
             strings_size += buffer.write_string(name)
 
-        table_size = strings_start - table_offset + strings_size
-
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
         buffer.write_int32(glyphs_count, byte_order)
         for name_offset in name_offsets:
             buffer.write_int32(name_offset, byte_order)
         buffer.write_int32(strings_size, byte_order)
+        buffer.skip(strings_size)
 
+        table_size = buffer.tell() - table_offset
         return table_size

@@ -85,8 +85,6 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
         glyph_indices_count = (max_char_or_byte2 - min_char_or_byte2 + 1) * (max_byte1 - min_byte1 + 1)
 
-        table_size = 4 + 2 * 5 + 2 * glyph_indices_count
-
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
         buffer.write_int16(min_char_or_byte2, byte_order)
@@ -106,4 +104,5 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
                     glyph_index = self.get(code_point, _NO_GLYPH_INDEX)
                     buffer.write_int16(glyph_index, byte_order)
 
+        table_size = buffer.tell() - table_offset
         return table_size

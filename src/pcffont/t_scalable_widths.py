@@ -29,7 +29,6 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         byte_order = util.get_table_byte_order(self.table_format)
 
         glyphs_count = len(self)
-        table_size = 4 + 4 + 4 * glyphs_count
 
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
@@ -37,4 +36,5 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         for scalable_width in self:
             buffer.write_int32(scalable_width, byte_order)
 
+        table_size = buffer.tell() - table_offset
         return table_size

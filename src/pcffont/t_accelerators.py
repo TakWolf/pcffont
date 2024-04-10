@@ -90,10 +90,6 @@ class PcfAccelerators(PcfTable):
         byte_order = util.get_table_byte_order(self.table_format)
         is_accel_w_ink_bounds = self.table_format & PcfTableFormat.ACCEL_W_INKBOUNDS
 
-        table_size = 4 + 8 + 4 * 3 + 2 * 6
-        if is_accel_w_ink_bounds:
-            table_size += 2 * 6
-
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
         buffer.write_bool(self.no_overlap)
@@ -115,4 +111,5 @@ class PcfAccelerators(PcfTable):
             self.ink_min_bounds.dump(buffer, byte_order, False)
             self.ink_max_bounds.dump(buffer, byte_order, False)
 
+        table_size = buffer.tell() - table_offset
         return table_size

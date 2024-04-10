@@ -36,11 +36,6 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
 
         metrics_count = len(self)
 
-        if is_compressed:
-            table_size = 4 + 2 + 5 * metrics_count
-        else:
-            table_size = 4 + 4 + 2 * 6 * metrics_count
-
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
         if is_compressed:
@@ -50,4 +45,5 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         for metric in self:
             metric.dump(buffer, byte_order, is_compressed)
 
+        table_size = buffer.tell() - table_offset
         return table_size
