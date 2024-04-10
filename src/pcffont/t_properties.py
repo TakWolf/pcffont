@@ -107,7 +107,7 @@ def _check_value(key: str, value: str | int):
             raise PcfPropValueError(key, value, f"contains illegal characters '{matched.group()}'")
 
 
-class PcfProperties(PcfTable, UserDict[str, str | int | None]):
+class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader) -> 'PcfProperties':
         table_format = util.read_and_check_table_format(buffer, header)
@@ -145,7 +145,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int | None]):
     def __init__(
             self,
             table_format: int = PcfTableFormat.BYTE_ORDER_BIG,
-            properties: dict[str, str | int | None] = None,
+            properties: dict[str, str | int] = None,
     ):
         PcfTable.__init__(self, table_format)
         UserDict.__init__(self, properties)
