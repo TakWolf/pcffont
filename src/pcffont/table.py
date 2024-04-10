@@ -14,6 +14,7 @@ class PcfTable:
     def dump(self, buffer: Buffer, table_offset: int) -> int:
         table_size = self._dump(buffer, table_offset)
 
+        # All tables begin on a 32bit boundary (and will be padded with zeroes).
         padding = 4 - table_size % 4
         if padding != 4:
             buffer.seek(table_offset + table_size)
