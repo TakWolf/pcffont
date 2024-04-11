@@ -55,9 +55,13 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             bitmap = []
             buffer.seek(bitmaps_start + bitmap_offset)
             for _ in range(bitmap_size // bitmap_row_size):
-                bitmap_row_data = buffer.read(bitmap_row_size)
-                bin_string = ''.join([f'{b:08b}' for b in bitmap_row_data])
-                bitmap_row = [int(c) for c in bin_string]
+                bitmap_row = []
+                for _ in range(bitmap_row_size):
+                    data = buffer.read(1)
+                    array = [int(c) for c in f'{ord(data):08b}']
+                    if byte_order == 'little':
+                        array.reverse()
+                    bitmap_row.extend(array)
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
 
@@ -95,9 +99,13 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             bitmap_offsets.append(bitmaps_size)
             bitmap = _get_bit_aligned_bitmap(bitmap, 8 * bitmap_row_size)
             for bitmap_row in bitmap:
-                bin_string = ''.join(map(str, bitmap_row))
-                bitmap_row_data = int(bin_string, 2).to_bytes(len(bin_string) // 8, 'big')
-                bitmaps_size += buffer.write(bitmap_row_data)
+                for i in range(len(bitmap_row) // 8):
+                    array = bitmap_row[i * 8:(i + 1) * 8]
+                    if byte_order == 'little':
+                        array.reverse()
+                    bin_string = ''.join(map(str, array))
+                    data = int(bin_string, 2).to_bytes(1, 'big')
+                    bitmaps_size += buffer.write(data)
 
         size_configs = [
             bitmaps_size // 4,
@@ -113,6 +121,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         for size_config in size_configs:
             buffer.write_int32(size_config, byte_order)
         buffer.skip(bitmaps_size)
+        buffer.write_nulls(1)  # Need to write a null
 
         table_size = buffer.tell() - table_offset
         return table_size
