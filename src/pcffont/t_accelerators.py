@@ -12,9 +12,6 @@ class PcfAccelerators(PcfTable):
         byte_order = util.get_table_byte_order(table_format)
         is_accel_w_ink_bounds = table_format & PcfTableFormat.ACCEL_W_INKBOUNDS
 
-        _ink_bounds_chunk = None  # TODO
-        _padding_chunk_info = None  # TODO
-
         no_overlap = buffer.read_bool()
         constant_metrics = buffer.read_bool()
         terminal_font = buffer.read_bool()
@@ -29,6 +26,9 @@ class PcfAccelerators(PcfTable):
 
         min_bounds = PcfMetric.parse(buffer, byte_order, False)
         max_bounds = PcfMetric.parse(buffer, byte_order, False)
+
+        _ink_bounds_chunk = None  # TODO
+        _padding_chunk_info = None  # TODO
 
         if is_accel_w_ink_bounds:
             ink_min_bounds = PcfMetric.parse(buffer, byte_order, False)
