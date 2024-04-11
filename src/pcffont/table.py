@@ -10,6 +10,9 @@ class PcfTable:
     def __init__(self, table_format: int):
         self.table_format = table_format
 
+    def __repr__(self) -> str:
+        return object.__repr__(self)
+
     @abstractmethod
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         raise NotImplementedError

@@ -47,6 +47,9 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
                 raise PcfError(f"Mismatched table type: '{table_type.name}' -> '{type(table)}'")
             super().__setitem__(table_type, table)
 
+    def __repr__(self) -> str:
+        return object.__repr__(self)
+
     @property
     def properties(self) -> PcfProperties | None:
         return self.get(PcfTableType.PROPERTIES, None)
