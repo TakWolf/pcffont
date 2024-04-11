@@ -46,10 +46,8 @@ def test_reload(tmp_path: Path):
     assert font_2.accelerators.ink_min_bounds is None
     assert font_2.accelerators.ink_max_bounds is None
 
-    assert font_1.accelerators._ink_bounds_chunk is not None
-    assert font_1.accelerators._padding_chunk_info is not None
-    assert font_2.accelerators._ink_bounds_chunk is None
-    assert font_2.accelerators._padding_chunk_info is None
+    assert font_1.accelerators._compat_info is not None
+    assert font_2.accelerators._compat_info is None
 
     assert len(font_1.metrics) == len(font_2.metrics)
     for glyph_index, metric_1 in enumerate(font_1.metrics):
@@ -114,7 +112,5 @@ def test_reload(tmp_path: Path):
     assert font_2.bdf_accelerators.ink_min_bounds is None
     assert font_2.bdf_accelerators.ink_max_bounds is None
 
-    assert font_1.bdf_accelerators._ink_bounds_chunk is not None
-    assert font_1.bdf_accelerators._padding_chunk_info is not None
-    assert font_2.bdf_accelerators._ink_bounds_chunk is None
-    assert font_2.bdf_accelerators._padding_chunk_info is None
+    assert font_1.bdf_accelerators._compat_info is not None
+    assert font_2.bdf_accelerators._compat_info is None

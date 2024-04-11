@@ -71,11 +71,11 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             self,
             table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
             bitmaps: list[list[list[int]]] = None,
-            _old_size_configs: list[int] = None,  # TODO
+            _compat_size_configs: list[int] = None,
     ):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, bitmaps)
-        self._old_size_configs = _old_size_configs  # TODO
+        self._compat_size_configs = _compat_size_configs
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
@@ -110,8 +110,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     bitmaps_size += buffer.write(data)
 
         # TODO
-        if compat_mode and self._old_size_configs is not None:
-            size_configs = list(self._old_size_configs)
+        if compat_mode and self._compat_size_configs is not None:
+            size_configs = list(self._compat_size_configs)
             size_configs[bitmap_padded_mode] = bitmaps_size
         else:
             unit_size_config = bitmaps_size // bitmap_row_size

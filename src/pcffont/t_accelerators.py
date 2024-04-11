@@ -27,23 +27,22 @@ class PcfAccelerators(PcfTable):
         min_bounds = PcfMetric.parse(buffer, byte_order, False)
         max_bounds = PcfMetric.parse(buffer, byte_order, False)
 
-        _ink_bounds_chunk = None  # TODO
-        _padding_chunk_info = None  # TODO
-
         if is_accel_w_ink_bounds:
             ink_min_bounds = PcfMetric.parse(buffer, byte_order, False)
             ink_max_bounds = PcfMetric.parse(buffer, byte_order, False)
         else:
             ink_min_bounds = None
             ink_max_bounds = None
-            # TODO
-            if header.table_size >= buffer.tell() - header.table_offset + 2 * 6 * 2:
-                _ink_bounds_chunk = buffer.read(2 * 6 * 2)
 
         # TODO
-        _padding = header.table_size - (buffer.tell() - header.table_offset)
-        if _padding > 0:
-            _padding_chunk_info = buffer.read(_padding), _padding
+        if header.table_size > buffer.tell() - header.table_offset:
+            buffer.seek(header.table_offset + 4 + 8 + 4 * 3 + 2 * 6 * 2)
+            _compat_chunk_start = buffer.tell() - header.table_offset
+            _compat_chunk_size = header.table_size - _compat_chunk_start
+            _compat_chunk = buffer.read(_compat_chunk_size)
+            _compat_info = _compat_chunk_start, _compat_chunk_size, _compat_chunk
+        else:
+            _compat_info = None
 
         return PcfAccelerators(
             table_format,
@@ -61,8 +60,7 @@ class PcfAccelerators(PcfTable):
             max_bounds,
             ink_min_bounds,
             ink_max_bounds,
-            _ink_bounds_chunk,  # TODO
-            _padding_chunk_info,  # TODO
+            _compat_info,
         )
 
     def __init__(
@@ -82,8 +80,7 @@ class PcfAccelerators(PcfTable):
             max_bounds: PcfMetric = None,
             ink_min_bounds: PcfMetric = None,
             ink_max_bounds: PcfMetric = None,
-            _ink_bounds_chunk: bytes = None,  # TODO
-            _padding_chunk_info: tuple[bytes, int] = None,  # TODO
+            _compat_info: tuple[int, int, bytes] = None,
     ):
         super().__init__(table_format)
         self.no_overlap = no_overlap
@@ -100,8 +97,7 @@ class PcfAccelerators(PcfTable):
         self.max_bounds = max_bounds
         self.ink_min_bounds = ink_min_bounds
         self.ink_max_bounds = ink_max_bounds
-        self._ink_bounds_chunk = _ink_bounds_chunk  # TODO
-        self._padding_chunk_info = _padding_chunk_info  # TODO
+        self._compat_info = _compat_info
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
@@ -127,17 +123,26 @@ class PcfAccelerators(PcfTable):
         if is_accel_w_ink_bounds:
             self.ink_min_bounds.dump(buffer, byte_order, False)
             self.ink_max_bounds.dump(buffer, byte_order, False)
-        else:
-            # TODO
-            if compat_mode and self._ink_bounds_chunk is not None:
-                buffer.write(self._ink_bounds_chunk)
 
         table_size = buffer.tell() - table_offset
 
         # TODO
-        if compat_mode and self._padding_chunk_info is not None:
-            _padding_chunk, _padding = self._padding_chunk_info
-            buffer.write(_padding_chunk)
-            table_size += _padding
+        if compat_mode and self._compat_info is not None:
+            _compat_chunk_start, _compat_chunk_size, _compat_chunk = self._compat_info
+            _compat_chunk = bytearray(_compat_chunk)
+
+            ink_chunk_size = 2 * 6 * 2
+            if table_size == _compat_chunk_start + ink_chunk_size:
+                _compat_chunk_start += ink_chunk_size
+                _compat_chunk_size -= ink_chunk_size
+                for _ in range(ink_chunk_size):
+                    if len(_compat_chunk) == 0:
+                        break
+                    _compat_chunk.pop(0)
+            else:
+                assert table_size == _compat_chunk_start
+
+            buffer.write(_compat_chunk)
+            table_size += _compat_chunk_size
 
         return table_size
