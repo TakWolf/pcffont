@@ -115,13 +115,13 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         ]
 
         buffer.seek(table_offset)
+        buffer.write_int32_le(self.table_format)
         buffer.write_int32(glyphs_count, byte_order)
         for offset in bitmap_offsets:
             buffer.write_int32(offset, byte_order)
         for size_config in size_configs:
             buffer.write_int32(size_config, byte_order)
         buffer.skip(bitmaps_size)
-        buffer.write_nulls(1)  # Need to write a null
 
         table_size = buffer.tell() - table_offset
         return table_size
