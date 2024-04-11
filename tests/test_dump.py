@@ -33,7 +33,7 @@ def _test_dump(file_name: str):
             if table is None:
                 continue
             table_offset = header.table_offset
-            table_size = table.dump(buffer_out, table_offset)
+            table_size = table.dump(buffer_out, table_offset, compat_mode=True)
             assert table_size == header.table_size
             buffer_in.seek(table_offset)
             buffer_out.seek(table_offset)

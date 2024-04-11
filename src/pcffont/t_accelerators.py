@@ -103,7 +103,7 @@ class PcfAccelerators(PcfTable):
         self._ink_bounds_chunk = _ink_bounds_chunk  # TODO
         self._padding_chunk_info = _padding_chunk_info  # TODO
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
         is_accel_w_ink_bounds = self.table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
 
@@ -129,13 +129,13 @@ class PcfAccelerators(PcfTable):
             self.ink_max_bounds.dump(buffer, byte_order, False)
         else:
             # TODO
-            if self._ink_bounds_chunk is not None:
+            if compat_mode and self._ink_bounds_chunk is not None:
                 buffer.write(self._ink_bounds_chunk)
 
         table_size = buffer.tell() - table_offset
 
         # TODO
-        if self._padding_chunk_info is not None:
+        if compat_mode and self._padding_chunk_info is not None:
             _padding_chunk, _padding = self._padding_chunk_info
             buffer.write(_padding_chunk)
             table_size += _padding

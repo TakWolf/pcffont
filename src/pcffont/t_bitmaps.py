@@ -77,7 +77,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         UserList.__init__(self, bitmaps)
         self._old_size_configs = _old_size_configs  # TODO
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
 
         # How each row in each glyph's bitmap is padded
@@ -110,7 +110,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     bitmaps_size += buffer.write(data)
 
         # TODO
-        if self._old_size_configs is not None:
+        if compat_mode and self._old_size_configs is not None:
             size_configs = list(self._old_size_configs)
             size_configs[bitmap_padded_mode] = bitmaps_size
         else:

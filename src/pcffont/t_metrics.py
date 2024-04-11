@@ -30,7 +30,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, metrics)
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
         is_compressed = self.table_format & PcfTableFormat.COMPRESSED_METRICS > 0
 
