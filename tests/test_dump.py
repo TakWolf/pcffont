@@ -56,3 +56,19 @@ def test_kates():
 
 def test_dweep():
     _test_dump('dweep/dweep.pcf')
+
+
+def test_trisk():
+    _test_dump('trisk/trisk.pcf')
+
+
+def test_rock36():
+    _test_dump('sgi/rock36.pcf')
+
+
+def test_raize():
+    _test_dump('raize/raize-normal-19.pcf')
+
+
+def test_profont():
+    _test_dump('profont-x11/ProFont_r400-29.pcf')

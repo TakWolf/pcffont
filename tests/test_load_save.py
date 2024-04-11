@@ -42,3 +42,35 @@ def test_dweep(tmp_path: Path):
     font = PcfFont.load(load_file_path)
     font.save(save_file_path)
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_trisk(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'trisk', 'trisk.pcf')
+    save_file_path = os.path.join(tmp_path, 'trisk.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_rock36(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'sgi', 'rock36.pcf')
+    save_file_path = os.path.join(tmp_path, 'rock36.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_raize(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'raize', 'raize-normal-19.pcf')
+    save_file_path = os.path.join(tmp_path, 'raize-normal-19.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_profont(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'profont-x11', 'ProFont_r400-29.pcf')
+    save_file_path = os.path.join(tmp_path, 'ProFont_r400-29.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
