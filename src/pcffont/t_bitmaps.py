@@ -1,5 +1,6 @@
 from collections import UserList
 
+from pcffont.error import PcfError
 from pcffont.header import PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
@@ -33,7 +34,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         # What the bits are stored
         # 0 => byte, 1 => short, 2 => int32
         bits_stored_mode = (table_format >> 4) & 3
-        assert bits_stored_mode == 0  # TODO
+        if bits_stored_mode != 0:
+            raise PcfError(f'Table format not supported: {table_format:b}')
 
         glyphs_count = buffer.read_int32(byte_order)
         bitmap_offsets = [buffer.read_int32(byte_order) for _ in range(glyphs_count)]
@@ -80,7 +82,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         # What the bits are stored
         # 0 => byte, 1 => short, 2 => int32
         bits_stored_mode = (self.table_format >> 4) & 3
-        assert bits_stored_mode == 0  # TODO
+        if bits_stored_mode != 0:
+            raise PcfError(f'Table format not supported: {self.table_format:b}')
 
         glyphs_count = len(self)
 

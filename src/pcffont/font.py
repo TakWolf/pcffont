@@ -43,7 +43,8 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         if table is None:
             self.pop(table_type, None)
         else:
-            assert isinstance(table, util.TABLE_TYPE_REGISTRY[table_type])
+            if not isinstance(table, util.TABLE_TYPE_REGISTRY[table_type]):
+                raise PcfError(f"Mismatched table type: '{table_type.name}' -> '{type(table)}'")
             super().__setitem__(table_type, table)
 
     @property

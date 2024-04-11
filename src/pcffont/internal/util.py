@@ -39,7 +39,11 @@ def read_and_check_table_format(buffer: Buffer, header: PcfHeader) -> int:
 
 
 def get_table_byte_order(table_format: int) -> ByteOrder:
-    if table_format & (PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT) > 0:
+    byte_mask = table_format & PcfTableFormatMask.BYTE > 0
+    bit_mask = table_format & PcfTableFormatMask.BIT > 0
+    if byte_mask and bit_mask:
         return 'big'
-    else:
+    elif (not byte_mask) and (not bit_mask):
         return 'little'
+    else:
+        raise PcfError(f'Table format not supported: {table_format:b}')
