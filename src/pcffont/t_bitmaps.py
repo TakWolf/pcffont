@@ -65,15 +65,17 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
 
-        return PcfBitmaps(table_format, bitmaps)
+        return PcfBitmaps(table_format, bitmaps, size_configs)
 
     def __init__(
             self,
             table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
             bitmaps: list[list[list[int]]] = None,
+            _old_size_configs: list[int] = None,  # TODO
     ):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, bitmaps)
+        self._old_size_configs = _old_size_configs  # TODO
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
@@ -107,12 +109,18 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     data = int(bin_string, 2).to_bytes(1, 'big')
                     bitmaps_size += buffer.write(data)
 
-        size_configs = [
-            bitmaps_size // 4,
-            bitmaps_size // 2,
-            bitmaps_size,
-            bitmaps_size * 2,
-        ]
+        # TODO
+        if self._old_size_configs is not None:
+            size_configs = list(self._old_size_configs)
+            size_configs[bitmap_padded_mode] = bitmaps_size
+        else:
+            unit_size_config = bitmaps_size // bitmap_row_size
+            size_configs = [
+                unit_size_config,
+                unit_size_config * 2,
+                unit_size_config * 4,
+                unit_size_config * 8,
+            ]
 
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
