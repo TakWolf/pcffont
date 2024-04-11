@@ -1,7 +1,7 @@
 from collections import UserDict
 
 from pcffont.error import PcfError
-from pcffont.header import PcfTableFormat, PcfHeader
+from pcffont.header import PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
@@ -44,7 +44,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.BYTE_ORDER_BIG,
+            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
             mapping: dict[int, int] = None,
             default_char: int = _NO_GLYPH_INDEX,
     ):

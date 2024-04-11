@@ -23,8 +23,6 @@ class PcfTableFormat(IntFlag):
     INKBOUNDS = 0b_0010_0000_0000
     ACCEL_W_INKBOUNDS = 0b_0001_0000_0000
     COMPRESSED_METRICS = 0b_0001_0000_0000
-    BYTE_ORDER_BIG = 0b_1110
-    BYTE_ORDER_LITTLE = 0b_0010
 
 
 class PcfTableFormatMask(IntFlag):

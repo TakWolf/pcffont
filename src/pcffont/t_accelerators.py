@@ -67,7 +67,7 @@ class PcfAccelerators(PcfTable):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.BYTE_ORDER_BIG,
+            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
             no_overlap: bool = False,
             constant_metrics: bool = False,
             terminal_font: bool = False,

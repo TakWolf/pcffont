@@ -2,7 +2,7 @@ import re
 from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
-from pcffont.header import PcfTableFormat, PcfHeader
+from pcffont.header import PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
@@ -144,7 +144,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.BYTE_ORDER_BIG,
+            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
             properties: dict[str, str | int] = None,
     ):
         PcfTable.__init__(self, table_format)

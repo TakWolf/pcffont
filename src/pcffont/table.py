@@ -4,6 +4,9 @@ from pcffont.internal.buffer import Buffer
 
 
 class PcfTable:
+    DEFAULT_TABLE_FORMAT = 0b_1110
+    DEFAULT_TABLE_FORMAT2 = 0b_0010
+
     def __init__(self, table_format: int):
         self.table_format = table_format
 
