@@ -46,20 +46,8 @@ def test_unifont():
     _test_dump('unifont/unifont-15.1.05.pcf')
 
 
-def test_anorexia():
-    _test_dump('artwiz/anorexia.pcf')
-
-
-def test_kates():
-    _test_dump('artwiz/kates.pcf')
-
-
 def test_dweep():
     _test_dump('dweep/dweep.pcf')
-
-
-def test_trisk():
-    _test_dump('trisk/trisk.pcf')
 
 
 def test_rock36():
@@ -68,6 +56,18 @@ def test_rock36():
 
 def test_raize():
     _test_dump('raize/raize-normal-19.pcf')
+
+
+def test_anorexia():
+    _test_dump('artwiz/anorexia.pcf')
+
+
+def test_kates():
+    _test_dump('artwiz/kates.pcf')
+
+
+def test_trisk():
+    _test_dump('trisk/trisk.pcf')
 
 
 def test_profont():

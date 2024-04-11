@@ -20,33 +20,9 @@ def test_unifont(tmp_path: Path):
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
 
 
-def test_anorexia(tmp_path: Path):
-    load_file_path = os.path.join(project_root_dir, 'assets', 'artwiz', 'anorexia.pcf')
-    save_file_path = os.path.join(tmp_path, 'anorexia.pcf')
-    font = PcfFont.load(load_file_path)
-    font.save(save_file_path)
-    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
-
-
-def test_kates(tmp_path: Path):
-    load_file_path = os.path.join(project_root_dir, 'assets', 'artwiz', 'kates.pcf')
-    save_file_path = os.path.join(tmp_path, 'kates.pcf')
-    font = PcfFont.load(load_file_path)
-    font.save(save_file_path)
-    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
-
-
 def test_dweep(tmp_path: Path):
     load_file_path = os.path.join(project_root_dir, 'assets', 'dweep', 'dweep.pcf')
     save_file_path = os.path.join(tmp_path, 'dweep.pcf')
-    font = PcfFont.load(load_file_path)
-    font.save(save_file_path)
-    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
-
-
-def test_trisk(tmp_path: Path):
-    load_file_path = os.path.join(project_root_dir, 'assets', 'trisk', 'trisk.pcf')
-    save_file_path = os.path.join(tmp_path, 'trisk.pcf')
     font = PcfFont.load(load_file_path)
     font.save(save_file_path)
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
@@ -63,6 +39,30 @@ def test_rock36(tmp_path: Path):
 def test_raize(tmp_path: Path):
     load_file_path = os.path.join(project_root_dir, 'assets', 'raize', 'raize-normal-19.pcf')
     save_file_path = os.path.join(tmp_path, 'raize-normal-19.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_anorexia(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'artwiz', 'anorexia.pcf')
+    save_file_path = os.path.join(tmp_path, 'anorexia.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_kates(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'artwiz', 'kates.pcf')
+    save_file_path = os.path.join(tmp_path, 'kates.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_trisk(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'trisk', 'trisk.pcf')
+    save_file_path = os.path.join(tmp_path, 'trisk.pcf')
     font = PcfFont.load(load_file_path)
     font.save(save_file_path)
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
