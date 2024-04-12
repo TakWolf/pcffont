@@ -109,7 +109,7 @@ def _check_value(key: str, value: str | int):
 
 class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfProperties':
+    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfProperties':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
 
@@ -138,7 +138,14 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
                 value = buffer.read_string()
             else:
                 value = int(value)
-            properties[key] = value
+
+            try:
+                _check_key(key)
+                _check_value(key, value)
+                properties[key] = value
+            except (PcfPropKeyError, PcfPropValueError) as e:
+                if strict_level >= 1:
+                    raise e
 
         return PcfProperties(table_format, properties)
 
