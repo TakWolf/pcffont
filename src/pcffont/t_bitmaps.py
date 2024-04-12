@@ -22,7 +22,7 @@ def _get_bit_aligned_bitmap(bitmap: list[list[int]], n: int) -> list[list[int]]:
 
 class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader) -> 'PcfBitmaps':
+    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBitmaps':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
 

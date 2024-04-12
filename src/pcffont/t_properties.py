@@ -109,7 +109,7 @@ def _check_value(key: str, value: str | int):
 
 class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader) -> 'PcfProperties':
+    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfProperties':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
 

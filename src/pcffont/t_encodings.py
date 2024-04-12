@@ -15,7 +15,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
     """
 
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader) -> 'PcfBdfEncodings':
+    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBdfEncodings':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
 

@@ -9,7 +9,7 @@ from pcffont.table import PcfTable
 
 class PcfMetrics(PcfTable, UserList[PcfMetric]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader) -> 'PcfMetrics':
+    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfMetrics':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
         is_compressed = table_format & PcfTableFormat.COMPRESSED_METRICS > 0

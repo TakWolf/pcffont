@@ -18,23 +18,27 @@ from pcffont.table import PcfTable
 
 class PcfFont(UserDict[PcfTableType, PcfTable]):
     @staticmethod
-    def parse(stream: BinaryIO) -> 'PcfFont':
+    def parse(stream: BinaryIO, strict_level: int = 1) -> 'PcfFont':
         buffer = Buffer(stream)
 
         headers = PcfHeader.parse(buffer)
 
         tables = {}
         for header in headers:
-            if header.table_type in tables:
+            if header.table_type in tables and strict_level >= 1:
                 raise PcfError(f"Duplicate table '{header.table_type.name}'")
-            tables[header.table_type] = util.parse_table(buffer, header)
+            table = util.parse_table(buffer, header, strict_level)
+            tables[header.table_type] = table
 
         return PcfFont(tables)
 
     @staticmethod
-    def load(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]) -> 'PcfFont':
+    def load(
+            file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+            strict_level: int = 1,
+    ) -> 'PcfFont':
         with open(file_path, 'rb') as file:
-            return PcfFont.parse(file)
+            return PcfFont.parse(file, strict_level)
 
     def __init__(self, tables: dict[PcfTableType, PcfTable | None] = None):
         super().__init__(tables)

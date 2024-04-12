@@ -7,7 +7,7 @@ from pcffont.table import PcfTable
 
 class PcfAccelerators(PcfTable):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader) -> 'PcfAccelerators':
+    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfAccelerators':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
         is_accel_w_ink_bounds = table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
