@@ -16,10 +16,17 @@ def main():
     print(f'size: {font.properties.pixel_size}')
     print(f'ascent: {font.accelerators.font_ascent}')
     print(f'descent: {font.accelerators.font_descent}')
+    print()
     for code_point, glyph_index in sorted(font.bdf_encodings.items()):
-        print(f'{code_point:04X} {chr(code_point)} - {font.glyph_names[glyph_index]}')
-        for bitmap_row in font.bitmaps[glyph_index]:
-            print(''.join(map(str, bitmap_row)).replace('0', '__').replace('1', '**'))
+        glyph_name = font.glyph_names[glyph_index]
+        metric = font.metrics[glyph_index]
+        bitmap = font.bitmaps[glyph_index]
+        print(f'char: {chr(code_point)} ({code_point:04X})')
+        print(f'glyph_name: {glyph_name}')
+        print(f'advance_width: {metric.character_width}')
+        print(f'offset: ({-metric.left_sided_bearing}, {-metric.character_descent})')
+        for bitmap_row in bitmap:
+            print(f'{''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')}*')
         print()
     font.save(os.path.join(outputs_dir, 'unifont-15.1.05.pcf'))
 
