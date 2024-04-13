@@ -1,7 +1,7 @@
 from collections import UserList
 
 from pcffont.error import PcfError
-from pcffont.header import PcfHeader
+from pcffont.header import PcfTableFormatMask, PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
@@ -28,20 +28,20 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
 
         # How each row in each glyph's bitmap is padded
         # 0 => byte, 1 => short, 2 => int32, 3 => int64
-        bitmap_padded_mode = table_format & 3
-        bitmap_row_size = [1, 2, 4, 8][bitmap_padded_mode]
+        bitmap_pad_mode = table_format & PcfTableFormatMask.GLYPH_PAD
+        bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
 
         # What the bits are stored
         # 0 => byte, 1 => short, 2 => int32
-        bits_stored_mode = (table_format >> 4) & 3
-        if bits_stored_mode != 0:
+        bits_store_mode = table_format & PcfTableFormatMask.SCAN_UNIT
+        if bits_store_mode != 0:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
         glyphs_count = buffer.read_int32(byte_order)
         bitmap_offsets = [buffer.read_int32(byte_order) for _ in range(glyphs_count)]
         size_configs = [buffer.read_int32(byte_order) for _ in range(4)]
         bitmaps_start = buffer.tell()
-        bitmaps_size = size_configs[bitmap_padded_mode]
+        bitmaps_size = size_configs[bitmap_pad_mode]
 
         bitmaps = []
         for i in range(glyphs_count):
@@ -82,13 +82,13 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
 
         # How each row in each glyph's bitmap is padded
         # 0 => byte, 1 => short, 2 => int32, 3 => int64
-        bitmap_padded_mode = self.table_format & 3
-        bitmap_row_size = [1, 2, 4, 8][bitmap_padded_mode]
+        bitmap_pad_mode = self.table_format & PcfTableFormatMask.GLYPH_PAD
+        bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
 
         # What the bits are stored
         # 0 => byte, 1 => short, 2 => int32
-        bits_stored_mode = (self.table_format >> 4) & 3
-        if bits_stored_mode != 0:
+        bits_store_mode = self.table_format & PcfTableFormatMask.SCAN_UNIT
+        if bits_store_mode != 0:
             raise PcfError(f'Table format not supported: {self.table_format:b}')
 
         glyphs_count = len(self)
@@ -112,7 +112,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         # TODO
         if compat_mode and self._compat_size_configs is not None:
             size_configs = list(self._compat_size_configs)
-            size_configs[bitmap_padded_mode] = bitmaps_size
+            size_configs[bitmap_pad_mode] = bitmaps_size
         else:
             unit_size_config = bitmaps_size // bitmap_row_size
             size_configs = [

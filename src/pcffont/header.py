@@ -26,9 +26,9 @@ class PcfTableFormat(IntFlag):
 
 
 class PcfTableFormatMask(IntFlag):
-    GLYPH_PAD = 0b_0000_0011
     BYTE = 0b_0000_0100
     BIT = 0b_0000_1000
+    GLYPH_PAD = 0b_0000_0011
     SCAN_UNIT = 0b_0011_0000
 
 
