@@ -10,7 +10,7 @@ class PcfAccelerators(PcfTable):
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfAccelerators':
         table_format = util.read_and_check_table_format(buffer, header)
         byte_order = util.get_table_byte_order(table_format)
-        is_accel_w_ink_bounds = table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
+        has_ink_bounds = table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
 
         no_overlap = buffer.read_bool()
         constant_metrics = buffer.read_bool()
@@ -27,7 +27,7 @@ class PcfAccelerators(PcfTable):
         min_bounds = PcfMetric.parse(buffer, byte_order, False)
         max_bounds = PcfMetric.parse(buffer, byte_order, False)
 
-        if is_accel_w_ink_bounds:
+        if has_ink_bounds:
             ink_min_bounds = PcfMetric.parse(buffer, byte_order, False)
             ink_max_bounds = PcfMetric.parse(buffer, byte_order, False)
         else:
@@ -101,7 +101,7 @@ class PcfAccelerators(PcfTable):
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         byte_order = util.get_table_byte_order(self.table_format)
-        is_accel_w_ink_bounds = self.table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
+        has_ink_bounds = self.table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
 
         buffer.seek(table_offset)
         buffer.write_int32_le(self.table_format)
@@ -120,7 +120,7 @@ class PcfAccelerators(PcfTable):
         self.min_bounds.dump(buffer, byte_order, False)
         self.max_bounds.dump(buffer, byte_order, False)
 
-        if is_accel_w_ink_bounds:
+        if has_ink_bounds:
             self.ink_min_bounds.dump(buffer, byte_order, False)
             self.ink_max_bounds.dump(buffer, byte_order, False)
 
