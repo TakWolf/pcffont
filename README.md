@@ -40,7 +40,7 @@ def main():
         print(f'char: {chr(code_point)} ({code_point:04X})')
         print(f'glyph_name: {glyph_name}')
         print(f'advance_width: {metric.character_width}')
-        print(f'offset: ({-metric.left_sided_bearing}, {-metric.character_descent})')
+        print(f'offset: ({-metric.left_side_bearing}, {-metric.character_descent})')
         for bitmap_row in bitmap:
             print(f'{''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')}*')
         print()
