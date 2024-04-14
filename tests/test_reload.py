@@ -29,7 +29,7 @@ def test_reload(tmp_path: Path):
     assert font_1.accelerators.constant_width == font_2.accelerators.constant_width
     assert font_1.accelerators.ink_inside == font_2.accelerators.ink_inside
     assert font_1.accelerators.ink_metrics == font_2.accelerators.ink_metrics
-    assert font_1.accelerators.draw_direction_right_to_left == font_2.accelerators.draw_direction_right_to_left
+    assert font_1.accelerators.draw_right_to_left == font_2.accelerators.draw_right_to_left
     assert font_1.accelerators.font_ascent == font_2.accelerators.font_ascent
     assert font_1.accelerators.font_descent == font_2.accelerators.font_descent
     assert font_1.accelerators.max_overlap == font_2.accelerators.max_overlap
@@ -95,7 +95,7 @@ def test_reload(tmp_path: Path):
     assert font_1.bdf_accelerators.constant_width == font_2.bdf_accelerators.constant_width
     assert font_1.bdf_accelerators.ink_inside == font_2.bdf_accelerators.ink_inside
     assert font_1.bdf_accelerators.ink_metrics == font_2.bdf_accelerators.ink_metrics
-    assert font_1.bdf_accelerators.draw_direction_right_to_left == font_2.bdf_accelerators.draw_direction_right_to_left
+    assert font_1.bdf_accelerators.draw_right_to_left == font_2.bdf_accelerators.draw_right_to_left
     assert font_1.bdf_accelerators.font_ascent == font_2.bdf_accelerators.font_ascent
     assert font_1.bdf_accelerators.font_descent == font_2.bdf_accelerators.font_descent
     assert font_1.bdf_accelerators.max_overlap == font_2.bdf_accelerators.max_overlap

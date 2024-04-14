@@ -18,7 +18,7 @@ class PcfAccelerators(PcfTable):
         constant_width = buffer.read_bool()
         ink_inside = buffer.read_bool()
         ink_metrics = buffer.read_bool()
-        draw_direction_right_to_left = buffer.read_bool()
+        draw_right_to_left = buffer.read_bool()
         buffer.skip(1)
         font_ascent = buffer.read_int32(byte_order)
         font_descent = buffer.read_int32(byte_order)
@@ -52,7 +52,7 @@ class PcfAccelerators(PcfTable):
             constant_width,
             ink_inside,
             ink_metrics,
-            draw_direction_right_to_left,
+            draw_right_to_left,
             font_ascent,
             font_descent,
             max_overlap,
@@ -72,7 +72,7 @@ class PcfAccelerators(PcfTable):
             constant_width: bool = False,
             ink_inside: bool = False,
             ink_metrics: bool = False,
-            draw_direction_right_to_left: bool = False,
+            draw_right_to_left: bool = False,
             font_ascent: int = 0,
             font_descent: int = 0,
             max_overlap: int = 0,
@@ -89,7 +89,7 @@ class PcfAccelerators(PcfTable):
         self.constant_width = constant_width
         self.ink_inside = ink_inside
         self.ink_metrics = ink_metrics
-        self.draw_direction_right_to_left = draw_direction_right_to_left
+        self.draw_right_to_left = draw_right_to_left
         self.font_ascent = font_ascent
         self.font_descent = font_descent
         self.max_overlap = max_overlap
@@ -111,7 +111,7 @@ class PcfAccelerators(PcfTable):
         buffer.write_bool(self.constant_width)
         buffer.write_bool(self.ink_inside)
         buffer.write_bool(self.ink_metrics)
-        buffer.write_bool(self.draw_direction_right_to_left)
+        buffer.write_bool(self.draw_right_to_left)
         buffer.write_nulls(1)
         buffer.write_int32(self.font_ascent, byte_order)
         buffer.write_int32(self.font_descent, byte_order)
