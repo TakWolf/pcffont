@@ -12,14 +12,14 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfMetrics':
         table_format = util.read_and_check_table_format(buffer, header)
-        byte_order = util.get_table_byte_order(table_format)
+        is_ms_byte = util.is_ms_byte(table_format)
         is_compressed = table_format & PcfTableFormat.COMPRESSED_METRICS > 0
 
         if is_compressed:
-            glyphs_count = buffer.read_int16(byte_order)
+            glyphs_count = buffer.read_int16(is_ms_byte)
         else:
-            glyphs_count = buffer.read_int32(byte_order)
-        metrics = [PcfMetric.parse(buffer, byte_order, is_compressed) for _ in range(glyphs_count)]
+            glyphs_count = buffer.read_int32(is_ms_byte)
+        metrics = [PcfMetric.parse(buffer, is_ms_byte, is_compressed) for _ in range(glyphs_count)]
 
         return PcfMetrics(table_format, metrics)
 
@@ -32,19 +32,19 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         UserList.__init__(self, metrics)
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        byte_order = util.get_table_byte_order(self.table_format)
+        is_ms_byte = util.is_ms_byte(self.table_format)
         is_compressed = self.table_format & PcfTableFormat.COMPRESSED_METRICS > 0
 
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
-        buffer.write_int32_le(self.table_format)
+        buffer.write_int32(self.table_format)
         if is_compressed:
-            buffer.write_int16(glyphs_count, byte_order)
+            buffer.write_int16(glyphs_count, is_ms_byte)
         else:
-            buffer.write_int32(glyphs_count, byte_order)
+            buffer.write_int32(glyphs_count, is_ms_byte)
         for metric in self:
-            metric.dump(buffer, byte_order, is_compressed)
+            metric.dump(buffer, is_ms_byte, is_compressed)
 
         table_size = buffer.tell() - table_offset
         return table_size

@@ -25,7 +25,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBitmaps':
         table_format = util.read_and_check_table_format(buffer, header)
-        byte_order = util.get_table_byte_order(table_format)
+        is_ms_byte = util.is_ms_byte(table_format)
+        is_ms_bit = util.is_ms_bit(table_format)
 
         # How each row in each glyph's bitmap is padded
         # 0 => byte, 1 => short, 2 => int32, 3 => int64
@@ -38,9 +39,9 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         if bits_store_mode != 0:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
-        glyphs_count = buffer.read_int32(byte_order)
-        bitmap_offsets = [buffer.read_int32(byte_order) for _ in range(glyphs_count)]
-        size_configs = [buffer.read_int32(byte_order) for _ in range(4)]
+        glyphs_count = buffer.read_int32(is_ms_byte)
+        bitmap_offsets = [buffer.read_int32(is_ms_byte) for _ in range(glyphs_count)]
+        size_configs = [buffer.read_int32(is_ms_byte) for _ in range(4)]
         bitmaps_start = buffer.tell()
         bitmaps_size = size_configs[bitmap_pad_mode]
 
@@ -60,7 +61,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                 for _ in range(bitmap_row_size):
                     data = buffer.read(1)
                     array = [int(c) for c in f'{ord(data):08b}']
-                    if byte_order == 'little':
+                    if not is_ms_bit:
                         array.reverse()
                     bitmap_row.extend(array)
                 bitmap.append(bitmap_row)
@@ -79,7 +80,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         self._compat_size_configs = _compat_size_configs
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        byte_order = util.get_table_byte_order(self.table_format)
+        is_ms_byte = util.is_ms_byte(self.table_format)
+        is_ms_bit = util.is_ms_byte(self.table_format)
 
         # How each row in each glyph's bitmap is padded
         # 0 => byte, 1 => short, 2 => int32, 3 => int64
@@ -104,7 +106,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             for bitmap_row in bitmap:
                 for i in range(len(bitmap_row) // 8):
                     array = bitmap_row[i * 8:(i + 1) * 8]
-                    if byte_order == 'little':
+                    if not is_ms_bit:
                         array.reverse()
                     bin_string = ''.join(map(str, array))
                     data = int(bin_string, 2).to_bytes(1, 'big')
@@ -124,12 +126,12 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             ]
 
         buffer.seek(table_offset)
-        buffer.write_int32_le(self.table_format)
-        buffer.write_int32(glyphs_count, byte_order)
+        buffer.write_int32(self.table_format)
+        buffer.write_int32(glyphs_count, is_ms_byte)
         for offset in bitmap_offsets:
-            buffer.write_int32(offset, byte_order)
+            buffer.write_int32(offset, is_ms_byte)
         for size_config in size_configs:
-            buffer.write_int32(size_config, byte_order)
+            buffer.write_int32(size_config, is_ms_byte)
         buffer.skip(bitmaps_size)
 
         table_size = buffer.tell() - table_offset

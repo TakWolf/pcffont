@@ -1,7 +1,7 @@
 from pcffont.error import PcfError
 from pcffont.format import PcfTableFormatMask
 from pcffont.header import PcfTableType, PcfHeader
-from pcffont.internal.buffer import ByteOrder, Buffer
+from pcffont.internal.buffer import Buffer
 from pcffont.t_accelerators import PcfAccelerators
 from pcffont.t_bitmaps import PcfBitmaps
 from pcffont.t_encodings import PcfBdfEncodings
@@ -33,18 +33,15 @@ def parse_table(buffer: Buffer, header: PcfHeader, strict_level: int = 1) -> Pcf
 
 def read_and_check_table_format(buffer: Buffer, header: PcfHeader) -> int:
     buffer.seek(header.table_offset)
-    table_format = buffer.read_int32_le()
+    table_format = buffer.read_int32()
     if table_format != header.table_format:
         raise PcfError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', offset {header.table_offset}")
     return table_format
 
 
-def get_table_byte_order(table_format: int) -> ByteOrder:
-    byte_mask = table_format & PcfTableFormatMask.BYTE > 0
-    bit_mask = table_format & PcfTableFormatMask.BIT > 0
-    if byte_mask and bit_mask:
-        return 'big'
-    elif (not byte_mask) and (not bit_mask):
-        return 'little'
-    else:
-        raise PcfError(f'Table format not supported: {table_format:b}')
+def is_ms_byte(table_format: int) -> bool:
+    return table_format & PcfTableFormatMask.BYTE > 0
+
+
+def is_ms_bit(table_format: int) -> bool:
+    return table_format & PcfTableFormatMask.BIT > 0

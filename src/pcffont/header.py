@@ -25,14 +25,14 @@ class PcfHeader:
         if buffer.read(4) != _FILE_VERSION:
             raise PcfError('Not PCF format')
 
-        tables_count = buffer.read_int32_le()
+        tables_count = buffer.read_int32()
 
         headers = []
         for _ in range(tables_count):
-            table_type = PcfTableType(buffer.read_int32_le())
-            table_format = buffer.read_int32_le()
-            table_size = buffer.read_int32_le()
-            table_offset = buffer.read_int32_le()
+            table_type = PcfTableType(buffer.read_int32())
+            table_format = buffer.read_int32()
+            table_size = buffer.read_int32()
+            table_offset = buffer.read_int32()
             headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
 
         return headers
@@ -42,12 +42,12 @@ class PcfHeader:
         buffer.seek(0)
         buffer.write(_FILE_VERSION)
 
-        buffer.write_int32_le(len(headers))
+        buffer.write_int32(len(headers))
         for header in headers:
-            buffer.write_int32_le(header.table_type)
-            buffer.write_int32_le(header.table_format)
-            buffer.write_int32_le(header.table_size)
-            buffer.write_int32_le(header.table_offset)
+            buffer.write_int32(header.table_type)
+            buffer.write_int32(header.table_format)
+            buffer.write_int32(header.table_size)
+            buffer.write_int32(header.table_offset)
 
     def __init__(self, table_type: PcfTableType, table_format: int, table_size: int, table_offset: int):
         self.table_type = table_type

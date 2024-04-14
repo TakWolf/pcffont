@@ -111,15 +111,15 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfProperties':
         table_format = util.read_and_check_table_format(buffer, header)
-        byte_order = util.get_table_byte_order(table_format)
+        is_ms_byte = util.is_ms_byte(table_format)
 
-        props_count = buffer.read_int32(byte_order)
+        props_count = buffer.read_int32(is_ms_byte)
 
         prop_infos = []
         for _ in range(props_count):
-            key_offset = buffer.read_int32(byte_order)
+            key_offset = buffer.read_int32(is_ms_byte)
             is_string_prop = buffer.read_bool()
-            value = buffer.read_int32(byte_order)
+            value = buffer.read_int32(is_ms_byte)
             prop_infos.append((key_offset, is_string_prop, value))
 
         # Pad to next int32 boundary
@@ -357,7 +357,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             self[key] = value
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        byte_order = util.get_table_byte_order(self.table_format)
+        is_ms_byte = util.is_ms_byte(self.table_format)
 
         props_count = len(self)
 
@@ -377,18 +377,18 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             prop_infos.append((key, key_offset, value, value_offset))
 
         buffer.seek(table_offset)
-        buffer.write_int32_le(self.table_format)
-        buffer.write_int32(props_count, byte_order)
+        buffer.write_int32(self.table_format)
+        buffer.write_int32(props_count, is_ms_byte)
         for key, key_offset, value, value_offset in prop_infos:
-            buffer.write_int32(key_offset, byte_order)
+            buffer.write_int32(key_offset, is_ms_byte)
             if isinstance(value, str):
                 buffer.write_bool(True)
-                buffer.write_int32(value_offset, byte_order)
+                buffer.write_int32(value_offset, is_ms_byte)
             else:
                 buffer.write_bool(False)
-                buffer.write_int32(value, byte_order)
+                buffer.write_int32(value, is_ms_byte)
         buffer.write_nulls(padding)
-        buffer.write_int32(strings_size, byte_order)
+        buffer.write_int32(strings_size, is_ms_byte)
         buffer.skip(strings_size)
 
         table_size = buffer.tell() - table_offset
