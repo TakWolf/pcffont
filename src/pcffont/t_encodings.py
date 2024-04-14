@@ -6,6 +6,7 @@ from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
+_MAX_CODE_POINT = 0xFFFF
 _NO_GLYPH_INDEX = 0xFFFF
 
 
@@ -52,10 +53,10 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         self.default_char = default_char
 
     def __setitem__(self, code_point: int, glyph_index: int | None):
-        if code_point < 0 or code_point > 0xFFFF:
-            raise PcfError(f'Code point must between [0, 0xFFFF]')
+        if code_point < 0 or code_point > _MAX_CODE_POINT:
+            raise PcfError(f'Code point must between [0, {_MAX_CODE_POINT}]')
         if glyph_index < 0 or glyph_index > _NO_GLYPH_INDEX:
-            raise PcfError(f'Glyph index must between [0, 0x{_NO_GLYPH_INDEX:04X}]')
+            raise PcfError(f'Glyph index must between [0, {_NO_GLYPH_INDEX}]')
 
         if glyph_index == _NO_GLYPH_INDEX:
             glyph_index = None
