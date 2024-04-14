@@ -123,7 +123,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             prop_infos.append((key_offset, is_string_prop, value))
 
         # Pad to next int32 boundary
-        padding = 0 if (props_count & 3) == 0 else 4 - (props_count & 3)
+        padding = 3 - (((4 + 1 + 4) * props_count + 3) % 4)
         buffer.skip(padding)
 
         buffer.skip_int()  # strings_size
@@ -362,7 +362,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         props_count = len(self)
 
         # Pad to next int32 boundary
-        padding = 0 if (props_count & 3) == 0 else 4 - (props_count & 3)
+        padding = 3 - (((4 + 1 + 4) * props_count + 3) % 4)
 
         strings_start = table_offset + 4 + 4 + (4 + 1 + 4) * props_count + padding + 4
         strings_size = 0
