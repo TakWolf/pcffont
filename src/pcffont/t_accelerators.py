@@ -1,6 +1,5 @@
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.metric import PcfMetric
 from pcffont.table import PcfTable
@@ -9,9 +8,9 @@ from pcffont.table import PcfTable
 class PcfAccelerators(PcfTable):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfAccelerators':
-        table_format = util.read_and_check_table_format(buffer, header)
-        is_ms_byte = util.is_ms_byte(table_format)
-        has_ink_bounds = table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
+        table_format = PcfTableFormat.read_and_check(buffer, header)
+        is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
+        has_ink_bounds = PcfTableFormat.has_ink_bounds(table_format)
 
         no_overlap = buffer.read_bool()
         constant_metrics = buffer.read_bool()
@@ -66,7 +65,7 @@ class PcfAccelerators(PcfTable):
 
     def __init__(
             self,
-            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
+            table_format: int = PcfTableFormat.build_for_accelerators(),
             no_overlap: bool = False,
             constant_metrics: bool = False,
             terminal_font: bool = False,
@@ -101,8 +100,8 @@ class PcfAccelerators(PcfTable):
         self._compat_info = _compat_info
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        is_ms_byte = util.is_ms_byte(self.table_format)
-        has_ink_bounds = self.table_format & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
+        is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
+        has_ink_bounds = PcfTableFormat.has_ink_bounds(self.table_format)
 
         buffer.seek(table_offset)
         buffer.write_int32(self.table_format)

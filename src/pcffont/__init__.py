@@ -1,5 +1,6 @@
 from pcffont.font import PcfFont
 from pcffont.header import PcfTableType
+from pcffont.format import PcfTableFormat
 from pcffont.metric import PcfMetric
 from pcffont.t_properties import PcfProperties
 from pcffont.t_accelerators import PcfAccelerators

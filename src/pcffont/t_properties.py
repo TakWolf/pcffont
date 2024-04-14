@@ -2,8 +2,8 @@ import re
 from collections import UserDict
 
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
+from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
@@ -110,8 +110,8 @@ def _check_value(key: str, value: str | int):
 class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfProperties':
-        table_format = util.read_and_check_table_format(buffer, header)
-        is_ms_byte = util.is_ms_byte(table_format)
+        table_format = PcfTableFormat.read_and_check(buffer, header)
+        is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
 
         props_count = buffer.read_int32(is_ms_byte)
 
@@ -151,7 +151,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
 
     def __init__(
             self,
-            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
+            table_format: int = PcfTableFormat.build(),
             properties: dict[str, str | int] = None,
     ):
         PcfTable.__init__(self, table_format)
@@ -357,7 +357,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             self[key] = value
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        is_ms_byte = util.is_ms_byte(self.table_format)
+        is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
 
         props_count = len(self)
 

@@ -1,13 +1,9 @@
 from abc import abstractmethod
-from typing import Final
 
-from pcffont.format import PcfTableFormatMask
 from pcffont.internal.buffer import Buffer
 
 
 class PcfTable:
-    DEFAULT_TABLE_FORMAT: Final[int] = 0b_0010 | PcfTableFormatMask.BYTE | PcfTableFormatMask.BIT
-
     def __init__(self, table_format: int):
         self.table_format = table_format
 

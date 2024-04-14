@@ -1,8 +1,8 @@
 from collections import UserDict
 
 from pcffont.error import PcfError
+from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
@@ -16,8 +16,8 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBdfEncodings':
-        table_format = util.read_and_check_table_format(buffer, header)
-        is_ms_byte = util.is_ms_byte(table_format)
+        table_format = PcfTableFormat.read_and_check(buffer, header)
+        is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
 
         first_col = buffer.read_int16(is_ms_byte)
         last_col = buffer.read_int16(is_ms_byte)
@@ -44,7 +44,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
     def __init__(
             self,
-            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
+            table_format: int = PcfTableFormat.build(),
             mapping: dict[int, int] = None,
             default_char: int = -1,
     ):
@@ -67,7 +67,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
             super().__setitem__(code_point, glyph_index)
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        is_ms_byte = util.is_ms_byte(self.table_format)
+        is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
 
         max_code_point = max(self)
         if max_code_point <= 0xFF:

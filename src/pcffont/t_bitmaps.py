@@ -1,9 +1,8 @@
 from collections import UserList
 
 from pcffont.error import PcfError
-from pcffont.format import PcfTableFormatMask
+from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
@@ -24,18 +23,14 @@ def _get_bit_aligned_bitmap(bitmap: list[list[int]], n: int) -> list[list[int]]:
 class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBitmaps':
-        table_format = util.read_and_check_table_format(buffer, header)
-        is_ms_byte = util.is_ms_byte(table_format)
-        is_ms_bit = util.is_ms_bit(table_format)
+        table_format = PcfTableFormat.read_and_check(buffer, header)
+        is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
+        is_ms_bit = PcfTableFormat.is_ms_bit(table_format)
 
-        # How each row in each glyph's bitmap is padded
-        # 0 => byte, 1 => short, 2 => int32, 3 => int64
-        bitmap_pad_mode = table_format & PcfTableFormatMask.GLYPH_PAD
+        bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(table_format)
         bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
 
-        # What the bits are stored
-        # 0 => byte, 1 => short, 2 => int32
-        bits_store_mode = table_format & PcfTableFormatMask.SCAN_UNIT
+        bits_store_mode = PcfTableFormat.bits_store_mode(table_format)
         if bits_store_mode != 0:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
@@ -71,7 +66,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
 
     def __init__(
             self,
-            table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
+            table_format: int = PcfTableFormat.build_for_bitmaps(),
             bitmaps: list[list[list[int]]] = None,
             _compat_size_configs: list[int] = None,
     ):
@@ -80,17 +75,13 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         self._compat_size_configs = _compat_size_configs
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        is_ms_byte = util.is_ms_byte(self.table_format)
-        is_ms_bit = util.is_ms_byte(self.table_format)
+        is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
+        is_ms_bit = PcfTableFormat.is_ms_byte(self.table_format)
 
-        # How each row in each glyph's bitmap is padded
-        # 0 => byte, 1 => short, 2 => int32, 3 => int64
-        bitmap_pad_mode = self.table_format & PcfTableFormatMask.GLYPH_PAD
+        bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(self.table_format)
         bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
 
-        # What the bits are stored
-        # 0 => byte, 1 => short, 2 => int32
-        bits_store_mode = self.table_format & PcfTableFormatMask.SCAN_UNIT
+        bits_store_mode = PcfTableFormat.bits_store_mode(self.table_format)
         if bits_store_mode != 0:
             raise PcfError(f'Table format not supported: {self.table_format:b}')
 

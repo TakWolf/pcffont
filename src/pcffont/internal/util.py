@@ -1,5 +1,3 @@
-from pcffont.error import PcfError
-from pcffont.format import PcfTableFormatMask
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.buffer import Buffer
 from pcffont.t_accelerators import PcfAccelerators
@@ -29,19 +27,3 @@ def parse_table(buffer: Buffer, header: PcfHeader, strict_level: int = 1) -> Pcf
     if clz is not None:
         return clz.parse(buffer, header, strict_level)
     return None
-
-
-def read_and_check_table_format(buffer: Buffer, header: PcfHeader) -> int:
-    buffer.seek(header.table_offset)
-    table_format = buffer.read_int32()
-    if table_format != header.table_format:
-        raise PcfError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', offset {header.table_offset}")
-    return table_format
-
-
-def is_ms_byte(table_format: int) -> bool:
-    return table_format & PcfTableFormatMask.BYTE > 0
-
-
-def is_ms_bit(table_format: int) -> bool:
-    return table_format & PcfTableFormatMask.BIT > 0
