@@ -1,5 +1,6 @@
 from pcffont.error import PcfError
-from pcffont.header import PcfTableType, PcfTableFormatMask, PcfHeader
+from pcffont.format import PcfTableFormatMask
+from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.buffer import ByteOrder, Buffer
 from pcffont.t_accelerators import PcfAccelerators
 from pcffont.t_bitmaps import PcfBitmaps

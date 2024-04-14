@@ -1,6 +1,7 @@
 from collections import UserList
 
-from pcffont.header import PcfTableFormat, PcfHeader
+from pcffont.format import PcfTableFormat
+from pcffont.header import PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.metric import PcfMetric

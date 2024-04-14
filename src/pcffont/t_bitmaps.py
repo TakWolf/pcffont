@@ -1,7 +1,8 @@
 from collections import UserList
 
 from pcffont.error import PcfError
-from pcffont.header import PcfTableFormatMask, PcfHeader
+from pcffont.format import PcfTableFormatMask
+from pcffont.header import PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable

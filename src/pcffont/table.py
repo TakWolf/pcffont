@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Final
 
-from pcffont.header import PcfTableFormatMask
+from pcffont.format import PcfTableFormatMask
 from pcffont.internal.buffer import Buffer
 
 
