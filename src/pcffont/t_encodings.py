@@ -25,8 +25,8 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         max_byte1 = buffer.read_int16(byte_order)
         default_char = buffer.read_int16(byte_order)
 
-        glyph_indices_count = (max_char_or_byte2 - min_char_or_byte2 + 1) * (max_byte1 - min_byte1 + 1)
-        glyph_indices = [buffer.read_int16(byte_order) for _ in range(glyph_indices_count)]
+        glyphs_count = (max_char_or_byte2 - min_char_or_byte2 + 1) * (max_byte1 - min_byte1 + 1)
+        glyph_indices = [buffer.read_int16(byte_order) for _ in range(glyphs_count)]
 
         mapping = {}
         if min_byte1 == max_byte1 == 0:
