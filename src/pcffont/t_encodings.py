@@ -46,7 +46,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
             self,
             table_format: int = PcfTable.DEFAULT_TABLE_FORMAT,
             mapping: dict[int, int] = None,
-            default_char: int = _NO_GLYPH_INDEX,
+            default_char: int = -1,
     ):
         PcfTable.__init__(self, table_format)
         UserDict.__init__(self, mapping)
