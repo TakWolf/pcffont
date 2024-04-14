@@ -30,8 +30,9 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(table_format)
         bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
 
-        bits_store_mode = PcfTableFormat.bits_store_mode(table_format)
-        if bits_store_mode != 0:
+        # FIXME
+        bit_scan_mode = PcfTableFormat.bit_scan_mode(table_format)
+        if bit_scan_mode != 0:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
         glyphs_count = buffer.read_int32(is_ms_byte)
@@ -81,8 +82,9 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(self.table_format)
         bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
 
-        bits_store_mode = PcfTableFormat.bits_store_mode(self.table_format)
-        if bits_store_mode != 0:
+        # FIXME
+        bit_scan_mode = PcfTableFormat.bit_scan_mode(self.table_format)
+        if bit_scan_mode != 0:
             raise PcfError(f'Table format not supported: {self.table_format:b}')
 
         glyphs_count = len(self)

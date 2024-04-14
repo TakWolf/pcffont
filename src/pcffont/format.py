@@ -63,7 +63,7 @@ class PcfTableFormat(IntFlag):
             is_ms_byte: bool = True,
             is_ms_bit: bool = True,
             bitmap_pad_mode: int = 2,
-            bits_store_mode: int = 0,
+            bit_scan_mode: int = 0,
     ) -> int:
         table_format = PcfTableFormat.DEFAULT_FORMAT
         if is_ms_byte:
@@ -71,7 +71,7 @@ class PcfTableFormat(IntFlag):
         if is_ms_bit:
             table_format |= PcfTableFormat.MASK_BIT
         table_format |= bitmap_pad_mode
-        table_format |= bits_store_mode >> 4
+        table_format |= bit_scan_mode >> 4
         return table_format
 
     @staticmethod
@@ -107,9 +107,9 @@ class PcfTableFormat(IntFlag):
         return table_format & PcfTableFormat.MASK_GLYPH_PAD
 
     @staticmethod
-    def bits_store_mode(table_format: int) -> int:
+    def bit_scan_mode(table_format: int) -> int:
         """
-        What the bits are stored
+        Bitmap scan unit
         :return: 0 => byte, 1 => short, 2 => int32
         """
         return table_format & PcfTableFormat.MASK_SCAN_UNIT
