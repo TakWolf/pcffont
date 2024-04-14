@@ -7,19 +7,6 @@ from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
 
-def _get_bit_aligned_bitmap(bitmap: list[list[int]], n: int) -> list[list[int]]:
-    new_bitmap = []
-    for bitmap_row in bitmap:
-        new_bitmap_row = []
-        for i in range(n):
-            if i < len(bitmap_row):
-                new_bitmap_row.append(bitmap_row[i])
-            else:
-                new_bitmap_row.append(0)
-        new_bitmap.append(new_bitmap_row)
-    return new_bitmap
-
-
 class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBitmaps':
@@ -97,8 +84,10 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         buffer.seek(bitmaps_start)
         for bitmap in self:
             bitmap_offsets.append(bitmaps_size)
-            bitmap = _get_bit_aligned_bitmap(bitmap, 8 * bitmap_row_size)
             for bitmap_row in bitmap:
+                if len(bitmap_row) < 8 * bitmap_row_size:
+                    bitmap_row = bitmap_row[:]
+                    bitmap_row += [0] * (8 * bitmap_row_size - len(bitmap_row))
                 for i in range(len(bitmap_row) // 8):
                     array = bitmap_row[i * 8:(i + 1) * 8]
                     if not is_ms_bit:
