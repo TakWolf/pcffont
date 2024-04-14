@@ -69,17 +69,22 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
 
-        max_code_point = max(self)
-        if max_code_point <= 0xFF:
-            first_col = min(self)
-            last_col = max_code_point
-            first_row = 0
-            last_row = 0
-        else:
-            first_col = 0
-            last_col = 0xFF
-            first_row = 0
-            last_row = 0xFF
+        first_col = 0xFF
+        last_col = 0
+        first_row = 0xFF
+        last_row = 0
+        for code_point in self:
+            bs = code_point.to_bytes(2)
+            row = bs[0]
+            col = bs[1]
+            if row < first_row:
+                first_row = row
+            if row > last_row:
+                last_row = row
+            if col < first_col:
+                first_col = col
+            if col > last_col:
+                last_col = col
 
         buffer.seek(table_offset)
         buffer.write_int32(self.table_format)
