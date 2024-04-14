@@ -37,9 +37,9 @@ def test_reload(tmp_path: Path):
     assert font_1.accelerators.min_bounds.left_side_bearing == font_2.accelerators.min_bounds.left_side_bearing
     assert font_1.accelerators.min_bounds.right_side_bearing == font_2.accelerators.min_bounds.right_side_bearing
     assert font_1.accelerators.min_bounds.character_width == font_2.accelerators.min_bounds.character_width
-    assert font_1.accelerators.min_bounds.character_ascent == font_2.accelerators.min_bounds.character_ascent
-    assert font_1.accelerators.min_bounds.character_descent == font_2.accelerators.min_bounds.character_descent
-    assert font_1.accelerators.min_bounds.character_attributes == font_2.accelerators.min_bounds.character_attributes == 0
+    assert font_1.accelerators.min_bounds.ascent == font_2.accelerators.min_bounds.ascent
+    assert font_1.accelerators.min_bounds.descent == font_2.accelerators.min_bounds.descent
+    assert font_1.accelerators.min_bounds.attributes == font_2.accelerators.min_bounds.attributes == 0
 
     assert font_1.accelerators.ink_min_bounds is None
     assert font_1.accelerators.ink_max_bounds is None
@@ -55,9 +55,9 @@ def test_reload(tmp_path: Path):
         assert metric_1.left_side_bearing == metric_2.left_side_bearing
         assert metric_1.right_side_bearing == metric_2.right_side_bearing
         assert metric_1.character_width == metric_2.character_width
-        assert metric_1.character_ascent == metric_2.character_ascent
-        assert metric_1.character_descent == metric_2.character_descent
-        assert metric_1.character_attributes == metric_2.character_attributes
+        assert metric_1.ascent == metric_2.ascent
+        assert metric_1.descent == metric_2.descent
+        assert metric_1.attributes == metric_2.attributes
 
     assert len(font_1.bitmaps) == len(font_2.bitmaps)
     for glyph_index, bitmap_1 in enumerate(font_1.bitmaps):
@@ -103,9 +103,9 @@ def test_reload(tmp_path: Path):
     assert font_1.bdf_accelerators.min_bounds.left_side_bearing == font_2.bdf_accelerators.min_bounds.left_side_bearing
     assert font_1.bdf_accelerators.min_bounds.right_side_bearing == font_2.bdf_accelerators.min_bounds.right_side_bearing
     assert font_1.bdf_accelerators.min_bounds.character_width == font_2.bdf_accelerators.min_bounds.character_width
-    assert font_1.bdf_accelerators.min_bounds.character_ascent == font_2.bdf_accelerators.min_bounds.character_ascent
-    assert font_1.bdf_accelerators.min_bounds.character_descent == font_2.bdf_accelerators.min_bounds.character_descent
-    assert font_1.bdf_accelerators.min_bounds.character_attributes == font_2.bdf_accelerators.min_bounds.character_attributes == 0
+    assert font_1.bdf_accelerators.min_bounds.ascent == font_2.bdf_accelerators.min_bounds.ascent
+    assert font_1.bdf_accelerators.min_bounds.descent == font_2.bdf_accelerators.min_bounds.descent
+    assert font_1.bdf_accelerators.min_bounds.attributes == font_2.bdf_accelerators.min_bounds.attributes == 0
 
     assert font_1.bdf_accelerators.ink_min_bounds is None
     assert font_1.bdf_accelerators.ink_max_bounds is None
