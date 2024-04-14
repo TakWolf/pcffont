@@ -41,7 +41,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         bitmaps_start = buffer.tell()
         bitmaps_size = size_configs[bitmap_pad_mode]
 
-        bitmaps = PcfBitmaps(table_format, None, size_configs)
+        bitmaps = PcfBitmaps(table_format)
         for i in range(glyphs_count):
             bitmap_offset = bitmap_offsets[i]
             if i < glyphs_count - 1:
@@ -62,17 +62,20 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     bitmap_row.extend(array)
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
+
+        # TODO
+        bitmaps._compat_size_configs = size_configs
+
         return bitmaps
 
     def __init__(
             self,
             table_format: int = PcfTableFormat.build_for_bitmaps(),
             bitmaps: list[list[list[int]]] = None,
-            _compat_size_configs: list[int] = None,
     ):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, bitmaps)
-        self._compat_size_configs = _compat_size_configs
+        self._compat_size_configs: list[int] | None = None  # TODO
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)

@@ -44,7 +44,7 @@ class PcfAccelerators(PcfTable):
         else:
             _compat_info = None
 
-        return PcfAccelerators(
+        accelerators = PcfAccelerators(
             table_format,
             no_overlap,
             constant_metrics,
@@ -60,8 +60,12 @@ class PcfAccelerators(PcfTable):
             max_bounds,
             ink_min_bounds,
             ink_max_bounds,
-            _compat_info,
         )
+
+        # TODO
+        accelerators._compat_info = _compat_info
+
+        return accelerators
 
     def __init__(
             self,
@@ -80,7 +84,6 @@ class PcfAccelerators(PcfTable):
             max_bounds: PcfMetric = None,
             ink_min_bounds: PcfMetric = None,
             ink_max_bounds: PcfMetric = None,
-            _compat_info: tuple[int, int, bytes] = None,
     ):
         super().__init__(table_format)
         self.no_overlap = no_overlap
@@ -97,7 +100,7 @@ class PcfAccelerators(PcfTable):
         self.max_bounds = max_bounds
         self.ink_min_bounds = ink_min_bounds
         self.ink_max_bounds = ink_max_bounds
-        self._compat_info = _compat_info
+        self._compat_info: tuple[int, int, bytes] | None = None  # TODO
 
     def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
