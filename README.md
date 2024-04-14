@@ -58,7 +58,9 @@ if __name__ == '__main__':
 
 ## References
 
+- [pcf2bdf - pcf.txt](https://salsa.debian.org/fonts-team/pcf2bdf/-/blob/master/pcf.txt)
 - [FontForge - The X11 PCF bitmap font file format](https://fontforge.org/docs/techref/pcf-format.html)
+- [X Logical Font Description Conventions - X Consortium Standard](https://www.x.org/releases/current/doc/xorg-docs/xlfd/xlfd.html)
 
 ## License
 
