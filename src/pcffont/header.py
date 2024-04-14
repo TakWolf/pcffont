@@ -3,7 +3,7 @@ from enum import IntEnum
 from pcffont.error import PcfError
 from pcffont.internal.buffer import Buffer
 
-_MAGIC_STRING = b'\x01fcp'
+_FILE_VERSION = b'\x01fcp'
 
 
 class PcfTableType(IntEnum):
@@ -22,7 +22,7 @@ class PcfHeader:
     @staticmethod
     def parse(buffer: Buffer) -> list['PcfHeader']:
         buffer.seek(0)
-        if buffer.read(4) != _MAGIC_STRING:
+        if buffer.read(4) != _FILE_VERSION:
             raise PcfError('Not PCF format')
 
         tables_count = buffer.read_int32_le()
@@ -40,7 +40,7 @@ class PcfHeader:
     @staticmethod
     def dump(buffer: Buffer, headers: list['PcfHeader']):
         buffer.seek(0)
-        buffer.write(_MAGIC_STRING)
+        buffer.write(_FILE_VERSION)
 
         buffer.write_int32_le(len(headers))
         for header in headers:
