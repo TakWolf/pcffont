@@ -13,9 +13,11 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
 
         glyphs_count = buffer.read_int32(is_ms_byte)
-        scalable_widths = [buffer.read_int32(is_ms_byte) for _ in range(glyphs_count)]
 
-        return PcfScalableWidths(table_format, scalable_widths)
+        scalable_widths = PcfScalableWidths(table_format)
+        for _ in range(glyphs_count):
+            scalable_widths.append(buffer.read_int32(is_ms_byte))
+        return scalable_widths
 
     def __init__(
             self,

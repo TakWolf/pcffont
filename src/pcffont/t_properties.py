@@ -129,7 +129,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         buffer.skip_int()  # strings_size
         strings_start = buffer.tell()
 
-        properties = {}
+        properties = PcfProperties(table_format)
         for key_offset, is_string_prop, value in prop_infos:
             buffer.seek(strings_start + key_offset)
             key = buffer.read_string()
@@ -138,16 +138,12 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
                 value = buffer.read_string()
             else:
                 value = int(value)
-
             try:
-                _check_key(key)
-                _check_value(key, value)
                 properties[key] = value
             except (PcfPropKeyError, PcfPropValueError) as e:
                 if strict_level >= 1:
                     raise e
-
-        return PcfProperties(table_format, properties)
+        return properties
 
     def __init__(
             self,

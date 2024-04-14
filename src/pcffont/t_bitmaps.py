@@ -41,7 +41,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         bitmaps_start = buffer.tell()
         bitmaps_size = size_configs[bitmap_pad_mode]
 
-        bitmaps = []
+        bitmaps = PcfBitmaps(table_format, None, size_configs)
         for i in range(glyphs_count):
             bitmap_offset = bitmap_offsets[i]
             if i < glyphs_count - 1:
@@ -62,8 +62,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     bitmap_row.extend(array)
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
-
-        return PcfBitmaps(table_format, bitmaps, size_configs)
+        return bitmaps
 
     def __init__(
             self,

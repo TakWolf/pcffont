@@ -28,28 +28,27 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         glyphs_count = (last_col - first_col + 1) * (last_row - first_row + 1)
         glyph_indices = [buffer.read_int16(is_ms_byte) for _ in range(glyphs_count)]
 
-        mapping = {}
+        encodings = PcfBdfEncodings(table_format, default_char)
         if first_row == last_row == 0:
             for code_point in range(first_col, last_col + 1):
                 glyph_index = glyph_indices[code_point - first_col]
-                mapping[code_point] = glyph_index
+                encodings[code_point] = glyph_index
         else:
             for row in range(first_row, last_row + 1):
                 for col in range(first_col, last_col + 1):
                     code_point = int.from_bytes(bytes([row, col]))
                     glyph_index = glyph_indices[(row - first_row) * (last_col - first_col + 1) + col - first_col]
-                    mapping[code_point] = glyph_index
-
-        return PcfBdfEncodings(table_format, mapping, default_char)
+                    encodings[code_point] = glyph_index
+        return encodings
 
     def __init__(
             self,
             table_format: int = PcfTableFormat.build(),
-            mapping: dict[int, int] = None,
             default_char: int = -1,
+            encodings: dict[int, int] = None,
     ):
         PcfTable.__init__(self, table_format)
-        UserDict.__init__(self, mapping)
+        UserDict.__init__(self, encodings)
         self.default_char = default_char
 
     def __setitem__(self, code_point: int, glyph_index: int | None):

@@ -17,13 +17,12 @@ class PcfGlyphNames(PcfTable, UserList[str]):
         buffer.skip_int()  # strings_size
         strings_start = buffer.tell()
 
-        names = []
+        names = PcfGlyphNames(table_format)
         for name_offset in name_offsets:
             buffer.seek(strings_start + name_offset)
             name = buffer.read_string()
             names.append(name)
-
-        return PcfGlyphNames(table_format, names)
+        return names
 
     def __init__(
             self,

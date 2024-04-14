@@ -18,9 +18,12 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
             glyphs_count = buffer.read_int16(is_ms_byte)
         else:
             glyphs_count = buffer.read_int32(is_ms_byte)
-        metrics = [PcfMetric.parse(buffer, is_ms_byte, is_compressed) for _ in range(glyphs_count)]
 
-        return PcfMetrics(table_format, metrics)
+        metrics = PcfMetrics(table_format)
+        for _ in range(glyphs_count):
+            metric = PcfMetric.parse(buffer, is_ms_byte, is_compressed)
+            metrics.append(metric)
+        return metrics
 
     def __init__(
             self,
