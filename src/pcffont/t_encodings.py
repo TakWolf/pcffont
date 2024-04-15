@@ -58,10 +58,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         if glyph_index < 0 or glyph_index > _NO_GLYPH_INDEX:
             raise PcfError(f'Glyph index must between [0, {_NO_GLYPH_INDEX}]')
 
-        if glyph_index == _NO_GLYPH_INDEX:
-            glyph_index = None
-
-        if glyph_index is None:
+        if glyph_index is None or glyph_index == _NO_GLYPH_INDEX:
             self.pop(code_point, None)
         else:
             super().__setitem__(code_point, glyph_index)
