@@ -20,50 +20,10 @@ class PcfTableFormat(IntFlag):
     def build(
             is_ms_byte: bool = True,
             is_ms_bit: bool = True,
-    ) -> int:
-        table_format = PcfTableFormat.DEFAULT_FORMAT
-        if is_ms_byte:
-            table_format |= PcfTableFormat.MASK_BYTE
-        if is_ms_bit:
-            table_format |= PcfTableFormat.MASK_BIT
-        return table_format
-
-    @staticmethod
-    def build_for_accelerators(
-            is_ms_byte: bool = True,
-            is_ms_bit: bool = True,
-            has_ink_bounds: bool = False,
-    ) -> int:
-        table_format = PcfTableFormat.DEFAULT_FORMAT
-        if is_ms_byte:
-            table_format |= PcfTableFormat.MASK_BYTE
-        if is_ms_bit:
-            table_format |= PcfTableFormat.MASK_BIT
-        if has_ink_bounds:
-            table_format |= PcfTableFormat.ACCEL_W_INKBOUNDS
-        return table_format
-
-    @staticmethod
-    def build_for_metrics(
-            is_ms_byte: bool = True,
-            is_ms_bit: bool = True,
-            is_compressed: bool = True,
-    ) -> int:
-        table_format = PcfTableFormat.DEFAULT_FORMAT
-        if is_ms_byte:
-            table_format |= PcfTableFormat.MASK_BYTE
-        if is_ms_bit:
-            table_format |= PcfTableFormat.MASK_BIT
-        if is_compressed:
-            table_format |= PcfTableFormat.COMPRESSED_METRICS
-        return table_format
-
-    @staticmethod
-    def build_for_bitmaps(
-            is_ms_byte: bool = True,
-            is_ms_bit: bool = True,
             bitmap_pad_mode: int = 2,
             bit_scan_mode: int = 0,
+            has_ink_bounds: bool = False,
+            is_compressed_metrics: bool = False,
     ) -> int:
         table_format = PcfTableFormat.DEFAULT_FORMAT
         if is_ms_byte:
@@ -72,6 +32,10 @@ class PcfTableFormat(IntFlag):
             table_format |= PcfTableFormat.MASK_BIT
         table_format |= bitmap_pad_mode
         table_format |= bit_scan_mode >> 4
+        if has_ink_bounds:
+            table_format |= PcfTableFormat.ACCEL_W_INKBOUNDS
+        if is_compressed_metrics:
+            table_format |= PcfTableFormat.COMPRESSED_METRICS
         return table_format
 
     @staticmethod

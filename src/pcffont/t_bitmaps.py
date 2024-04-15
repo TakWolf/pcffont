@@ -57,7 +57,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.build_for_bitmaps(),
+            table_format: int = PcfTableFormat.build(),
             bitmaps: list[list[list[int]]] = None,
     ):
         PcfTable.__init__(self, table_format)
