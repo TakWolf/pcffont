@@ -42,7 +42,8 @@ def main():
         print(f'advance_width: {metric.character_width}')
         print(f'offset: ({-metric.left_side_bearing}, {-metric.descent})')
         for bitmap_row in bitmap:
-            print(f'{''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')}*')
+            text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
+            print(f'{text}*')
         print()
     font.save(os.path.join(outputs_dir, 'unifont-15.1.05.pcf'))
 
