@@ -1,6 +1,6 @@
 from collections import UserDict
 
-from pcffont.error import PcfError
+from pcffont.error import PcfOutOfRangeError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
@@ -54,9 +54,9 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
     def __setitem__(self, code_point: int, glyph_index: int | None):
         if code_point < 0 or code_point > _MAX_CODE_POINT:
-            raise PcfError(f'Code point must between [0, {_MAX_CODE_POINT}]')
+            raise PcfOutOfRangeError(f'Code point must between [0, {_MAX_CODE_POINT}]')
         if glyph_index < 0 or glyph_index > _NO_GLYPH_INDEX:
-            raise PcfError(f'Glyph index must between [0, {_NO_GLYPH_INDEX}]')
+            raise PcfOutOfRangeError(f'Glyph index must between [0, {_NO_GLYPH_INDEX}]')
 
         if glyph_index is None or glyph_index == _NO_GLYPH_INDEX:
             self.pop(code_point, None)

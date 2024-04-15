@@ -2,7 +2,7 @@ import os
 from collections import UserDict
 from typing import BinaryIO
 
-from pcffont.error import PcfError
+from pcffont.error import PcfParseError, PcfTableTypeError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
@@ -26,7 +26,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         tables = {}
         for header in headers:
             if header.table_type in tables and strict_level >= 1:
-                raise PcfError(f"Duplicate table '{header.table_type.name}'")
+                raise PcfParseError(f"Duplicate table '{header.table_type.name}'")
             table = util.parse_table(buffer, header, strict_level)
             tables[header.table_type] = table
 
@@ -48,7 +48,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
             self.pop(table_type, None)
         else:
             if not isinstance(table, util.TABLE_TYPE_REGISTRY[table_type]):
-                raise PcfError(f"Mismatched table type: '{table_type.name}' -> '{type(table)}'")
+                raise PcfTableTypeError(f"Mismatched table type: '{table_type.name}' -> '{type(table)}'")
             super().__setitem__(table_type, table)
 
     def __repr__(self) -> str:

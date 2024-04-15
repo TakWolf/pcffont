@@ -1,6 +1,6 @@
 from enum import IntFlag
 
-from pcffont.error import PcfError
+from pcffont.error import PcfParseError
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
 
@@ -43,7 +43,7 @@ class PcfTableFormat(IntFlag):
         buffer.seek(header.table_offset)
         table_format = buffer.read_int32()
         if table_format != header.table_format:
-            raise PcfError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', offset {header.table_offset}")
+            raise PcfParseError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', offset {header.table_offset}")
         return table_format
 
     @staticmethod

@@ -3,6 +3,14 @@ class PcfError(Exception):
     pass
 
 
+class PcfParseError(PcfError):
+    pass
+
+
+class PcfTableTypeError(PcfError):
+    pass
+
+
 class PcfPropKeyError(PcfError):
     def __init__(self, key: str, reason: str):
         self.key = key
@@ -23,3 +31,7 @@ class PcfXlfdError(PcfError):
         self.font_name = font_name
         self.reason = reason
         super().__init__(f"'{font_name}': {reason}")
+
+
+class PcfOutOfRangeError(PcfError):
+    pass

@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from pcffont.error import PcfError
+from pcffont.error import PcfParseError
 from pcffont.internal.buffer import Buffer
 
 _FILE_VERSION = b'\x01fcp'
@@ -23,7 +23,7 @@ class PcfHeader:
     def parse(buffer: Buffer) -> list['PcfHeader']:
         buffer.seek(0)
         if buffer.read(4) != _FILE_VERSION:
-            raise PcfError('Not PCF format')
+            raise PcfParseError('Not PCF format')
 
         tables_count = buffer.read_int32()
 
