@@ -33,7 +33,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, metrics)
 
-    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
         is_compressed = PcfTableFormat.is_compressed_metrics(self.table_format)
 

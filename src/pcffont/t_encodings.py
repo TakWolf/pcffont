@@ -66,7 +66,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         else:
             super().__setitem__(code_point, glyph_index)
 
-    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
 
         first_col = 0xFF

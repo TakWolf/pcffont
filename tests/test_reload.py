@@ -9,14 +9,11 @@ project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 def test_reload(tmp_path: Path):
     load_file_path = os.path.join(project_root_dir, 'assets', 'unifont', 'unifont-15.1.05.pcf')
     save_file_path = os.path.join(tmp_path, 'unifont-15.1.05.pcf')
-    font_1 = PcfFont.load(load_file_path)
-
-    for bitmap in font_1.bitmaps:
-        for bitmap_row in bitmap:
-            while len(bitmap_row) > 0 and bitmap_row[-1] == 0:
-                bitmap_row.pop()
-
-    font_1.save(save_file_path)
+    font = PcfFont.load(load_file_path)
+    font.accelerators._compat_info = None
+    font.bdf_accelerators._compat_info = None
+    font.bitmaps._compat_size_configs = None
+    font.save(save_file_path)
 
     font_1 = PcfFont.load(load_file_path)
     font_2 = PcfFont.load(save_file_path)

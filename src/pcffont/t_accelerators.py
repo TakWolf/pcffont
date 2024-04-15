@@ -102,7 +102,7 @@ class PcfAccelerators(PcfTable):
         self.ink_max_bounds = ink_max_bounds
         self._compat_info: tuple[int, int, bytes] | None = None  # TODO
 
-    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
         has_ink_bounds = PcfTableFormat.has_ink_bounds(self.table_format)
 
@@ -130,7 +130,7 @@ class PcfAccelerators(PcfTable):
         table_size = buffer.tell() - table_offset
 
         # TODO
-        if compat_mode and self._compat_info is not None:
+        if self._compat_info is not None:
             _compat_chunk_start, _compat_chunk_size, _compat_chunk = self._compat_info
             _compat_chunk = bytearray(_compat_chunk)
 

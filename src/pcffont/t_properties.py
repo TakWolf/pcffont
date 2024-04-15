@@ -352,7 +352,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
                     value = int(token)
             self[key] = value
 
-    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
 
         props_count = len(self)

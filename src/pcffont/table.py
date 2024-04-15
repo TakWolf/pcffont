@@ -11,11 +11,11 @@ class PcfTable:
         return object.__repr__(self)
 
     @abstractmethod
-    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
         raise NotImplementedError
 
-    def dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
-        table_size = self._dump(buffer, table_offset, compat_mode)
+    def dump(self, buffer: Buffer, table_offset: int) -> int:
+        table_size = self._dump(buffer, table_offset)
 
         # All tables begin on a 32bit boundary (and will be padded with zeroes).
         padding = 4 - table_size % 4

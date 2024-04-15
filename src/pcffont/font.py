@@ -126,22 +126,18 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
     def bdf_accelerators(self, table: PcfAccelerators | None):
         self[PcfTableType.BDF_ACCELERATORS] = table
 
-    def dump(self, stream: BinaryIO, compat_mode: bool = False):
+    def dump(self, stream: BinaryIO):
         buffer = Buffer(stream)
 
         headers = []
         table_offset = 4 + 4 + (4 * 4) * len(self)
         for table_type, table in sorted(self.items()):
-            table_size = table.dump(buffer, table_offset, compat_mode)
+            table_size = table.dump(buffer, table_offset)
             headers.append(PcfHeader(table_type, table.table_format, table_size, table_offset))
             table_offset += table_size
 
         PcfHeader.dump(buffer, headers)
 
-    def save(
-            self,
-            file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
-            compat_mode: bool = False,
-    ):
+    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         with open(file_path, 'wb') as file:
-            self.dump(file, compat_mode)
+            self.dump(file)

@@ -27,7 +27,7 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, scalable_widths)
 
-    def _dump(self, buffer: Buffer, table_offset: int, compat_mode: bool = False) -> int:
+    def _dump(self, buffer: Buffer, table_offset: int) -> int:
         is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
 
         glyphs_count = len(self)
