@@ -22,8 +22,5 @@ TABLE_TYPE_REGISTRY = {
 }
 
 
-def parse_table(buffer: Buffer, header: PcfHeader, strict_level: int = 1) -> PcfTable | None:
-    clz = TABLE_TYPE_REGISTRY.get(header.table_type, None)
-    if clz is not None:
-        return clz.parse(buffer, header, strict_level)
-    return None
+def parse_table(buffer: Buffer, header: PcfHeader, strict_level: int = 1) -> PcfTable:
+    return TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, header, strict_level)

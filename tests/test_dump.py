@@ -30,8 +30,6 @@ def _test_dump(file_name: str):
 
         for header in headers:
             table = util.parse_table(buffer_in, header)
-            if table is None:
-                continue
             table_offset = header.table_offset
             table_size = table.dump(buffer_out, table_offset, compat_mode=True)
             assert table_size == header.table_size
