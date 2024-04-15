@@ -86,8 +86,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             bitmap_offsets.append(bitmaps_size)
             for bitmap_row in bitmap:
                 if len(bitmap_row) < 8 * bitmap_row_size:
-                    bitmap_row = bitmap_row[:]
-                    bitmap_row += [0] * (8 * bitmap_row_size - len(bitmap_row))
+                    bitmap_row = bitmap_row + [0] * (8 * bitmap_row_size - len(bitmap_row))
                 for i in range(len(bitmap_row) // 8):
                     array = bitmap_row[i * 8:(i + 1) * 8]
                     if not is_ms_bit:
