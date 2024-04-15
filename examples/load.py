@@ -6,7 +6,7 @@ from pcffont import PcfFont
 
 
 def main():
-    outputs_dir = os.path.join(build_dir, 'demo')
+    outputs_dir = os.path.join(build_dir, 'load')
     if os.path.exists(outputs_dir):
         shutil.rmtree(outputs_dir)
     os.makedirs(outputs_dir)
