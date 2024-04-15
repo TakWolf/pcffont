@@ -32,14 +32,14 @@ class PcfTableFormat(IntFlag):
     def build_for_accelerators(
             is_ms_byte: bool = True,
             is_ms_bit: bool = True,
-            accelerators_has_ink_bounds: bool = False,
+            has_ink_bounds: bool = False,
     ) -> int:
         table_format = PcfTableFormat.DEFAULT_FORMAT
         if is_ms_byte:
             table_format |= PcfTableFormat.MASK_BYTE
         if is_ms_bit:
             table_format |= PcfTableFormat.MASK_BIT
-        if accelerators_has_ink_bounds:
+        if has_ink_bounds:
             table_format |= PcfTableFormat.ACCEL_W_INKBOUNDS
         return table_format
 
