@@ -43,6 +43,14 @@ class PcfMetric:
         self.descent = descent
         self.attributes = attributes
 
+    @property
+    def glyph_width(self) -> int:
+        return self.right_side_bearing - self.left_side_bearing
+
+    @property
+    def glyph_height(self) -> int:
+        return self.ascent + self.descent
+
     def dump(self, buffer: Buffer, is_ms_byte: bool, is_compressed: bool):
         if is_compressed:
             buffer.write_int8(self.left_side_bearing + 0x80)
