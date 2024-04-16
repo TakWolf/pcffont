@@ -111,8 +111,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         buffer.seek(table_offset)
         buffer.write_int32(self.table_format)
         buffer.write_int32(glyphs_count, is_ms_byte)
-        for offset in bitmap_offsets:
-            buffer.write_uint32(offset, is_ms_byte)
+        for bitmap_offset in bitmap_offsets:
+            buffer.write_uint32(bitmap_offset, is_ms_byte)
         for size_config in size_configs:
             buffer.write_uint32(size_config, is_ms_byte)
         buffer.skip(bitmaps_size)
