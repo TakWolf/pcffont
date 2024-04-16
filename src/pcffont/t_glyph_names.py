@@ -14,7 +14,7 @@ class PcfGlyphNames(PcfTable, UserList[str]):
 
         glyphs_count = buffer.read_int32(is_ms_byte)
         name_offsets = [buffer.read_int32(is_ms_byte) for _ in range(glyphs_count)]
-        buffer.skip_int()  # strings_size
+        buffer.skip(4)  # strings_size
         strings_start = buffer.tell()
 
         names = PcfGlyphNames(table_format)

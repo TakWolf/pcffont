@@ -61,9 +61,6 @@ class Buffer:
     def skip(self, n: int):
         self.seek(self.tell() + n)
 
-    def skip_int(self):
-        self.skip(4)
-
     def seek(self, offset: int):
         self.stream.seek(offset)
 

@@ -126,7 +126,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         padding = 3 - (((4 + 1 + 4) * props_count + 3) % 4)
         buffer.skip(padding)
 
-        buffer.skip_int()  # strings_size
+        buffer.skip(4)  # strings_size
         strings_start = buffer.tell()
 
         properties = PcfProperties(table_format)
