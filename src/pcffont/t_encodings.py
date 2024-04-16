@@ -20,14 +20,14 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         table_format = PcfTableFormat.read_and_check(buffer, header)
         is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
 
-        min_byte_2 = buffer.read_int16(is_ms_byte)
-        max_byte_2 = buffer.read_int16(is_ms_byte)
-        min_byte_1 = buffer.read_int16(is_ms_byte)
-        max_byte_1 = buffer.read_int16(is_ms_byte)
-        default_char = buffer.read_int16(is_ms_byte)
+        min_byte_2 = buffer.read_uint16(is_ms_byte)
+        max_byte_2 = buffer.read_uint16(is_ms_byte)
+        min_byte_1 = buffer.read_uint16(is_ms_byte)
+        max_byte_1 = buffer.read_uint16(is_ms_byte)
+        default_char = buffer.read_uint16(is_ms_byte)
 
         glyphs_count = (max_byte_2 - min_byte_2 + 1) * (max_byte_1 - min_byte_1 + 1)
-        glyph_indices = [buffer.read_int16(is_ms_byte) for _ in range(glyphs_count)]
+        glyph_indices = [buffer.read_uint16(is_ms_byte) for _ in range(glyphs_count)]
 
         encodings = PcfBdfEncodings(table_format, default_char)
         if min_byte_1 == max_byte_1 == 0:
@@ -85,22 +85,22 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
         buffer.seek(table_offset)
         buffer.write_int32(self.table_format)
-        buffer.write_int16(min_byte_2, is_ms_byte)
-        buffer.write_int16(max_byte_2, is_ms_byte)
-        buffer.write_int16(min_byte_1, is_ms_byte)
-        buffer.write_int16(max_byte_1, is_ms_byte)
-        buffer.write_int16(self.default_char, is_ms_byte)
+        buffer.write_uint16(min_byte_2, is_ms_byte)
+        buffer.write_uint16(max_byte_2, is_ms_byte)
+        buffer.write_uint16(min_byte_1, is_ms_byte)
+        buffer.write_uint16(max_byte_1, is_ms_byte)
+        buffer.write_uint16(self.default_char, is_ms_byte)
 
         if min_byte_1 == max_byte_1 == 0:
             for code_point in range(min_byte_2, max_byte_2 + 1):
                 glyph_index = self.get(code_point, _NO_GLYPH_INDEX)
-                buffer.write_int16(glyph_index, is_ms_byte)
+                buffer.write_uint16(glyph_index, is_ms_byte)
         else:
             for byte_1 in range(min_byte_1, max_byte_1 + 1):
                 for byte_2 in range(min_byte_2, max_byte_2 + 1):
                     code_point = int.from_bytes(bytes([byte_1, byte_2]))
                     glyph_index = self.get(code_point, _NO_GLYPH_INDEX)
-                    buffer.write_int16(glyph_index, is_ms_byte)
+                    buffer.write_uint16(glyph_index, is_ms_byte)
 
         table_size = buffer.tell() - table_offset
         return table_size
