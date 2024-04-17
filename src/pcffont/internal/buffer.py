@@ -8,37 +8,37 @@ class Buffer:
     def read(self, n: int) -> bytes:
         return self.stream.read(n)
 
-    def read_int(self, n: int, is_ms_byte: bool = False) -> int:
+    def read_int(self, n: int, ms_byte_first: bool = False) -> int:
         return int.from_bytes(
             self.read(n),
-            byteorder='big' if is_ms_byte else 'little',
+            byteorder='big' if ms_byte_first else 'little',
             signed=True,
         )
 
     def read_int8(self) -> int:
         return self.read_int(1)
 
-    def read_int16(self, is_ms_byte: bool = False) -> int:
-        return self.read_int(2, is_ms_byte)
+    def read_int16(self, ms_byte_first: bool = False) -> int:
+        return self.read_int(2, ms_byte_first)
 
-    def read_int32(self, is_ms_byte: bool = False) -> int:
-        return self.read_int(4, is_ms_byte)
+    def read_int32(self, ms_byte_first: bool = False) -> int:
+        return self.read_int(4, ms_byte_first)
 
-    def read_uint(self, n: int, is_ms_byte: bool = False) -> int:
+    def read_uint(self, n: int, ms_byte_first: bool = False) -> int:
         return int.from_bytes(
             self.read(n),
-            byteorder='big' if is_ms_byte else 'little',
+            byteorder='big' if ms_byte_first else 'little',
             signed=False,
         )
 
     def read_uint8(self) -> int:
         return self.read_uint(1)
 
-    def read_uint16(self, is_ms_byte: bool = False) -> int:
-        return self.read_uint(2, is_ms_byte)
+    def read_uint16(self, ms_byte_first: bool = False) -> int:
+        return self.read_uint(2, ms_byte_first)
 
-    def read_uint32(self, is_ms_byte: bool = False) -> int:
-        return self.read_uint(4, is_ms_byte)
+    def read_uint32(self, ms_byte_first: bool = False) -> int:
+        return self.read_uint(4, ms_byte_first)
 
     def read_bool(self) -> bool:
         return self.read(1) != b'\x00'
@@ -55,37 +55,37 @@ class Buffer:
     def write(self, s: bytes) -> int:
         return self.stream.write(s)
 
-    def write_int(self, i: int, n: int, is_ms_byte: bool = False) -> int:
+    def write_int(self, i: int, n: int, ms_byte_first: bool = False) -> int:
         return self.write(i.to_bytes(
             n,
-            byteorder='big' if is_ms_byte else 'little',
+            byteorder='big' if ms_byte_first else 'little',
             signed=True,
         ))
 
     def write_int8(self, i: int) -> int:
         return self.write_int(i, 1)
 
-    def write_int16(self, i: int, is_ms_byte: bool = False) -> int:
-        return self.write_int(i, 2, is_ms_byte)
+    def write_int16(self, i: int, ms_byte_first: bool = False) -> int:
+        return self.write_int(i, 2, ms_byte_first)
 
-    def write_int32(self, i: int, is_ms_byte: bool = False) -> int:
-        return self.write_int(i, 4, is_ms_byte)
+    def write_int32(self, i: int, ms_byte_first: bool = False) -> int:
+        return self.write_int(i, 4, ms_byte_first)
 
-    def write_uint(self, i: int, n: int, is_ms_byte: bool = False) -> int:
+    def write_uint(self, i: int, n: int, ms_byte_first: bool = False) -> int:
         return self.write(i.to_bytes(
             n,
-            byteorder='big' if is_ms_byte else 'little',
+            byteorder='big' if ms_byte_first else 'little',
             signed=False,
         ))
 
     def write_uint8(self, i: int) -> int:
         return self.write_uint(i, 1)
 
-    def write_uint16(self, i: int, is_ms_byte: bool = False) -> int:
-        return self.write_uint(i, 2, is_ms_byte)
+    def write_uint16(self, i: int, ms_byte_first: bool = False) -> int:
+        return self.write_uint(i, 2, ms_byte_first)
 
-    def write_uint32(self, i: int, is_ms_byte: bool = False) -> int:
-        return self.write_uint(i, 4, is_ms_byte)
+    def write_uint32(self, i: int, ms_byte_first: bool = False) -> int:
+        return self.write_uint(i, 4, ms_byte_first)
 
     def write_bool(self, b: bool) -> int:
         return self.write(b'\x01' if b else b'\x00')

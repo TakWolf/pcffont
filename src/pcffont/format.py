@@ -18,17 +18,17 @@ class PcfTableFormat(IntFlag):
 
     @staticmethod
     def build(
-            is_ms_byte: bool = True,
-            is_ms_bit: bool = True,
+            ms_byte_first: bool = True,
+            ms_bit_first: bool = True,
             bitmap_pad_mode: int = 2,
             bit_scan_mode: int = 0,
             has_ink_bounds: bool = False,
             is_compressed_metrics: bool = False,
     ) -> int:
         table_format = PcfTableFormat.DEFAULT_FORMAT
-        if is_ms_byte:
+        if ms_byte_first:
             table_format |= PcfTableFormat.MASK_BYTE
-        if is_ms_bit:
+        if ms_bit_first:
             table_format |= PcfTableFormat.MASK_BIT
         table_format |= bitmap_pad_mode
         table_format |= bit_scan_mode >> 4
@@ -47,11 +47,11 @@ class PcfTableFormat(IntFlag):
         return table_format
 
     @staticmethod
-    def is_ms_byte(table_format: int) -> bool:
+    def ms_byte_first(table_format: int) -> bool:
         return table_format & PcfTableFormat.MASK_BYTE > 0
 
     @staticmethod
-    def is_ms_bit(table_format: int) -> bool:
+    def ms_bit_first(table_format: int) -> bool:
         return table_format & PcfTableFormat.MASK_BIT > 0
 
     @staticmethod

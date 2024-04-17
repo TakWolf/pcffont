@@ -11,17 +11,17 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfMetrics':
         table_format = PcfTableFormat.read_and_check(buffer, header)
-        is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
+        ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
         is_compressed = PcfTableFormat.is_compressed_metrics(table_format)
 
         if is_compressed:
-            glyphs_count = buffer.read_uint16(is_ms_byte)
+            glyphs_count = buffer.read_uint16(ms_byte_first)
         else:
-            glyphs_count = buffer.read_int32(is_ms_byte)
+            glyphs_count = buffer.read_int32(ms_byte_first)
 
         metrics = PcfMetrics(table_format)
         for _ in range(glyphs_count):
-            metric = PcfMetric.parse(buffer, is_ms_byte, is_compressed)
+            metric = PcfMetric.parse(buffer, ms_byte_first, is_compressed)
             metrics.append(metric)
         return metrics
 
@@ -34,7 +34,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         UserList.__init__(self, metrics)
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
-        is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
+        ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
         is_compressed = PcfTableFormat.is_compressed_metrics(self.table_format)
 
         glyphs_count = len(self)
@@ -42,11 +42,11 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         buffer.seek(table_offset)
         buffer.write_int32(self.table_format)
         if is_compressed:
-            buffer.write_uint16(glyphs_count, is_ms_byte)
+            buffer.write_uint16(glyphs_count, ms_byte_first)
         else:
-            buffer.write_int32(glyphs_count, is_ms_byte)
+            buffer.write_int32(glyphs_count, ms_byte_first)
         for metric in self:
-            metric.dump(buffer, is_ms_byte, is_compressed)
+            metric.dump(buffer, ms_byte_first, is_compressed)
 
         table_size = buffer.tell() - table_offset
         return table_size

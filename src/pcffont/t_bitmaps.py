@@ -11,8 +11,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfBitmaps':
         table_format = PcfTableFormat.read_and_check(buffer, header)
-        is_ms_byte = PcfTableFormat.is_ms_byte(table_format)
-        is_ms_bit = PcfTableFormat.is_ms_bit(table_format)
+        ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
+        ms_bit_first = PcfTableFormat.ms_bit_first(table_format)
 
         bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(table_format)
         bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
@@ -22,9 +22,9 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         if bit_scan_mode != 0:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
-        glyphs_count = buffer.read_int32(is_ms_byte)
-        bitmap_offsets = [buffer.read_uint32(is_ms_byte) for _ in range(glyphs_count)]
-        size_configs = [buffer.read_uint32(is_ms_byte) for _ in range(4)]
+        glyphs_count = buffer.read_int32(ms_byte_first)
+        bitmap_offsets = [buffer.read_uint32(ms_byte_first) for _ in range(glyphs_count)]
+        size_configs = [buffer.read_uint32(ms_byte_first) for _ in range(4)]
         bitmaps_start = buffer.tell()
         bitmaps_size = size_configs[bitmap_pad_mode]
 
@@ -44,7 +44,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                 for _ in range(bitmap_row_size):
                     data = buffer.read(1)
                     array = [int(c) for c in f'{ord(data):08b}']
-                    if not is_ms_bit:
+                    if not ms_bit_first:
                         array.reverse()
                     bitmap_row.extend(array)
                 bitmap.append(bitmap_row)
@@ -65,8 +65,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         self._compat_size_configs: list[int] | None = None  # TODO
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
-        is_ms_byte = PcfTableFormat.is_ms_byte(self.table_format)
-        is_ms_bit = PcfTableFormat.is_ms_byte(self.table_format)
+        ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
+        ms_bit_first = PcfTableFormat.ms_byte_first(self.table_format)
 
         bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(self.table_format)
         bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
@@ -89,7 +89,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     bitmap_row = bitmap_row + [0] * (8 * bitmap_row_size - len(bitmap_row))
                 for i in range(len(bitmap_row) // 8):
                     array = bitmap_row[i * 8:(i + 1) * 8]
-                    if not is_ms_bit:
+                    if not ms_bit_first:
                         array.reverse()
                     bin_string = ''.join(map(str, array))
                     data = int(bin_string, 2).to_bytes(1, 'big')
@@ -110,11 +110,11 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
 
         buffer.seek(table_offset)
         buffer.write_int32(self.table_format)
-        buffer.write_int32(glyphs_count, is_ms_byte)
+        buffer.write_int32(glyphs_count, ms_byte_first)
         for bitmap_offset in bitmap_offsets:
-            buffer.write_uint32(bitmap_offset, is_ms_byte)
+            buffer.write_uint32(bitmap_offset, ms_byte_first)
         for size_config in size_configs:
-            buffer.write_uint32(size_config, is_ms_byte)
+            buffer.write_uint32(size_config, ms_byte_first)
         buffer.skip(bitmaps_size)
 
         table_size = buffer.tell() - table_offset
