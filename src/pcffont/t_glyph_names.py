@@ -12,8 +12,8 @@ class PcfGlyphNames(PcfTable, UserList[str]):
         table_format = PcfTableFormat.read_and_check(buffer, header)
         ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
 
-        glyphs_count = buffer.read_int32(ms_byte_first)
-        name_offsets = [buffer.read_int32(ms_byte_first) for _ in range(glyphs_count)]
+        glyphs_count = buffer.read_uint32(ms_byte_first)
+        name_offsets = [buffer.read_uint32(ms_byte_first) for _ in range(glyphs_count)]
         buffer.skip(4)  # strings_size
         strings_start = buffer.tell()
 
@@ -46,11 +46,11 @@ class PcfGlyphNames(PcfTable, UserList[str]):
             strings_size += buffer.write_string(name)
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
-        buffer.write_int32(glyphs_count, ms_byte_first)
+        buffer.write_uint32(self.table_format)
+        buffer.write_uint32(glyphs_count, ms_byte_first)
         for name_offset in name_offsets:
-            buffer.write_int32(name_offset, ms_byte_first)
-        buffer.write_int32(strings_size, ms_byte_first)
+            buffer.write_uint32(name_offset, ms_byte_first)
+        buffer.write_uint32(strings_size, ms_byte_first)
         buffer.skip(strings_size)
 
         table_size = buffer.tell() - table_offset

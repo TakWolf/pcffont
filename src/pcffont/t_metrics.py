@@ -17,7 +17,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         if is_compressed:
             glyphs_count = buffer.read_uint16(ms_byte_first)
         else:
-            glyphs_count = buffer.read_int32(ms_byte_first)
+            glyphs_count = buffer.read_uint32(ms_byte_first)
 
         metrics = PcfMetrics(table_format)
         for _ in range(glyphs_count):
@@ -40,11 +40,11 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
+        buffer.write_uint32(self.table_format)
         if is_compressed:
             buffer.write_uint16(glyphs_count, ms_byte_first)
         else:
-            buffer.write_int32(glyphs_count, ms_byte_first)
+            buffer.write_uint32(glyphs_count, ms_byte_first)
         for metric in self:
             metric.dump(buffer, ms_byte_first, is_compressed)
 

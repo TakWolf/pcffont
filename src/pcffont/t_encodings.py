@@ -84,7 +84,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
                 max_byte_2 = byte_2
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
+        buffer.write_uint32(self.table_format)
         buffer.write_uint16(min_byte_2, ms_byte_first)
         buffer.write_uint16(max_byte_2, ms_byte_first)
         buffer.write_uint16(min_byte_1, ms_byte_first)

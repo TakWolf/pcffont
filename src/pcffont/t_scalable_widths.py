@@ -12,7 +12,7 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         table_format = PcfTableFormat.read_and_check(buffer, header)
         ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
 
-        glyphs_count = buffer.read_int32(ms_byte_first)
+        glyphs_count = buffer.read_uint32(ms_byte_first)
 
         scalable_widths = PcfScalableWidths(table_format)
         for _ in range(glyphs_count):
@@ -33,8 +33,8 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
-        buffer.write_int32(glyphs_count, ms_byte_first)
+        buffer.write_uint32(self.table_format)
+        buffer.write_uint32(glyphs_count, ms_byte_first)
         for scalable_width in self:
             buffer.write_int32(scalable_width, ms_byte_first)
 

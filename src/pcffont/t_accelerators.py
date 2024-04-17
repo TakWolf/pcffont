@@ -107,7 +107,7 @@ class PcfAccelerators(PcfTable):
         has_ink_bounds = PcfTableFormat.has_ink_bounds(self.table_format)
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
+        buffer.write_uint32(self.table_format)
         buffer.write_bool(self.no_overlap)
         buffer.write_bool(self.constant_metrics)
         buffer.write_bool(self.terminal_font)

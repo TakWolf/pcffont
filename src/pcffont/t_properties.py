@@ -113,14 +113,18 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         table_format = PcfTableFormat.read_and_check(buffer, header)
         ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
 
-        props_count = buffer.read_int32(ms_byte_first)
+        props_count = buffer.read_uint32(ms_byte_first)
 
         prop_infos = []
         for _ in range(props_count):
-            key_offset = buffer.read_int32(ms_byte_first)
+            key_offset = buffer.read_uint32(ms_byte_first)
             is_string_prop = buffer.read_bool()
-            value = buffer.read_int32(ms_byte_first)
-            prop_infos.append((key_offset, is_string_prop, value))
+            if is_string_prop:
+                value_offset = buffer.read_uint32(ms_byte_first)
+                prop_infos.append((key_offset, is_string_prop, value_offset))
+            else:
+                value = buffer.read_int32(ms_byte_first)
+                prop_infos.append((key_offset, is_string_prop, value))
 
         # Pad to next int32 boundary
         padding = 3 - (((4 + 1 + 4) * props_count + 3) % 4)
@@ -373,18 +377,18 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             prop_infos.append((key, key_offset, value, value_offset))
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
-        buffer.write_int32(props_count, ms_byte_first)
+        buffer.write_uint32(self.table_format)
+        buffer.write_uint32(props_count, ms_byte_first)
         for key, key_offset, value, value_offset in prop_infos:
-            buffer.write_int32(key_offset, ms_byte_first)
+            buffer.write_uint32(key_offset, ms_byte_first)
             if isinstance(value, str):
                 buffer.write_bool(True)
-                buffer.write_int32(value_offset, ms_byte_first)
+                buffer.write_uint32(value_offset, ms_byte_first)
             else:
                 buffer.write_bool(False)
                 buffer.write_int32(value, ms_byte_first)
         buffer.write_nulls(padding)
-        buffer.write_int32(strings_size, ms_byte_first)
+        buffer.write_uint32(strings_size, ms_byte_first)
         buffer.skip(strings_size)
 
         table_size = buffer.tell() - table_offset

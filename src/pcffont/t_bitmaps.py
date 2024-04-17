@@ -22,7 +22,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         if bit_scan_mode != 0:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
-        glyphs_count = buffer.read_int32(ms_byte_first)
+        glyphs_count = buffer.read_uint32(ms_byte_first)
         bitmap_offsets = [buffer.read_uint32(ms_byte_first) for _ in range(glyphs_count)]
         size_configs = [buffer.read_uint32(ms_byte_first) for _ in range(4)]
         bitmaps_start = buffer.tell()
@@ -109,8 +109,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             ]
 
         buffer.seek(table_offset)
-        buffer.write_int32(self.table_format)
-        buffer.write_int32(glyphs_count, ms_byte_first)
+        buffer.write_uint32(self.table_format)
+        buffer.write_uint32(glyphs_count, ms_byte_first)
         for bitmap_offset in bitmap_offsets:
             buffer.write_uint32(bitmap_offset, ms_byte_first)
         for size_config in size_configs:

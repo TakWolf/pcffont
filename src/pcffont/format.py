@@ -41,7 +41,7 @@ class PcfTableFormat(IntFlag):
     @staticmethod
     def read_and_check(buffer: Buffer, header: PcfHeader) -> int:
         buffer.seek(header.table_offset)
-        table_format = buffer.read_int32()
+        table_format = buffer.read_uint32()
         if table_format != header.table_format:
             raise PcfParseError(f"The table format definition is inconsistent with the header: type '{header.table_type.name}', offset {header.table_offset}")
         return table_format
