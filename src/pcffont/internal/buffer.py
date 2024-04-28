@@ -9,11 +9,7 @@ class Buffer:
         return self.stream.read(n)
 
     def read_int(self, n: int, ms_byte_first: bool = False) -> int:
-        return int.from_bytes(
-            self.read(n),
-            byteorder='big' if ms_byte_first else 'little',
-            signed=True,
-        )
+        return int.from_bytes(self.read(n), 'big' if ms_byte_first else 'little', signed=True)
 
     def read_int8(self) -> int:
         return self.read_int(1)
@@ -25,11 +21,7 @@ class Buffer:
         return self.read_int(4, ms_byte_first)
 
     def read_uint(self, n: int, ms_byte_first: bool = False) -> int:
-        return int.from_bytes(
-            self.read(n),
-            byteorder='big' if ms_byte_first else 'little',
-            signed=False,
-        )
+        return int.from_bytes(self.read(n), 'big' if ms_byte_first else 'little', signed=False)
 
     def read_uint8(self) -> int:
         return self.read_uint(1)
@@ -56,11 +48,7 @@ class Buffer:
         return self.stream.write(s)
 
     def write_int(self, i: int, n: int, ms_byte_first: bool = False) -> int:
-        return self.write(i.to_bytes(
-            n,
-            byteorder='big' if ms_byte_first else 'little',
-            signed=True,
-        ))
+        return self.write(i.to_bytes(n, 'big' if ms_byte_first else 'little', signed=True))
 
     def write_int8(self, i: int) -> int:
         return self.write_int(i, 1)
@@ -72,11 +60,7 @@ class Buffer:
         return self.write_int(i, 4, ms_byte_first)
 
     def write_uint(self, i: int, n: int, ms_byte_first: bool = False) -> int:
-        return self.write(i.to_bytes(
-            n,
-            byteorder='big' if ms_byte_first else 'little',
-            signed=False,
-        ))
+        return self.write(i.to_bytes(n, 'big' if ms_byte_first else 'little', signed=False))
 
     def write_uint8(self, i: int) -> int:
         return self.write_uint(i, 1)
