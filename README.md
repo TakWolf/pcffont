@@ -159,6 +159,7 @@ if __name__ == '__main__':
 ## Test Fonts
 
 - [GNU Unifont Glyphs](https://unifoundry.com/unifont/index.html)
+- [Spleen](https://github.com/fcambus/spleen)
 - [bitmap-fonts](https://github.com/masaeedu/bitmap-fonts)
 
 ## References

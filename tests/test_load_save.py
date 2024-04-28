@@ -20,6 +20,54 @@ def test_unifont(tmp_path: Path):
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
 
 
+def test_spleen_5_8(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'spleen', 'spleen-5x8.pcf')
+    save_file_path = os.path.join(tmp_path, 'spleen-5x8.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_spleen_6_12(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'spleen', 'spleen-6x12.pcf')
+    save_file_path = os.path.join(tmp_path, 'spleen-6x12.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_spleen_8_16(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'spleen', 'spleen-8x16.pcf')
+    save_file_path = os.path.join(tmp_path, 'spleen-8x16.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_spleen_12_24(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'spleen', 'spleen-12x24.pcf')
+    save_file_path = os.path.join(tmp_path, 'spleen-12x24.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_spleen_16_32(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'spleen', 'spleen-16x32.pcf')
+    save_file_path = os.path.join(tmp_path, 'spleen-16x32.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_spleen_32_64(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'spleen', 'spleen-32x64.pcf')
+    save_file_path = os.path.join(tmp_path, 'spleen-32x64.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
 def test_dweep(tmp_path: Path):
     load_file_path = os.path.join(project_root_dir, 'assets', 'dweep', 'dweep.pcf')
     save_file_path = os.path.join(tmp_path, 'dweep.pcf')

@@ -44,6 +44,30 @@ def test_unifont():
     _test_dump('unifont/unifont-15.1.05.pcf')
 
 
+def test_spleen_5_8():
+    _test_dump('spleen/spleen-5x8.pcf')
+
+
+def test_spleen_6_12():
+    _test_dump('spleen/spleen-6x12.pcf')
+
+
+def test_spleen_8_16():
+    _test_dump('spleen/spleen-8x16.pcf')
+
+
+def test_spleen_12_24():
+    _test_dump('spleen/spleen-12x24.pcf')
+
+
+def test_spleen_16_32():
+    _test_dump('spleen/spleen-16x32.pcf')
+
+
+def test_spleen_32_64():
+    _test_dump('spleen/spleen-32x64.pcf')
+
+
 def test_dweep():
     _test_dump('dweep/dweep.pcf')
 
