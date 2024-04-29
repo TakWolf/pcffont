@@ -165,8 +165,8 @@ if __name__ == '__main__':
 
 - [FreeType font driver for PCF fonts](https://github.com/freetype/freetype/tree/master/src/pcf)
 - [FontForge - The X11 PCF bitmap font file format](https://fontforge.org/docs/techref/pcf-format.html)
-- [pcf2bdf](https://github.com/ganaware/pcf2bdf)
 - [bdftopcf](https://gitlab.freedesktop.org/xorg/util/bdftopcf)
+- [bdftopcf - docs](https://www.x.org/releases/current/doc/man/man1/bdftopcf.1.xhtml)
 - [X Logical Font Description Conventions - X Consortium Standard](https://www.x.org/releases/current/doc/xorg-docs/xlfd/xlfd.html)
 
 ## License
