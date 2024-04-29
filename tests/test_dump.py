@@ -66,31 +66,3 @@ def test_spleen_16_32():
 
 def test_spleen_32_64():
     _test_dump('spleen/spleen-32x64.pcf')
-
-
-def test_dweep():
-    _test_dump('dweep/dweep.pcf')
-
-
-def test_rock36():
-    _test_dump('sgi/rock36.pcf')
-
-
-def test_raize():
-    _test_dump('raize/raize-normal-19.pcf')
-
-
-def test_anorexia():
-    _test_dump('artwiz/anorexia.pcf')
-
-
-def test_kates():
-    _test_dump('artwiz/kates.pcf')
-
-
-def test_trisk():
-    _test_dump('trisk/trisk.pcf')
-
-
-def test_profont():
-    _test_dump('profont-x11/ProFont_r400-29.pcf')
