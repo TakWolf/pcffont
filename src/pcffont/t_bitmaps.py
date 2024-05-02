@@ -14,19 +14,20 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
         ms_bit_first = PcfTableFormat.ms_bit_first(table_format)
 
-        bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(table_format)
-        bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
+        glyph_pad_config = PcfTableFormat.glyph_pad_config(table_format)
+        glyph_pad = [1, 2, 4, 8][glyph_pad_config]
 
         # FIXME
-        bit_scan_mode = PcfTableFormat.bit_scan_mode(table_format)
-        if bit_scan_mode != 0:
+        scan_unit_config = PcfTableFormat.scan_unit_config(table_format)
+        scan_unit = [1, 2, 4][scan_unit_config]
+        if scan_unit != 1:
             raise PcfError(f'Table format not supported: {table_format:b}')
 
         glyphs_count = buffer.read_uint32(ms_byte_first)
         bitmap_offsets = buffer.read_uint32_list(glyphs_count, ms_byte_first)
-        size_configs = buffer.read_uint32_list(4, ms_byte_first)
+        bitmaps_sizes = buffer.read_uint32_list(4, ms_byte_first)
         bitmaps_start = buffer.tell()
-        bitmaps_size = size_configs[bitmap_pad_mode]
+        bitmaps_size = bitmaps_sizes[glyph_pad_config]
 
         bitmaps = PcfBitmaps(table_format)
         for i in range(glyphs_count):
@@ -39,9 +40,9 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
 
             bitmap = []
             buffer.seek(bitmaps_start + bitmap_offset)
-            for _ in range(bitmap_size // bitmap_row_size):
+            for _ in range(bitmap_size // glyph_pad):
                 bitmap_row = []
-                for _ in range(bitmap_row_size):
+                for _ in range(glyph_pad):
                     data = buffer.read(1)
                     array = [int(c) for c in f'{ord(data):08b}']
                     if not ms_bit_first:
@@ -51,7 +52,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             bitmaps.append(bitmap)
 
         # Compat
-        bitmaps._compat_size_configs = size_configs
+        bitmaps._compat_info = bitmaps_sizes
 
         return bitmaps
 
@@ -62,18 +63,19 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     ):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, bitmaps)
-        self._compat_size_configs: list[int] | None = None
+        self._compat_info: list[int] | None = None
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
         ms_bit_first = PcfTableFormat.ms_byte_first(self.table_format)
 
-        bitmap_pad_mode = PcfTableFormat.bitmap_pad_mode(self.table_format)
-        bitmap_row_size = [1, 2, 4, 8][bitmap_pad_mode]
+        glyph_pad_config = PcfTableFormat.glyph_pad_config(self.table_format)
+        glyph_pad = [1, 2, 4, 8][glyph_pad_config]
 
         # FIXME
-        bit_scan_mode = PcfTableFormat.bit_scan_mode(self.table_format)
-        if bit_scan_mode != 0:
+        scan_unit_config = PcfTableFormat.scan_unit_config(self.table_format)
+        scan_unit = [1, 2, 4][scan_unit_config]
+        if scan_unit != 1:
             raise PcfError(f'Table format not supported: {self.table_format:b}')
 
         glyphs_count = len(self)
@@ -85,8 +87,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         for bitmap in self:
             bitmap_offsets.append(bitmaps_size)
             for bitmap_row in bitmap:
-                if len(bitmap_row) < 8 * bitmap_row_size:
-                    bitmap_row = bitmap_row + [0] * (8 * bitmap_row_size - len(bitmap_row))
+                if len(bitmap_row) < 8 * glyph_pad:
+                    bitmap_row = bitmap_row + [0] * (8 * glyph_pad - len(bitmap_row))
                 for i in range(len(bitmap_row) // 8):
                     array = bitmap_row[i * 8:(i + 1) * 8]
                     if not ms_bit_first:
@@ -96,23 +98,23 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     bitmaps_size += buffer.write(data)
 
         # Compat
-        if self._compat_size_configs is not None:
-            size_configs = list(self._compat_size_configs)
-            size_configs[bitmap_pad_mode] = bitmaps_size
+        if self._compat_info is not None:
+            bitmaps_sizes = list(self._compat_info)
+            bitmaps_sizes[glyph_pad_config] = bitmaps_size
         else:
-            unit_size_config = bitmaps_size // bitmap_row_size
-            size_configs = [
-                unit_size_config,
-                unit_size_config * 2,
-                unit_size_config * 4,
-                unit_size_config * 8,
+            unit_bitmaps_size = bitmaps_size // glyph_pad
+            bitmaps_sizes = [
+                unit_bitmaps_size,
+                unit_bitmaps_size * 2,
+                unit_bitmaps_size * 4,
+                unit_bitmaps_size * 8,
             ]
 
         buffer.seek(table_offset)
         buffer.write_uint32(self.table_format)
         buffer.write_uint32(glyphs_count, ms_byte_first)
         buffer.write_uint32_list(bitmap_offsets, ms_byte_first)
-        buffer.write_uint32_list(size_configs, ms_byte_first)
+        buffer.write_uint32_list(bitmaps_sizes, ms_byte_first)
         buffer.skip(bitmaps_size)
 
         table_size = buffer.tell() - table_offset

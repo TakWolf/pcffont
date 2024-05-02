@@ -11,31 +11,31 @@ class PcfTableFormat(IntFlag):
     ACCEL_W_INKBOUNDS = 0b_0001_0000_0000
     COMPRESSED_METRICS = 0b_0001_0000_0000
 
-    MASK_BYTE = 0b_0000_0100
-    MASK_BIT = 0b_0000_1000
-    MASK_GLYPH_PAD = 0b_0000_0011
-    MASK_SCAN_UNIT = 0b_0011_0000
+    MASK_GLYPH_PAD = 0b_00_00_11
+    MASK_BYTE_ORDER = 0b_00_01_00
+    MASK_BIT_ORDER = 0b_00_10_00
+    MASK_SCAN_UNIT = 0b_11_00_00
 
     @staticmethod
     def build(
             ms_byte_first: bool = True,
             ms_bit_first: bool = True,
-            bitmap_pad_mode: int = 2,
-            bit_scan_mode: int = 0,
             has_ink_bounds: bool = False,
             is_compressed_metrics: bool = False,
+            glyph_pad_config: int = 2,
+            scan_unit_config: int = 0,
     ) -> int:
         table_format = PcfTableFormat.DEFAULT_FORMAT
         if ms_byte_first:
-            table_format |= PcfTableFormat.MASK_BYTE
+            table_format |= PcfTableFormat.MASK_BYTE_ORDER
         if ms_bit_first:
-            table_format |= PcfTableFormat.MASK_BIT
-        table_format |= bitmap_pad_mode
-        table_format |= bit_scan_mode >> 4
+            table_format |= PcfTableFormat.MASK_BIT_ORDER
         if has_ink_bounds:
             table_format |= PcfTableFormat.ACCEL_W_INKBOUNDS
         if is_compressed_metrics:
             table_format |= PcfTableFormat.COMPRESSED_METRICS
+        table_format |= glyph_pad_config
+        table_format |= scan_unit_config << 4
         return table_format
 
     @staticmethod
@@ -48,11 +48,11 @@ class PcfTableFormat(IntFlag):
 
     @staticmethod
     def ms_byte_first(table_format: int) -> bool:
-        return table_format & PcfTableFormat.MASK_BYTE > 0
+        return table_format & PcfTableFormat.MASK_BYTE_ORDER > 0
 
     @staticmethod
     def ms_bit_first(table_format: int) -> bool:
-        return table_format & PcfTableFormat.MASK_BIT > 0
+        return table_format & PcfTableFormat.MASK_BIT_ORDER > 0
 
     @staticmethod
     def has_ink_bounds(table_format: int) -> bool:
@@ -63,17 +63,22 @@ class PcfTableFormat(IntFlag):
         return table_format & PcfTableFormat.COMPRESSED_METRICS > 0
 
     @staticmethod
-    def bitmap_pad_mode(table_format: int) -> int:
+    def glyph_pad_config(table_format: int) -> int:
         """
-        How each row in each glyph's bitmap is padded
-        :return: 0 => byte, 1 => short, 2 => int32, 3 => int64
+        The font glyph padding.
+        Each glyph in the font will have each scanline padded in to a multiple of n bytes.
+
+        glyph_pad = [1, 2, 4, 8][glyph_pad_config]
         """
         return table_format & PcfTableFormat.MASK_GLYPH_PAD
 
     @staticmethod
-    def bit_scan_mode(table_format: int) -> int:
+    def scan_unit_config(table_format: int) -> int:
         """
-        Bitmap scan unit
-        :return: 0 => byte, 1 => short, 2 => int32
+        The font scanline unit.
+        When the font bit order is different from the font byte order, the scanline unit n describes
+        what unit of data (in bytes) are to be swapped.
+
+        scan_unit = [1, 2, 4][scan_unit_config]
         """
-        return table_format & PcfTableFormat.MASK_SCAN_UNIT
+        return (table_format & PcfTableFormat.MASK_SCAN_UNIT) >> 4

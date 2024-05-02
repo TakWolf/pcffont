@@ -12,7 +12,7 @@ def test_reload(tmp_path: Path):
     font = PcfFont.load(load_file_path)
     font.accelerators._compat_info = None
     font.bdf_accelerators._compat_info = None
-    font.bitmaps._compat_size_configs = None
+    font.bitmaps._compat_info = None
     font.save(save_file_path)
 
     font_1 = PcfFont.load(load_file_path)
