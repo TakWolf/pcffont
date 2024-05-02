@@ -41,13 +41,11 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             bitmap = []
             buffer.seek(bitmaps_start + bitmap_offset)
             for _ in range(bitmap_size // glyph_pad):
-                bitmap_row = []
-                for _ in range(glyph_pad):
-                    data = buffer.read(1)
-                    array = [int(c) for c in f'{ord(data):08b}']
-                    if not ms_bit_first:
-                        array.reverse()
-                    bitmap_row.extend(array)
+                bin_format = '{:0' + str(glyph_pad * 8) + 'b}'
+                bin_string = bin_format.format(buffer.read_uint(glyph_pad, ms_byte_first))
+                bitmap_row = [int(c) for c in bin_string]
+                if not ms_bit_first:
+                    bitmap_row.reverse()
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
 
@@ -89,13 +87,10 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             for bitmap_row in bitmap:
                 if len(bitmap_row) < 8 * glyph_pad:
                     bitmap_row = bitmap_row + [0] * (8 * glyph_pad - len(bitmap_row))
-                for i in range(len(bitmap_row) // 8):
-                    array = bitmap_row[i * 8:(i + 1) * 8]
-                    if not ms_bit_first:
-                        array.reverse()
-                    bin_string = ''.join(map(str, array))
-                    data = int(bin_string, 2).to_bytes(1, 'big')
-                    bitmaps_size += buffer.write(data)
+                if not ms_bit_first:
+                    bitmap_row = bitmap_row[::-1]
+                bin_string = ''.join(map(str, bitmap_row))
+                bitmaps_size += buffer.write_uint(int(bin_string, 2), glyph_pad, ms_byte_first)
 
         # Compat
         if self._compat_info is not None:
