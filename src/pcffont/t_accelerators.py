@@ -34,7 +34,7 @@ class PcfAccelerators(PcfTable):
             ink_min_bounds = None
             ink_max_bounds = None
 
-        # TODO
+        # Compat
         if header.table_size > buffer.tell() - header.table_offset:
             buffer.seek(header.table_offset + 4 + 8 + 4 * 3 + 2 * 6 * 2)
             _compat_chunk_start = buffer.tell() - header.table_offset
@@ -62,7 +62,7 @@ class PcfAccelerators(PcfTable):
             ink_max_bounds,
         )
 
-        # TODO
+        # Compat
         accelerators._compat_info = _compat_info
 
         return accelerators
@@ -100,7 +100,7 @@ class PcfAccelerators(PcfTable):
         self.max_bounds = max_bounds
         self.ink_min_bounds = ink_min_bounds
         self.ink_max_bounds = ink_max_bounds
-        self._compat_info: tuple[int, int, bytes] | None = None  # TODO
+        self._compat_info: tuple[int, int, bytes] | None = None
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
@@ -129,7 +129,7 @@ class PcfAccelerators(PcfTable):
 
         table_size = buffer.tell() - table_offset
 
-        # TODO
+        # Compat
         if self._compat_info is not None:
             _compat_chunk_start, _compat_chunk_size, _compat_chunk = self._compat_info
             _compat_chunk = bytearray(_compat_chunk)

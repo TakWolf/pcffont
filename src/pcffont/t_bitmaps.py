@@ -50,7 +50,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
 
-        # TODO
+        # Compat
         bitmaps._compat_size_configs = size_configs
 
         return bitmaps
@@ -62,7 +62,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     ):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, bitmaps)
-        self._compat_size_configs: list[int] | None = None  # TODO
+        self._compat_size_configs: list[int] | None = None
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
         ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
@@ -95,7 +95,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                     data = int(bin_string, 2).to_bytes(1, 'big')
                     bitmaps_size += buffer.write(data)
 
-        # TODO
+        # Compat
         if self._compat_size_configs is not None:
             size_configs = list(self._compat_size_configs)
             size_configs[bitmap_pad_mode] = bitmaps_size
