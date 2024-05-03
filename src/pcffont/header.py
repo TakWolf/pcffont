@@ -20,6 +20,18 @@ class PcfTableType(IntEnum):
 
 
 class PcfHeader:
+    _TABLE_PARSE_ORDER = [
+        PcfTableType.PROPERTIES,
+        PcfTableType.ACCELERATORS,
+        PcfTableType.BDF_ACCELERATORS,
+        PcfTableType.GLYPH_NAMES,
+        PcfTableType.METRICS,
+        PcfTableType.INK_METRICS,
+        PcfTableType.SWIDTHS,
+        PcfTableType.BITMAPS,
+        PcfTableType.BDF_ENCODINGS,
+    ]
+
     @staticmethod
     def parse(buffer: Buffer) -> list['PcfHeader']:
         buffer.seek(0)
@@ -35,6 +47,7 @@ class PcfHeader:
             table_size = buffer.read_uint32()
             table_offset = buffer.read_uint32()
             headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
+        headers.sort(key=lambda header: PcfHeader._TABLE_PARSE_ORDER.index(header.table_type))
 
         return headers
 
