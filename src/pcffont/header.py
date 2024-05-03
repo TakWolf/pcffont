@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from pcffont.error import PcfParseError
+from pcffont.format import PcfTableFormat
 from pcffont.internal.buffer import Buffer
 
 _FILE_VERSION = b'\x01fcp'
@@ -30,7 +31,7 @@ class PcfHeader:
         headers = []
         for _ in range(tables_count):
             table_type = PcfTableType(buffer.read_uint32())
-            table_format = buffer.read_uint32()
+            table_format = PcfTableFormat.parse(buffer.read_uint32())
             table_size = buffer.read_uint32()
             table_offset = buffer.read_uint32()
             headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
@@ -45,12 +46,19 @@ class PcfHeader:
         buffer.write_uint32(len(headers))
         for header in headers:
             buffer.write_uint32(header.table_type)
-            buffer.write_uint32(header.table_format)
+            buffer.write_uint32(header.table_format.value)
             buffer.write_uint32(header.table_size)
             buffer.write_uint32(header.table_offset)
 
-    def __init__(self, table_type: PcfTableType, table_format: int, table_size: int, table_offset: int):
+    def __init__(self, table_type: PcfTableType, table_format: PcfTableFormat, table_size: int, table_offset: int):
         self.table_type = table_type
         self.table_format = table_format
         self.table_size = table_size
         self.table_offset = table_offset
+
+    def read_and_check_table_format(self, buffer: Buffer, strict_level: int) -> 'PcfTableFormat':
+        buffer.seek(self.table_offset)
+        value = buffer.read_uint32()
+        if value != self.table_format.value and strict_level >= 2:
+            raise PcfParseError(f"The table format definition is inconsistent with the header: type '{self.table_type.name}', offset {self.table_offset}")
+        return self.table_format

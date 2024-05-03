@@ -1,10 +1,11 @@
 from abc import abstractmethod
 
+from pcffont.format import PcfTableFormat
 from pcffont.internal.buffer import Buffer
 
 
 class PcfTable:
-    def __init__(self, table_format: int):
+    def __init__(self, table_format: PcfTableFormat):
         self.table_format = table_format
 
     def __repr__(self) -> str:

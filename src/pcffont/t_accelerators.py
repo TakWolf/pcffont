@@ -7,10 +7,8 @@ from pcffont.table import PcfTable
 
 class PcfAccelerators(PcfTable):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfAccelerators':
-        table_format = PcfTableFormat.read_and_check(buffer, header)
-        ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
-        has_ink_bounds = PcfTableFormat.has_ink_bounds(table_format)
+    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfAccelerators':
+        table_format = header.read_and_check_table_format(buffer, strict_level)
 
         no_overlap = buffer.read_bool()
         constant_metrics = buffer.read_bool()
@@ -20,16 +18,16 @@ class PcfAccelerators(PcfTable):
         ink_metrics = buffer.read_bool()
         draw_right_to_left = buffer.read_bool()
         buffer.skip(1)
-        font_ascent = buffer.read_int32(ms_byte_first)
-        font_descent = buffer.read_int32(ms_byte_first)
-        max_overlap = buffer.read_int32(ms_byte_first)
+        font_ascent = buffer.read_int32(table_format.ms_byte_first)
+        font_descent = buffer.read_int32(table_format.ms_byte_first)
+        max_overlap = buffer.read_int32(table_format.ms_byte_first)
 
-        min_bounds = PcfMetric.parse(buffer, ms_byte_first, False)
-        max_bounds = PcfMetric.parse(buffer, ms_byte_first, False)
+        min_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
+        max_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
 
-        if has_ink_bounds:
-            ink_min_bounds = PcfMetric.parse(buffer, ms_byte_first, False)
-            ink_max_bounds = PcfMetric.parse(buffer, ms_byte_first, False)
+        if table_format.has_ink_bounds:
+            ink_min_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
+            ink_max_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
         else:
             ink_min_bounds = None
             ink_max_bounds = None
@@ -69,7 +67,7 @@ class PcfAccelerators(PcfTable):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.build(),
+            table_format: PcfTableFormat = None,
             no_overlap: bool = False,
             constant_metrics: bool = False,
             terminal_font: bool = False,
@@ -85,6 +83,8 @@ class PcfAccelerators(PcfTable):
             ink_min_bounds: PcfMetric = None,
             ink_max_bounds: PcfMetric = None,
     ):
+        if table_format is None:
+            table_format = PcfTableFormat()
         super().__init__(table_format)
         self.no_overlap = no_overlap
         self.constant_metrics = constant_metrics
@@ -103,11 +103,8 @@ class PcfAccelerators(PcfTable):
         self._compat_info: tuple[int, int, bytes] | None = None
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
-        ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
-        has_ink_bounds = PcfTableFormat.has_ink_bounds(self.table_format)
-
         buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format)
+        buffer.write_uint32(self.table_format.value)
         buffer.write_bool(self.no_overlap)
         buffer.write_bool(self.constant_metrics)
         buffer.write_bool(self.terminal_font)
@@ -116,16 +113,16 @@ class PcfAccelerators(PcfTable):
         buffer.write_bool(self.ink_metrics)
         buffer.write_bool(self.draw_right_to_left)
         buffer.write_nulls(1)
-        buffer.write_int32(self.font_ascent, ms_byte_first)
-        buffer.write_int32(self.font_descent, ms_byte_first)
-        buffer.write_int32(self.max_overlap, ms_byte_first)
+        buffer.write_int32(self.font_ascent, self.table_format.ms_byte_first)
+        buffer.write_int32(self.font_descent, self.table_format.ms_byte_first)
+        buffer.write_int32(self.max_overlap, self.table_format.ms_byte_first)
 
-        self.min_bounds.dump(buffer, ms_byte_first, False)
-        self.max_bounds.dump(buffer, ms_byte_first, False)
+        self.min_bounds.dump(buffer, self.table_format.ms_byte_first, False)
+        self.max_bounds.dump(buffer, self.table_format.ms_byte_first, False)
 
-        if has_ink_bounds:
-            self.ink_min_bounds.dump(buffer, ms_byte_first, False)
-            self.ink_max_bounds.dump(buffer, ms_byte_first, False)
+        if self.table_format.has_ink_bounds:
+            self.ink_min_bounds.dump(buffer, self.table_format.ms_byte_first, False)
+            self.ink_max_bounds.dump(buffer, self.table_format.ms_byte_first, False)
 
         table_size = buffer.tell() - table_offset
 

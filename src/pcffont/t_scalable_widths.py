@@ -8,35 +8,34 @@ from pcffont.table import PcfTable
 
 class PcfScalableWidths(PcfTable, UserList[int]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfScalableWidths':
-        table_format = PcfTableFormat.read_and_check(buffer, header)
-        ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
+    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfScalableWidths':
+        table_format = header.read_and_check_table_format(buffer, strict_level)
 
-        glyphs_count = buffer.read_uint32(ms_byte_first)
+        glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
 
         scalable_widths = PcfScalableWidths(
             table_format,
-            buffer.read_int32_list(glyphs_count, ms_byte_first),
+            buffer.read_int32_list(glyphs_count, table_format.ms_byte_first),
         )
         return scalable_widths
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.build(),
+            table_format: PcfTableFormat = None,
             scalable_widths: list[int] = None,
     ):
+        if table_format is None:
+            table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, scalable_widths)
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
-        ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
-
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format)
-        buffer.write_uint32(glyphs_count, ms_byte_first)
-        buffer.write_int32_list(self, ms_byte_first)
+        buffer.write_uint32(self.table_format.value)
+        buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
+        buffer.write_int32_list(self, self.table_format.ms_byte_first)
 
         table_size = buffer.tell() - table_offset
         return table_size

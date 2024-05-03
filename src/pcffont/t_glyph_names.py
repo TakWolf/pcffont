@@ -8,12 +8,11 @@ from pcffont.table import PcfTable
 
 class PcfGlyphNames(PcfTable, UserList[str]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, _strict_level: int) -> 'PcfGlyphNames':
-        table_format = PcfTableFormat.read_and_check(buffer, header)
-        ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
+    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfGlyphNames':
+        table_format = header.read_and_check_table_format(buffer, strict_level)
 
-        glyphs_count = buffer.read_uint32(ms_byte_first)
-        name_offsets = buffer.read_uint32_list(glyphs_count, ms_byte_first)
+        glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
+        name_offsets = buffer.read_uint32_list(glyphs_count, table_format.ms_byte_first)
         buffer.skip(4)  # strings_size
         strings_start = buffer.tell()
 
@@ -26,15 +25,15 @@ class PcfGlyphNames(PcfTable, UserList[str]):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.build(),
+            table_format: PcfTableFormat = None,
             names: list[str] = None,
     ):
+        if table_format is None:
+            table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, names)
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
-        ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
-
         glyphs_count = len(self)
 
         strings_start = table_offset + 4 + 4 + 4 * glyphs_count + 4
@@ -46,10 +45,10 @@ class PcfGlyphNames(PcfTable, UserList[str]):
             strings_size += buffer.write_string(name)
 
         buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format)
-        buffer.write_uint32(glyphs_count, ms_byte_first)
-        buffer.write_uint32_list(name_offsets, ms_byte_first)
-        buffer.write_uint32(strings_size, ms_byte_first)
+        buffer.write_uint32(self.table_format.value)
+        buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
+        buffer.write_uint32_list(name_offsets, self.table_format.ms_byte_first)
+        buffer.write_uint32(strings_size, self.table_format.ms_byte_first)
         buffer.skip(strings_size)
 
         table_size = buffer.tell() - table_offset

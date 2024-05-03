@@ -110,20 +110,19 @@ def _check_value(key: str, value: str | int):
 class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
     def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfProperties':
-        table_format = PcfTableFormat.read_and_check(buffer, header)
-        ms_byte_first = PcfTableFormat.ms_byte_first(table_format)
+        table_format = header.read_and_check_table_format(buffer, strict_level)
 
-        props_count = buffer.read_uint32(ms_byte_first)
+        props_count = buffer.read_uint32(table_format.ms_byte_first)
 
         prop_infos = []
         for _ in range(props_count):
-            key_offset = buffer.read_uint32(ms_byte_first)
+            key_offset = buffer.read_uint32(table_format.ms_byte_first)
             is_string_prop = buffer.read_bool()
             if is_string_prop:
-                value_offset = buffer.read_uint32(ms_byte_first)
+                value_offset = buffer.read_uint32(table_format.ms_byte_first)
                 prop_infos.append((key_offset, is_string_prop, value_offset))
             else:
-                value = buffer.read_int32(ms_byte_first)
+                value = buffer.read_int32(table_format.ms_byte_first)
                 prop_infos.append((key_offset, is_string_prop, value))
 
         # Pad to next int32 boundary
@@ -151,9 +150,11 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
 
     def __init__(
             self,
-            table_format: int = PcfTableFormat.build(),
+            table_format: PcfTableFormat = None,
             properties: dict[str, str | int] = None,
     ):
+        if table_format is None:
+            table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserDict.__init__(self, properties)
 
@@ -357,8 +358,6 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             self[key] = value
 
     def _dump(self, buffer: Buffer, table_offset: int) -> int:
-        ms_byte_first = PcfTableFormat.ms_byte_first(self.table_format)
-
         props_count = len(self)
 
         # Pad to next int32 boundary
@@ -377,18 +376,18 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             prop_infos.append((key, key_offset, value, value_offset))
 
         buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format)
-        buffer.write_uint32(props_count, ms_byte_first)
+        buffer.write_uint32(self.table_format.value)
+        buffer.write_uint32(props_count, self.table_format.ms_byte_first)
         for key, key_offset, value, value_offset in prop_infos:
-            buffer.write_uint32(key_offset, ms_byte_first)
+            buffer.write_uint32(key_offset, self.table_format.ms_byte_first)
             if isinstance(value, str):
                 buffer.write_bool(True)
-                buffer.write_uint32(value_offset, ms_byte_first)
+                buffer.write_uint32(value_offset, self.table_format.ms_byte_first)
             else:
                 buffer.write_bool(False)
-                buffer.write_int32(value, ms_byte_first)
+                buffer.write_int32(value, self.table_format.ms_byte_first)
         buffer.write_nulls(padding)
-        buffer.write_uint32(strings_size, ms_byte_first)
+        buffer.write_uint32(strings_size, self.table_format.ms_byte_first)
         buffer.skip(strings_size)
 
         table_size = buffer.tell() - table_offset

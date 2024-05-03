@@ -114,7 +114,7 @@ def main():
     font.scalable_widths = scalable_widths
     font.bitmaps = bitmaps
 
-    accelerators = PcfAccelerators(PcfTableFormat.build(has_ink_bounds=True))
+    accelerators = PcfAccelerators(PcfTableFormat(has_ink_bounds=True))
     accelerators.no_overlap = True
     accelerators.ink_inside = True
     accelerators.ink_metrics = True
