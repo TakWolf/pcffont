@@ -4,7 +4,6 @@ from typing import BinaryIO
 
 from pcffont.error import PcfParseError, PcfTableTypeError
 from pcffont.header import PcfTableType, PcfHeader
-from pcffont.internal import util
 from pcffont.internal.buffer import Buffer
 from pcffont.t_accelerators import PcfAccelerators
 from pcffont.t_bitmaps import PcfBitmaps
@@ -14,6 +13,18 @@ from pcffont.t_metrics import PcfMetrics
 from pcffont.t_properties import PcfProperties
 from pcffont.t_scalable_widths import PcfScalableWidths
 from pcffont.table import PcfTable
+
+_TABLE_TYPE_REGISTRY = {
+    PcfTableType.PROPERTIES: PcfProperties,
+    PcfTableType.ACCELERATORS: PcfAccelerators,
+    PcfTableType.METRICS: PcfMetrics,
+    PcfTableType.BITMAPS: PcfBitmaps,
+    PcfTableType.INK_METRICS: PcfMetrics,
+    PcfTableType.BDF_ENCODINGS: PcfBdfEncodings,
+    PcfTableType.SWIDTHS: PcfScalableWidths,
+    PcfTableType.GLYPH_NAMES: PcfGlyphNames,
+    PcfTableType.BDF_ACCELERATORS: PcfAccelerators,
+}
 
 
 class PcfFont(UserDict[PcfTableType, PcfTable]):
@@ -27,7 +38,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         for header in headers:
             if header.table_type in tables and strict_level >= 1:
                 raise PcfParseError(f"Duplicate table '{header.table_type.name}'")
-            table = util.parse_table(buffer, header, strict_level)
+            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, header, strict_level)
             tables[header.table_type] = table
 
         return PcfFont(tables)
@@ -44,7 +55,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         if table is None:
             self.pop(table_type, None)
         else:
-            if not isinstance(table, util.TABLE_TYPE_REGISTRY[table_type]):
+            if not isinstance(table, _TABLE_TYPE_REGISTRY[table_type]):
                 raise PcfTableTypeError(f"Mismatched table type: '{table_type.name}' -> '{type(table)}'")
             super().__setitem__(table_type, table)
 
