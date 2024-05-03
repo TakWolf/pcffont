@@ -1,6 +1,7 @@
 import re
 from collections import UserDict
 
+import pcffont
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
@@ -109,7 +110,7 @@ def _check_value(key: str, value: str | int):
 
 class PcfProperties(PcfTable, UserDict[str, str | int]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfProperties':
+    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfProperties':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
         props_count = buffer.read_uint32(table_format.ms_byte_first)
@@ -357,7 +358,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
                     value = int(token)
             self[key] = value
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         props_count = len(self)
 
         # Pad to next int32 boundary

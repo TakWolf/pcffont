@@ -34,14 +34,14 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
 
         headers = PcfHeader.parse(buffer)
 
-        tables = {}
+        font = PcfFont()
         for header in headers:
-            if header.table_type in tables and strict_level >= 1:
+            if header.table_type in font and strict_level >= 1:
                 raise PcfParseError(f"Duplicate table '{header.table_type.name}'")
-            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, header, strict_level)
-            tables[header.table_type] = table
+            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, font, header, strict_level)
+            font[header.table_type] = table
 
-        return PcfFont(tables)
+        return font
 
     @staticmethod
     def load(
@@ -140,7 +140,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         headers = []
         table_offset = 4 + 4 + (4 * 4) * len(self)
         for table_type, table in sorted(self.items()):
-            table_size = table.dump(buffer, table_offset)
+            table_size = table.dump(buffer, self, table_offset)
             headers.append(PcfHeader(table_type, table.table_format, table_size, table_offset))
             table_offset += table_size
 

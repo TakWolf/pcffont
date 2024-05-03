@@ -1,5 +1,6 @@
 from collections import UserList
 
+import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
@@ -8,7 +9,7 @@ from pcffont.table import PcfTable
 
 class PcfScalableWidths(PcfTable, UserList[int]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfScalableWidths':
+    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfScalableWidths':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
         glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
@@ -29,7 +30,7 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, scalable_widths)
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
         buffer.seek(table_offset)

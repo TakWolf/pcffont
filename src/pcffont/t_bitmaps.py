@@ -1,5 +1,6 @@
 from collections import UserList
 
+import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
@@ -8,7 +9,7 @@ from pcffont.table import PcfTable
 
 class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfBitmaps':
+    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBitmaps':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
         glyph_pad = [1, 2, 4, 8][table_format.glyph_pad_index]
@@ -56,7 +57,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         UserList.__init__(self, bitmaps)
         self._compat_info: list[int] | None = None
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyph_pad = [1, 2, 4, 8][self.table_format.glyph_pad_index]
         scan_unit = [1, 2, 4][self.table_format.scan_unit_index]  # FIXME
 

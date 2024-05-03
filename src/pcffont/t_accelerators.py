@@ -1,3 +1,4 @@
+import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
@@ -7,7 +8,7 @@ from pcffont.table import PcfTable
 
 class PcfAccelerators(PcfTable):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfAccelerators':
+    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfAccelerators':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
         no_overlap = buffer.read_bool()
@@ -102,7 +103,7 @@ class PcfAccelerators(PcfTable):
         self.ink_max_bounds = ink_max_bounds
         self._compat_info: tuple[int, int, bytes] | None = None
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         buffer.seek(table_offset)
         buffer.write_uint32(self.table_format.value)
         buffer.write_bool(self.no_overlap)

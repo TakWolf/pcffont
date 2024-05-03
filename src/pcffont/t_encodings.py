@@ -1,5 +1,6 @@
 from collections import UserDict
 
+import pcffont
 from pcffont.error import PcfOutOfRangeError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
@@ -16,7 +17,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
     """
 
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfBdfEncodings':
+    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBdfEncodings':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
         min_byte_2 = buffer.read_uint16(table_format.ms_byte_first)
@@ -64,7 +65,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         else:
             super().__setitem__(code_point, glyph_index)
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         min_byte_2 = 0xFF
         max_byte_2 = 0
         min_byte_1 = 0xFF

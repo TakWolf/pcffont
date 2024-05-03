@@ -1,5 +1,6 @@
 from collections import UserList
 
+import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
@@ -9,7 +10,7 @@ from pcffont.table import PcfTable
 
 class PcfMetrics(PcfTable, UserList[PcfMetric]):
     @staticmethod
-    def parse(buffer: Buffer, header: PcfHeader, strict_level: int) -> 'PcfMetrics':
+    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfMetrics':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
         if table_format.is_compressed_metrics:
@@ -33,7 +34,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, metrics)
 
-    def _dump(self, buffer: Buffer, table_offset: int) -> int:
+    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
