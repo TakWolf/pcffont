@@ -40,9 +40,6 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         with open(file_path, 'rb') as file:
             return PcfFont.parse(file, strict_level)
 
-    def __init__(self, tables: dict[PcfTableType, PcfTable | None] = None):
-        super().__init__(tables)
-
     def __setitem__(self, table_type: PcfTableType, table: PcfTable | None):
         if table is None:
             self.pop(table_type, None)
