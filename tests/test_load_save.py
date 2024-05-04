@@ -66,3 +66,67 @@ def test_spleen_32_64(tmp_path: Path):
     font = PcfFont.load(load_file_path)
     font.save(save_file_path)
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_lsbyte_lsbit_p4_u2(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-lsbit-p4-u2.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-lsbyte-lsbit-p4-u2.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_lsbyte_msbit_p4_u2(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-msbit-p4-u2.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-lsbyte-msbit-p4-u2.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_msbyte_lsbit_p4_u2(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-lsbit-p4-u2.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-msbyte-lsbit-p4-u2.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_msbyte_msbit_p4_u2(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-msbit-p4-u2.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-msbyte-msbit-p4-u2.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_lsbyte_lsbit_p2_u4(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-lsbit-p2-u4.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-lsbyte-lsbit-p2-u4.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_lsbyte_msbit_p2_u4(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-msbit-p2-u4.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-lsbyte-msbit-p2-u4.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_msbyte_lsbit_p2_u4(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-lsbit-p2-u4.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-msbyte-lsbit-p2-u4.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_msbyte_msbit_p2_u4(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-msbit-p2-u4.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-msbyte-msbit-p2-u4.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
