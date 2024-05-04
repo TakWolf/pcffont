@@ -78,13 +78,15 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         for glyph_index, bitmap in enumerate(self):
             bitmap_offsets.append(bitmaps_size)
             metric = font.metrics[glyph_index]
-            bitmap_row_size = math.ceil(metric.glyph_width / (glyph_pad * 8)) * glyph_pad * 8
+            bitmap_row_width = math.ceil(metric.glyph_width / (glyph_pad * 8)) * glyph_pad * 8
 
             fragments = []
             for bitmap_row in bitmap:
-                if len(bitmap_row) < bitmap_row_size:
-                    bitmap_row = bitmap_row + [0] * (bitmap_row_size - len(bitmap_row))
-                for i in range(bitmap_row_size // 8):
+                if len(bitmap_row) < bitmap_row_width:
+                    bitmap_row = bitmap_row + [0] * (bitmap_row_width - len(bitmap_row))
+                elif len(bitmap_row) > bitmap_row_width:
+                    bitmap_row = bitmap_row[:bitmap_row_width]
+                for i in range(bitmap_row_width // 8):
                     fragments.append(bitmap_row[i * 8:(i + 1) * 8])
 
             if self.table_format.ms_byte_first != self.table_format.ms_bit_first:
