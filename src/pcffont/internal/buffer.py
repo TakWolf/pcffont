@@ -57,8 +57,14 @@ class Buffer:
     def read_uint32_list(self, length: int, ms_byte_first: bool = False) -> list[int]:
         return self.read_uint_list(4, length, ms_byte_first)
 
-    def read_bool(self) -> bool:
-        return self.read(1) != b'\x00'
+    def read_binary(self, ms_bit_first: bool = False) -> list[int]:
+        binary = [int(c) for c in f'{self.read(1)[0]:08b}']
+        if not ms_bit_first:
+            binary.reverse()
+        return binary
+
+    def read_binary_list(self, length: int, ms_bit_first: bool = False) -> list[list[int]]:
+        return [self.read_binary(ms_bit_first) for _ in range(length)]
 
     def read_string(self) -> str:
         data = bytearray()
@@ -71,6 +77,9 @@ class Buffer:
 
     def read_string_list(self, length: int) -> list[str]:
         return [self.read_string() for _ in range(length)]
+
+    def read_bool(self) -> bool:
+        return self.read(1) != b'\x00'
 
     def write(self, data: bytes) -> int:
         return self.stream.write(data)
@@ -123,6 +132,20 @@ class Buffer:
     def write_uint32_list(self, data: Iterable[int], ms_byte_first: bool = False) -> int:
         return self.write_uint_list(data, 4, ms_byte_first)
 
+    def write_binary(self, binary: list[int], ms_bit_first: bool = False) -> int:
+        if not ms_bit_first:
+            binary = binary[::-1]
+        return self.write(bytes([int(''.join(map(str, binary)), 2)]))
+
+    def write_binary_list(self, data: Iterable[list[int]], ms_bit_first: bool = False) -> int:
+        return sum([self.write_binary(value, ms_bit_first) for value in data])
+
+    def write_string(self, data: str) -> int:
+        return self.write(data.encode('utf-8')) + self.write_nulls(1)
+
+    def write_string_list(self, data: Iterable[str]) -> int:
+        return sum([self.write_string(value) for value in data])
+
     def write_bool(self, value: bool) -> int:
         return self.write(b'\x01' if value else b'\x00')
 
@@ -130,12 +153,6 @@ class Buffer:
         for _ in range(size):
             self.write(b'\x00')
         return size
-
-    def write_string(self, data: str) -> int:
-        return self.write(data.encode('utf-8')) + self.write_nulls(1)
-
-    def write_string_list(self, data: Iterable[str]) -> int:
-        return sum([self.write_string(value) for value in data])
 
     def skip(self, size: int):
         self.seek(self.tell() + size)

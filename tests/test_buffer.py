@@ -4,6 +4,18 @@ from io import BytesIO
 from pcffont.internal.buffer import Buffer
 
 
+def test_byte():
+    buffer = Buffer(BytesIO())
+    size = 0
+    size += buffer.write(b'Hello World')
+    size += buffer.write_nulls(4)
+    assert buffer.tell() == size
+    buffer.seek(0)
+    assert buffer.read(11) == b'Hello World'
+    assert buffer.read(4) == b'\x00\x00\x00\x00'
+    assert buffer.tell() == size
+
+
 def test_int8():
     data = [random.randint(-0x80, 0x7F) for _ in range(20)]
 
@@ -198,6 +210,46 @@ def test_uint32():
     assert buffer.tell() == size
 
 
+def test_binary():
+    buffer = Buffer(BytesIO())
+    size = 0
+    size += buffer.write_binary([1, 1, 1, 1, 0, 0, 0, 0], True)
+    size += buffer.write_binary([1, 1, 1, 1, 0, 0, 0, 0], False)
+    size += buffer.write_binary_list([
+        [1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1],
+    ], True)
+    size += buffer.write_binary_list([
+        [1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1],
+    ], False)
+    assert buffer.tell() == size
+    buffer.seek(0)
+    assert buffer.read_binary(True) == [1, 1, 1, 1, 0, 0, 0, 0]
+    assert buffer.read_binary(False) == [1, 1, 1, 1, 0, 0, 0, 0]
+    assert buffer.read_binary_list(2, True) == [
+        [1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1],
+    ]
+    assert buffer.read_binary_list(2, False) == [
+        [1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1],
+    ]
+    assert buffer.tell() == size
+    buffer.seek(0)
+    assert buffer.read_binary(False) == [0, 0, 0, 0, 1, 1, 1, 1]
+    assert buffer.read_binary(True) == [0, 0, 0, 0, 1, 1, 1, 1]
+    assert buffer.read_binary_list(2, False) == [
+        [0, 0, 0, 0, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0, 0, 0],
+    ]
+    assert buffer.read_binary_list(2, True) == [
+        [0, 0, 0, 0, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0, 0, 0],
+    ]
+    assert buffer.tell() == size
+
+
 def test_string():
     data = ['ABC', 'DEF', '12345', '67890']
 
@@ -219,6 +271,18 @@ def test_string():
     assert buffer.tell() == size
 
 
+def test_bool():
+    buffer = Buffer(BytesIO())
+    size = 0
+    size += buffer.write_bool(True)
+    size += buffer.write_bool(False)
+    assert buffer.tell() == size
+    buffer.seek(0)
+    assert buffer.read_bool()
+    assert not buffer.read_bool()
+    assert buffer.tell() == size
+
+
 def test_skip():
     buffer = Buffer(BytesIO())
     buffer.write_nulls(100)
@@ -226,19 +290,3 @@ def test_skip():
     buffer.seek(25)
     buffer.skip(50)
     assert buffer.tell() == 75
-
-
-def test_other():
-    buffer = Buffer(BytesIO())
-    size = 0
-    size += buffer.write(b'Hello World')
-    size += buffer.write_nulls(4)
-    size += buffer.write_bool(True)
-    size += buffer.write_bool(False)
-    assert buffer.tell() == size
-    buffer.seek(0)
-    assert buffer.read(11) == b'Hello World'
-    assert buffer.read(4) == b'\x00\x00\x00\x00'
-    assert buffer.read_bool()
-    assert not buffer.read_bool()
-    assert buffer.tell() == size
