@@ -3,8 +3,8 @@ from pcffont.internal.buffer import Buffer
 
 class PcfMetric:
     @staticmethod
-    def parse(buffer: Buffer, ms_byte_first: bool, is_compressed: bool) -> 'PcfMetric':
-        if is_compressed:
+    def parse(buffer: Buffer, ms_byte_first: bool, compressed: bool) -> 'PcfMetric':
+        if compressed:
             left_side_bearing = buffer.read_uint8() - 0x80
             right_side_bearing = buffer.read_uint8() - 0x80
             character_width = buffer.read_uint8() - 0x80
@@ -67,8 +67,8 @@ class PcfMetric:
     def origin(self) -> tuple[int, int]:
         return self.origin_x, self.origin_y
 
-    def dump(self, buffer: Buffer, ms_byte_first: bool, is_compressed: bool):
-        if is_compressed:
+    def dump(self, buffer: Buffer, ms_byte_first: bool, compressed: bool):
+        if compressed:
             buffer.write_uint8(self.left_side_bearing + 0x80)
             buffer.write_uint8(self.right_side_bearing + 0x80)
             buffer.write_uint8(self.character_width + 0x80)

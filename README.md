@@ -78,7 +78,7 @@ def main():
     font.ink_metrics = PcfMetrics()
     font.scalable_widths = PcfScalableWidths()
     font.bitmaps = PcfBitmaps()
-    font.accelerators = PcfAccelerators(PcfTableFormat(has_ink_bounds=True))
+    font.accelerators = PcfAccelerators(PcfTableFormat(ink_metrics=True))
     font.bdf_accelerators = font.accelerators
     font.properties = PcfProperties()
 

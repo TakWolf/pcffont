@@ -13,14 +13,14 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
     def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfMetrics':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
-        if table_format.is_compressed_metrics:
+        if table_format.compressed_metrics:
             glyphs_count = buffer.read_uint16(table_format.ms_byte_first)
         else:
             glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
 
         metrics = PcfMetrics(table_format)
         for _ in range(glyphs_count):
-            metric = PcfMetric.parse(buffer, table_format.ms_byte_first, table_format.is_compressed_metrics)
+            metric = PcfMetric.parse(buffer, table_format.ms_byte_first, table_format.compressed_metrics)
             metrics.append(metric)
         return metrics
 
@@ -30,7 +30,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
             metrics: list[PcfMetric] = None,
     ):
         if table_format is None:
-            table_format = PcfTableFormat(is_compressed_metrics=True)
+            table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, metrics)
 
@@ -39,12 +39,12 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
 
         buffer.seek(table_offset)
         buffer.write_uint32(self.table_format.value)
-        if self.table_format.is_compressed_metrics:
+        if self.table_format.compressed_metrics:
             buffer.write_uint16(glyphs_count, self.table_format.ms_byte_first)
         else:
             buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
         for metric in self:
-            metric.dump(buffer, self.table_format.ms_byte_first, self.table_format.is_compressed_metrics)
+            metric.dump(buffer, self.table_format.ms_byte_first, self.table_format.compressed_metrics)
 
         table_size = buffer.tell() - table_offset
         return table_size
