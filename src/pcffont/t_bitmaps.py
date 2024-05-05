@@ -34,18 +34,18 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         for glyph_index, bitmap_offset in enumerate(bitmap_offsets):
             buffer.seek(bitmaps_start + bitmap_offset)
             metric = font.metrics[glyph_index]
-            glyph_row_pad = math.ceil(metric.glyph_width / (glyph_pad * 8)) * glyph_pad
+            glyph_row_pad = math.ceil(metric.width / (glyph_pad * 8)) * glyph_pad
 
-            fragments = buffer.read_binary_list(glyph_row_pad * metric.glyph_height, table_format.ms_bit_first)
+            fragments = buffer.read_binary_list(glyph_row_pad * metric.height, table_format.ms_bit_first)
             if table_format.ms_byte_first != table_format.ms_bit_first:
                 _swap_fragments(fragments, scan_unit)
 
             bitmap = []
-            for _ in range(metric.glyph_height):
+            for _ in range(metric.height):
                 bitmap_row = []
                 for _ in range(glyph_row_pad):
                     bitmap_row.extend(fragments.pop(0))
-                bitmap_row = bitmap_row[:metric.glyph_width]
+                bitmap_row = bitmap_row[:metric.width]
                 bitmap.append(bitmap_row)
             bitmaps.append(bitmap)
 
@@ -78,7 +78,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         for glyph_index, bitmap in enumerate(self):
             bitmap_offsets.append(bitmaps_size)
             metric = font.metrics[glyph_index]
-            bitmap_row_width = math.ceil(metric.glyph_width / (glyph_pad * 8)) * glyph_pad * 8
+            bitmap_row_width = math.ceil(metric.width / (glyph_pad * 8)) * glyph_pad * 8
 
             fragments = []
             for bitmap_row in bitmap:

@@ -44,12 +44,28 @@ class PcfMetric:
         self.attributes = attributes
 
     @property
-    def glyph_width(self) -> int:
+    def width(self) -> int:
         return self.right_side_bearing - self.left_side_bearing
 
     @property
-    def glyph_height(self) -> int:
+    def height(self) -> int:
         return self.ascent + self.descent
+
+    @property
+    def dimensions(self) -> tuple[int, int]:
+        return self.width, self.height
+
+    @property
+    def origin_x(self) -> int:
+        return self.left_side_bearing
+
+    @property
+    def origin_y(self) -> int:
+        return -self.descent
+
+    @property
+    def origin(self) -> tuple[int, int]:
+        return self.origin_x, self.origin_y
 
     def dump(self, buffer: Buffer, ms_byte_first: bool, is_compressed: bool):
         if is_compressed:
