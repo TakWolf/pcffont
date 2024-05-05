@@ -6,7 +6,7 @@ from pcffont import PcfFont
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
-def test_reload(tmp_path: Path):
+def test_no_compat(tmp_path: Path):
     load_file_path = os.path.join(project_root_dir, 'assets', 'unifont', 'unifont-15.1.05.pcf')
     save_file_path = os.path.join(tmp_path, 'unifont-15.1.05.pcf')
     font = PcfFont.load(load_file_path)
