@@ -1,1 +1,2 @@
 pytest==8.2.0
+bdffont==0.0.23
