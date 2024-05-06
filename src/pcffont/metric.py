@@ -79,6 +79,14 @@ class PcfMetric:
     def origin(self) -> tuple[int, int]:
         return self.origin_x, self.origin_y
 
+    @property
+    def compressible(self) -> bool:
+        return (-128 <= self.left_side_bearing <= 127 and
+                -128 <= self.right_side_bearing <= 127 and
+                -128 <= self.character_width <= 127 and
+                -128 <= self.ascent <= 127 and
+                -128 <= self.descent <= 127)
+
     def dump(self, buffer: Buffer, ms_byte_first: bool, compressed: bool):
         if compressed:
             buffer.write_uint8(self.left_side_bearing + 0x80)
