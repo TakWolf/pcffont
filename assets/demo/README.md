@@ -13,4 +13,7 @@ bdftopcf demo.bdf -o demo-lsbyte-lsbit-p2-u4.pcf -L -l -p2 -u4
 bdftopcf demo.bdf -o demo-lsbyte-msbit-p2-u4.pcf -L -p2 -u4
 bdftopcf demo.bdf -o demo-msbyte-lsbit-p2-u4.pcf -l -p2 -u4
 bdftopcf demo.bdf -o demo-msbyte-msbit-p2-u4.pcf -p2 -u4
+
+bdftopcf demo.bdf -o demo.pcf
+bdftopcf demo-2.bdf -o demo-2.pcf
 ```

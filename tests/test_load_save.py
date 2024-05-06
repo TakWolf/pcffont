@@ -130,3 +130,19 @@ def test_demo_msbyte_msbit_p2_u4(tmp_path: Path):
     font = PcfFont.load(load_file_path)
     font.save(save_file_path)
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
+
+
+def test_demo_2(tmp_path: Path):
+    load_file_path = os.path.join(project_root_dir, 'assets', 'demo', 'demo-2.pcf')
+    save_file_path = os.path.join(tmp_path, 'demo-2.pcf')
+    font = PcfFont.load(load_file_path)
+    font.save(save_file_path)
+    assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
