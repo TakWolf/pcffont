@@ -131,3 +131,6 @@ def test_metrics_calculate():
         descent=4,
     )
     assert metrics.calculate_max_overlap() == 4
+    assert metrics.calculate_compressible()
+    metrics[0].left_side_bearing = 128
+    assert not metrics.calculate_compressible()
