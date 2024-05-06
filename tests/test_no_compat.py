@@ -21,7 +21,7 @@ def test_no_compat(tmp_path: Path):
     assert len(font_1) == len(font_2)
     for table_type, table_1 in font_1.items():
         table_2 = font_2[table_type]
-        assert table_1.table_format.value == table_2.table_format.value
+        assert table_1.table_format == table_2.table_format
 
     assert len(font_1.properties) == len(font_2.properties)
     for key, value_1 in font_1.properties.items():

@@ -1,4 +1,4 @@
-from typing import Final
+from typing import Final, Any
 
 
 class PcfTableFormat:
@@ -65,6 +65,16 @@ class PcfTableFormat:
         self.compressed_metrics = compressed_metrics
         self.glyph_pad_index = glyph_pad_index
         self.scan_unit_index = scan_unit_index
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfTableFormat):
+            return False
+        return (self.ms_byte_first == other.ms_byte_first and
+                self.ms_bit_first == other.ms_bit_first and
+                self.ink_metrics == other.ink_metrics and
+                self.compressed_metrics == other.compressed_metrics and
+                self.glyph_pad_index == other.glyph_pad_index and
+                self.scan_unit_index == other.scan_unit_index)
 
     @property
     def value(self) -> int:

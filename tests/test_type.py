@@ -1,4 +1,14 @@
-from pcffont import PcfMetrics, PcfMetric
+from pcffont import PcfTableFormat, PcfMetric, PcfMetrics
+
+
+def test_table_format_eq():
+    table_format_1 = PcfTableFormat(ms_byte_first=False)
+    table_format_2 = PcfTableFormat(ms_byte_first=False)
+    table_format_3 = PcfTableFormat(glyph_pad_index=2)
+    assert table_format_1 == table_format_2
+    assert table_format_1 != table_format_3
+    assert table_format_1 != 1
+    assert table_format_1 != 'Hello World!'
 
 
 def test_metric_eq():
