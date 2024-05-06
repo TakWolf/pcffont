@@ -38,13 +38,8 @@ def test_no_compat(tmp_path: Path):
     assert font_1.accelerators.font_ascent == font_2.accelerators.font_ascent
     assert font_1.accelerators.font_descent == font_2.accelerators.font_descent
     assert font_1.accelerators.max_overlap == font_2.accelerators.max_overlap
-
-    assert font_1.accelerators.min_bounds.left_side_bearing == font_2.accelerators.min_bounds.left_side_bearing
-    assert font_1.accelerators.min_bounds.right_side_bearing == font_2.accelerators.min_bounds.right_side_bearing
-    assert font_1.accelerators.min_bounds.character_width == font_2.accelerators.min_bounds.character_width
-    assert font_1.accelerators.min_bounds.ascent == font_2.accelerators.min_bounds.ascent
-    assert font_1.accelerators.min_bounds.descent == font_2.accelerators.min_bounds.descent
-    assert font_1.accelerators.min_bounds.attributes == font_2.accelerators.min_bounds.attributes == 0
+    assert font_1.accelerators.min_bounds == font_2.accelerators.min_bounds
+    assert font_1.accelerators.max_bounds == font_2.accelerators.max_bounds
 
     assert font_1.accelerators.ink_min_bounds is None
     assert font_1.accelerators.ink_max_bounds is None
@@ -57,12 +52,7 @@ def test_no_compat(tmp_path: Path):
     assert len(font_1.metrics) == len(font_2.metrics)
     for glyph_index, metric_1 in enumerate(font_1.metrics):
         metric_2 = font_2.metrics[glyph_index]
-        assert metric_1.left_side_bearing == metric_2.left_side_bearing
-        assert metric_1.right_side_bearing == metric_2.right_side_bearing
-        assert metric_1.character_width == metric_2.character_width
-        assert metric_1.ascent == metric_2.ascent
-        assert metric_1.descent == metric_2.descent
-        assert metric_1.attributes == metric_2.attributes
+        assert metric_1 == metric_2
 
     assert len(font_1.bitmaps) == len(font_2.bitmaps)
     for glyph_index, bitmap_1 in enumerate(font_1.bitmaps):
@@ -104,13 +94,8 @@ def test_no_compat(tmp_path: Path):
     assert font_1.bdf_accelerators.font_ascent == font_2.bdf_accelerators.font_ascent
     assert font_1.bdf_accelerators.font_descent == font_2.bdf_accelerators.font_descent
     assert font_1.bdf_accelerators.max_overlap == font_2.bdf_accelerators.max_overlap
-
-    assert font_1.bdf_accelerators.min_bounds.left_side_bearing == font_2.bdf_accelerators.min_bounds.left_side_bearing
-    assert font_1.bdf_accelerators.min_bounds.right_side_bearing == font_2.bdf_accelerators.min_bounds.right_side_bearing
-    assert font_1.bdf_accelerators.min_bounds.character_width == font_2.bdf_accelerators.min_bounds.character_width
-    assert font_1.bdf_accelerators.min_bounds.ascent == font_2.bdf_accelerators.min_bounds.ascent
-    assert font_1.bdf_accelerators.min_bounds.descent == font_2.bdf_accelerators.min_bounds.descent
-    assert font_1.bdf_accelerators.min_bounds.attributes == font_2.bdf_accelerators.min_bounds.attributes == 0
+    assert font_1.bdf_accelerators.min_bounds == font_2.bdf_accelerators.min_bounds
+    assert font_1.bdf_accelerators.max_bounds == font_2.bdf_accelerators.max_bounds
 
     assert font_1.bdf_accelerators.ink_min_bounds is None
     assert font_1.bdf_accelerators.ink_max_bounds is None

@@ -37,12 +37,7 @@ def test_demo():
         metric_6 = font_6.metrics[glyph_index]
         metric_7 = font_7.metrics[glyph_index]
         metric_8 = font_8.metrics[glyph_index]
-        assert metric_1.left_side_bearing == metric_2.left_side_bearing == metric_3.left_side_bearing == metric_4.left_side_bearing == metric_5.left_side_bearing == metric_6.left_side_bearing == metric_7.left_side_bearing == metric_8.left_side_bearing
-        assert metric_1.right_side_bearing == metric_2.right_side_bearing == metric_3.right_side_bearing == metric_4.right_side_bearing == metric_5.right_side_bearing == metric_6.right_side_bearing == metric_7.right_side_bearing == metric_8.right_side_bearing
-        assert metric_1.character_width == metric_2.character_width == metric_3.character_width == metric_4.character_width == metric_5.character_width == metric_6.character_width == metric_7.character_width == metric_8.character_width
-        assert metric_1.ascent == metric_2.ascent == metric_3.ascent == metric_4.ascent == metric_5.ascent == metric_6.ascent == metric_7.ascent == metric_8.ascent
-        assert metric_1.descent == metric_2.descent == metric_3.descent == metric_4.descent == metric_5.descent == metric_6.descent == metric_7.descent == metric_8.descent
-        assert metric_1.attributes == metric_2.attributes == metric_3.attributes == metric_4.attributes == metric_5.attributes == metric_6.attributes == metric_7.attributes == metric_8.attributes
+        assert metric_1 == metric_2 == metric_3 == metric_4 == metric_5 == metric_6 == metric_7 == metric_8
         assert glyph.device_width_x == metric_1.character_width == metric_2.character_width == metric_3.character_width == metric_4.character_width == metric_5.character_width == metric_6.character_width == metric_7.character_width == metric_8.character_width
         assert glyph.dimensions == metric_1.dimensions == metric_2.dimensions == metric_3.dimensions == metric_4.dimensions == metric_5.dimensions == metric_6.dimensions == metric_7.dimensions == metric_8.dimensions
         assert glyph.origin == metric_1.origin == metric_2.origin == metric_3.origin == metric_4.origin == metric_5.origin == metric_6.origin == metric_7.origin == metric_8.origin
