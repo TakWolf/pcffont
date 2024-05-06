@@ -1,4 +1,5 @@
 from collections import UserList
+from copy import copy
 
 import pcffont
 from pcffont.format import PcfTableFormat
@@ -33,6 +34,35 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
             table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, metrics)
+
+    def calculate_min_bounds(self) -> PcfMetric:
+        min_bounds = None
+        for metric in self:
+            if min_bounds is None:
+                min_bounds = copy(metric)
+            else:
+                min_bounds.left_side_bearing = min(min_bounds.left_side_bearing, metric.left_side_bearing)
+                min_bounds.right_side_bearing = min(min_bounds.right_side_bearing, metric.right_side_bearing)
+                min_bounds.character_width = min(min_bounds.character_width, metric.character_width)
+                min_bounds.ascent = min(min_bounds.ascent, metric.ascent)
+                min_bounds.descent = min(min_bounds.descent, metric.descent)
+        return min_bounds
+
+    def calculate_max_bounds(self) -> PcfMetric:
+        max_bounds = None
+        for metric in self:
+            if max_bounds is None:
+                max_bounds = copy(metric)
+            else:
+                max_bounds.left_side_bearing = max(max_bounds.left_side_bearing, metric.left_side_bearing)
+                max_bounds.right_side_bearing = max(max_bounds.right_side_bearing, metric.right_side_bearing)
+                max_bounds.character_width = max(max_bounds.character_width, metric.character_width)
+                max_bounds.ascent = max(max_bounds.ascent, metric.ascent)
+                max_bounds.descent = max(max_bounds.descent, metric.descent)
+        return max_bounds
+
+    def calculate_max_overlap(self) -> int:
+        return max([metric.right_side_bearing - metric.character_width for metric in self])
 
     def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
