@@ -34,7 +34,7 @@ class PcfTableFormat:
             ms_byte_first: bool = True,
             ms_bit_first: bool = True,
             ink_metrics: bool = False,
-            compressed_metrics: bool = True,
+            compressed_metrics: bool = False,
             glyph_pad_index: int = 0,
             scan_unit_index: int = 0,
     ):
