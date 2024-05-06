@@ -1,14 +1,16 @@
+from typing import Final
+
 
 class PcfTableFormat:
-    DEFAULT_FORMAT = 0b_0000_0000_0000
-    INKBOUNDS = 0b_0010_0000_0000
-    ACCEL_W_INKBOUNDS = 0b_0001_0000_0000
-    COMPRESSED_METRICS = 0b_0001_0000_0000
+    DEFAULT_FORMAT: Final[int] = 0b_0000_0000_0000
+    INKBOUNDS: Final[int] = 0b_0010_0000_0000
+    ACCEL_W_INKBOUNDS: Final[int] = 0b_0001_0000_0000
+    COMPRESSED_METRICS: Final[int] = 0b_0001_0000_0000
 
-    MASK_GLYPH_PAD = 0b_00_00_11
-    MASK_BYTE_ORDER = 0b_00_01_00
-    MASK_BIT_ORDER = 0b_00_10_00
-    MASK_SCAN_UNIT = 0b_11_00_00
+    MASK_GLYPH_PAD: Final[int] = 0b_00_00_11
+    MASK_BYTE_ORDER: Final[int] = 0b_00_01_00
+    MASK_BIT_ORDER: Final[int] = 0b_00_10_00
+    MASK_SCAN_UNIT: Final[int] = 0b_11_00_00
 
     @staticmethod
     def parse(value: int) -> 'PcfTableFormat':
