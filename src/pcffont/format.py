@@ -66,6 +66,10 @@ class PcfTableFormat:
         self.glyph_pad_index = glyph_pad_index
         self.scan_unit_index = scan_unit_index
 
+    def __repr__(self) -> str:
+        value = self.value
+        return f'{value}#{value:010b}'
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfTableFormat):
             return False
