@@ -2,10 +2,8 @@ from typing import Final, Any
 
 
 class PcfTableFormat:
-    DEFAULT_FORMAT: Final[int] = 0b_0000_0000_0000
-    INKBOUNDS: Final[int] = 0b_0010_0000_0000
-    ACCEL_W_INKBOUNDS: Final[int] = 0b_0001_0000_0000
-    COMPRESSED_METRICS: Final[int] = 0b_0001_0000_0000
+    DEFAULT: Final[int] = 0b_0000_0000_0000
+    ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS: Final[int] = 0b_0001_0000_0000
 
     MASK_GLYPH_PAD: Final[int] = 0b_00_00_11
     MASK_BYTE_ORDER: Final[int] = 0b_00_01_00
@@ -16,15 +14,13 @@ class PcfTableFormat:
     def parse(value: int) -> 'PcfTableFormat':
         ms_byte_first = value & PcfTableFormat.MASK_BYTE_ORDER > 0
         ms_bit_first = value & PcfTableFormat.MASK_BIT_ORDER > 0
-        ink_metrics = value & PcfTableFormat.ACCEL_W_INKBOUNDS > 0
-        compressed_metrics = value & PcfTableFormat.COMPRESSED_METRICS > 0
+        ink_or_compressed_metrics = value & PcfTableFormat.ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS > 0
         glyph_pad_index = value & PcfTableFormat.MASK_GLYPH_PAD
         scan_unit_index = (value & PcfTableFormat.MASK_SCAN_UNIT) >> 4
         return PcfTableFormat(
             ms_byte_first,
             ms_bit_first,
-            ink_metrics,
-            compressed_metrics,
+            ink_or_compressed_metrics,
             glyph_pad_index,
             scan_unit_index,
         )
@@ -33,8 +29,7 @@ class PcfTableFormat:
             self,
             ms_byte_first: bool = True,
             ms_bit_first: bool = True,
-            ink_metrics: bool = False,
-            compressed_metrics: bool = False,
+            ink_or_compressed_metrics: bool = False,
             glyph_pad_index: int = 0,
             scan_unit_index: int = 0,
     ):
@@ -47,10 +42,9 @@ class PcfTableFormat:
             If true, sets the font bit order to MSB first.
             Bits for each glyph will be placed in this order; i.e., the left most bit on the screen will be in the
             highest valued bit in each unit.
-        :param ink_metrics:
-            If true, the `PcfAccelerators` will include the `ink_min_bounds` and `ink_max_bounds` fields.
-        :param compressed_metrics:
-            If true, the `PcfMetrics` will be compressed.
+        :param ink_or_compressed_metrics:
+            If true, the `PcfAccelerators` will include the `ink_min_bounds` and `ink_max_bounds` fields,
+            or the `PcfMetrics` will be compressed.
         :param glyph_pad_index:
             The font glyph padding. Each glyph in the font will have each scanline padded in to a multiple of n bytes.
             glyph_pad = [1, 2, 4, 8][glyph_pad_index]
@@ -61,8 +55,7 @@ class PcfTableFormat:
         """
         self.ms_byte_first = ms_byte_first
         self.ms_bit_first = ms_bit_first
-        self.ink_metrics = ink_metrics
-        self.compressed_metrics = compressed_metrics
+        self.ink_or_compressed_metrics = ink_or_compressed_metrics
         self.glyph_pad_index = glyph_pad_index
         self.scan_unit_index = scan_unit_index
 
@@ -75,22 +68,19 @@ class PcfTableFormat:
             return False
         return (self.ms_byte_first == other.ms_byte_first and
                 self.ms_bit_first == other.ms_bit_first and
-                self.ink_metrics == other.ink_metrics and
-                self.compressed_metrics == other.compressed_metrics and
+                self.ink_or_compressed_metrics == other.ink_or_compressed_metrics and
                 self.glyph_pad_index == other.glyph_pad_index and
                 self.scan_unit_index == other.scan_unit_index)
 
     @property
     def value(self) -> int:
-        value = PcfTableFormat.DEFAULT_FORMAT
+        value = PcfTableFormat.DEFAULT
         if self.ms_byte_first:
             value |= PcfTableFormat.MASK_BYTE_ORDER
         if self.ms_bit_first:
             value |= PcfTableFormat.MASK_BIT_ORDER
-        if self.ink_metrics:
-            value |= PcfTableFormat.ACCEL_W_INKBOUNDS
-        if self.compressed_metrics:
-            value |= PcfTableFormat.COMPRESSED_METRICS
+        if self.ink_or_compressed_metrics:
+            value |= PcfTableFormat.ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS
         value |= self.glyph_pad_index
         value |= self.scan_unit_index << 4
         return value

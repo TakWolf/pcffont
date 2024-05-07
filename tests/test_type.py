@@ -4,10 +4,10 @@ from pcffont import PcfTableFormat, PcfMetric, PcfMetrics
 def test_table_format_value():
     assert PcfTableFormat().value == 12
     assert PcfTableFormat(glyph_pad_index=2).value == 14
-    assert PcfTableFormat(glyph_pad_index=2, compressed_metrics=True).value == 270
+    assert PcfTableFormat(glyph_pad_index=2, ink_or_compressed_metrics=True).value == 270
     assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False).value == 0
     assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False, glyph_pad_index=2).value == 2
-    assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False, glyph_pad_index=2, compressed_metrics=True).value == 258
+    assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False, glyph_pad_index=2, ink_or_compressed_metrics=True).value == 258
 
 
 def test_table_format_eq():

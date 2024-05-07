@@ -26,7 +26,7 @@ class PcfAccelerators(PcfTable):
         min_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
         max_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
 
-        if table_format.ink_metrics:
+        if table_format.ink_or_compressed_metrics:
             ink_min_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
             ink_max_bounds = PcfMetric.parse(buffer, table_format.ms_byte_first, False)
         else:
@@ -121,7 +121,7 @@ class PcfAccelerators(PcfTable):
         self.min_bounds.dump(buffer, self.table_format.ms_byte_first, False)
         self.max_bounds.dump(buffer, self.table_format.ms_byte_first, False)
 
-        if self.table_format.ink_metrics:
+        if self.table_format.ink_or_compressed_metrics:
             self.ink_min_bounds.dump(buffer, self.table_format.ms_byte_first, False)
             self.ink_max_bounds.dump(buffer, self.table_format.ms_byte_first, False)
 
