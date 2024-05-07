@@ -8,6 +8,9 @@ from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
 from pcffont.table import PcfTable
 
+_GLYPH_PAD_OPTIONS = [1, 2, 4, 8]
+_SCAN_UNIT_OPTIONS = [1, 2, 4, 8]
+
 
 def _swap_fragments(fragments: list[list[int]], scan_unit: int):
     if scan_unit == 2:
@@ -23,8 +26,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
     def parse(buffer: Buffer, font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBitmaps':
         table_format = header.read_and_check_table_format(buffer, strict_level)
 
-        glyph_pad = [1, 2, 4, 8][table_format.glyph_pad_index]
-        scan_unit = [1, 2, 4, 8][table_format.scan_unit_index]
+        glyph_pad = _GLYPH_PAD_OPTIONS[table_format.glyph_pad_index]
+        scan_unit = _SCAN_UNIT_OPTIONS[table_format.scan_unit_index]
 
         glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
         bitmap_offsets = buffer.read_uint32_list(glyphs_count, table_format.ms_byte_first)
@@ -74,8 +77,8 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                 UserList.__eq__(self, other))
 
     def _dump(self, buffer: Buffer, font: 'pcffont.PcfFont', table_offset: int) -> int:
-        glyph_pad = [1, 2, 4, 8][self.table_format.glyph_pad_index]
-        scan_unit = [1, 2, 4, 8][self.table_format.scan_unit_index]
+        glyph_pad = _GLYPH_PAD_OPTIONS[self.table_format.glyph_pad_index]
+        scan_unit = _SCAN_UNIT_OPTIONS[self.table_format.scan_unit_index]
 
         glyphs_count = len(self)
 
