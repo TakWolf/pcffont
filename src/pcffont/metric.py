@@ -45,6 +45,9 @@ class PcfMetric:
         self.descent = descent
         self.attributes = attributes
 
+    def __repr__(self) -> str:
+        return f'(lsb:{self.left_side_bearing}, rsb:{self.right_side_bearing}, cw:{self.character_width}, asc:{self.ascent}, desc:{self.descent})'
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfMetric):
             return False
