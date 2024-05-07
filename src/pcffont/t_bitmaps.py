@@ -110,13 +110,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             bitmaps_sizes = list(self._compat_info)
             bitmaps_sizes[self.table_format.glyph_pad_index] = bitmaps_size
         else:
-            unit_bitmaps_size = bitmaps_size // glyph_pad
-            bitmaps_sizes = [
-                unit_bitmaps_size,
-                unit_bitmaps_size * 2,
-                unit_bitmaps_size * 4,
-                unit_bitmaps_size * 8,
-            ]
+            bitmaps_sizes = [bitmaps_size // glyph_pad * glyph_pad_option for glyph_pad_option in _GLYPH_PAD_OPTIONS]
 
         buffer.seek(table_offset)
         buffer.write_uint32(self.table_format.value)
