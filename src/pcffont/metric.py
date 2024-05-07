@@ -46,7 +46,12 @@ class PcfMetric:
         self.attributes = attributes
 
     def __repr__(self) -> str:
-        return f'(lsb:{self.left_side_bearing}, rsb:{self.right_side_bearing}, cw:{self.character_width}, asc:{self.ascent}, desc:{self.descent})'
+        return (f'left_side_bearing: {self.left_side_bearing}, '
+                f'right_side_bearing: {self.right_side_bearing}, '
+                f'character_width: {self.character_width}, '
+                f'ascent: {self.ascent}, '
+                f'descent: {self.descent}, '
+                f'attributes: {self.attributes}')
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfMetric):
