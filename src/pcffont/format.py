@@ -51,7 +51,7 @@ class PcfTableFormat:
         :param scan_unit_index:
             The font scanline unit. When the font bit order is different from the font byte order, the scanline unit
             n describes what unit of data (in bytes) are to be swapped.
-            scan_unit = [1, 2, 4][scan_unit_index]
+            scan_unit = [1, 2, 4, 8][scan_unit_index]
         """
         self.ms_byte_first = ms_byte_first
         self.ms_bit_first = ms_bit_first
