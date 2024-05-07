@@ -1,22 +1,22 @@
-from typing import Final, Any
+from typing import Any
+
+_DEFAULT_FORMAT = 0b_0000_0000_0000
+_ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS = 0b_0001_0000_0000
+
+_MASK_GLYPH_PAD = 0b_00_00_11
+_MASK_BYTE_ORDER = 0b_00_01_00
+_MASK_BIT_ORDER = 0b_00_10_00
+_MASK_SCAN_UNIT = 0b_11_00_00
 
 
 class PcfTableFormat:
-    DEFAULT: Final[int] = 0b_0000_0000_0000
-    ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS: Final[int] = 0b_0001_0000_0000
-
-    MASK_GLYPH_PAD: Final[int] = 0b_00_00_11
-    MASK_BYTE_ORDER: Final[int] = 0b_00_01_00
-    MASK_BIT_ORDER: Final[int] = 0b_00_10_00
-    MASK_SCAN_UNIT: Final[int] = 0b_11_00_00
-
     @staticmethod
     def parse(value: int) -> 'PcfTableFormat':
-        ms_byte_first = value & PcfTableFormat.MASK_BYTE_ORDER > 0
-        ms_bit_first = value & PcfTableFormat.MASK_BIT_ORDER > 0
-        ink_or_compressed_metrics = value & PcfTableFormat.ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS > 0
-        glyph_pad_index = value & PcfTableFormat.MASK_GLYPH_PAD
-        scan_unit_index = (value & PcfTableFormat.MASK_SCAN_UNIT) >> 4
+        ms_byte_first = value & _MASK_BYTE_ORDER > 0
+        ms_bit_first = value & _MASK_BIT_ORDER > 0
+        ink_or_compressed_metrics = value & _ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS > 0
+        glyph_pad_index = value & _MASK_GLYPH_PAD
+        scan_unit_index = (value & _MASK_SCAN_UNIT) >> 4
         return PcfTableFormat(
             ms_byte_first,
             ms_bit_first,
@@ -74,13 +74,13 @@ class PcfTableFormat:
 
     @property
     def value(self) -> int:
-        value = PcfTableFormat.DEFAULT
+        value = _DEFAULT_FORMAT
         if self.ms_byte_first:
-            value |= PcfTableFormat.MASK_BYTE_ORDER
+            value |= _MASK_BYTE_ORDER
         if self.ms_bit_first:
-            value |= PcfTableFormat.MASK_BIT_ORDER
+            value |= _MASK_BIT_ORDER
         if self.ink_or_compressed_metrics:
-            value |= PcfTableFormat.ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS
+            value |= _ACCEL_W_INKBOUNDS_OR_COMPRESSED_METRICS
         value |= self.glyph_pad_index
         value |= self.scan_unit_index << 4
         return value
