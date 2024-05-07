@@ -64,8 +64,7 @@ def main():
     builder.properties.font_version = '1.0.0'
     builder.properties.copyright = 'Copyright (c) TakWolf'
 
-    font = builder.build()
-    font.save(os.path.join(outputs_dir, 'my-font.pcf'))
+    builder.save(os.path.join(outputs_dir, 'my-font.pcf'))
 
 
 if __name__ == '__main__':

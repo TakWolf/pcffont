@@ -1,3 +1,5 @@
+import os
+
 from pcffont.font import PcfFont
 from pcffont.format import PcfTableFormat
 from pcffont.glyph import PcfGlyph
@@ -130,3 +132,6 @@ class PcfFontBuilder:
         font.bdf_accelerators = accelerators
         font.properties = self.properties
         return font
+
+    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
+        self.build().save(file_path)
