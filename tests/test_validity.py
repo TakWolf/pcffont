@@ -50,25 +50,7 @@ def test_demo():
         bitmap_6 = font_6.bitmaps[glyph_index]
         bitmap_7 = font_7.bitmaps[glyph_index]
         bitmap_8 = font_8.bitmaps[glyph_index]
-        for i, bitmap_row_0 in enumerate(glyph.bitmap):
-            bitmap_row_1 = bitmap_1[i]
-            bitmap_row_2 = bitmap_2[i]
-            bitmap_row_3 = bitmap_3[i]
-            bitmap_row_4 = bitmap_4[i]
-            bitmap_row_5 = bitmap_5[i]
-            bitmap_row_6 = bitmap_6[i]
-            bitmap_row_7 = bitmap_7[i]
-            bitmap_row_8 = bitmap_8[i]
-            bin_string_0 = ''.join(map(str, bitmap_row_0))
-            bin_string_1 = ''.join(map(str, bitmap_row_1))
-            bin_string_2 = ''.join(map(str, bitmap_row_2))
-            bin_string_3 = ''.join(map(str, bitmap_row_3))
-            bin_string_4 = ''.join(map(str, bitmap_row_4))
-            bin_string_5 = ''.join(map(str, bitmap_row_5))
-            bin_string_6 = ''.join(map(str, bitmap_row_6))
-            bin_string_7 = ''.join(map(str, bitmap_row_7))
-            bin_string_8 = ''.join(map(str, bitmap_row_8))
-            assert bin_string_0 == bin_string_1 == bin_string_2 == bin_string_3 == bin_string_4 == bin_string_5 == bin_string_6 == bin_string_7 == bin_string_8
+        assert glyph.bitmap == bitmap_1 == bitmap_2 == bitmap_3 == bitmap_4 == bitmap_5 == bitmap_6 == bitmap_7 == bitmap_8
 
 
 def test_unifont():
@@ -85,8 +67,4 @@ def test_unifont():
         assert glyph.origin == metric.origin
 
         bitmap = font_2.bitmaps[glyph_index]
-        for i, bitmap_row_1 in enumerate(glyph.bitmap):
-            bitmap_row_2 = bitmap[i]
-            bin_string_1 = ''.join(map(str, bitmap_row_1))
-            bin_string_2 = ''.join(map(str, bitmap_row_2))
-            assert bin_string_1 == bin_string_2
+        assert glyph.bitmap == bitmap
