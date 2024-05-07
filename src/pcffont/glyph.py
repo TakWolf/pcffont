@@ -46,36 +46,39 @@ class PcfGlyph:
             ascent=self.origin_y + self.height,
             descent=-self.origin_y,
         )
-        if is_ink:
-            # Top
-            for bitmap_row in self.bitmap:
-                if any(bitmap_row) != 0:
-                    break
-                metric.ascent -= 1
 
-            # Empty
-            if metric.ascent + metric.descent == 0:
-                metric.ascent = 0
-                metric.descent = 0
-                metric.right_side_bearing = metric.left_side_bearing
-                return metric
+        if not is_ink:
+            return metric
 
-            # Bottom
-            for bitmap_row in reversed(self.bitmap):
-                if any(bitmap_row) != 0:
-                    break
-                metric.descent -= 1
+        # Top
+        for bitmap_row in self.bitmap:
+            if any(bitmap_row) != 0:
+                break
+            metric.ascent -= 1
 
-            # Left
-            for i in range(self.width):
-                if any([bitmap_row[i] for bitmap_row in self.bitmap]) != 0:
-                    break
-                metric.left_side_bearing += 1
+        # Empty
+        if metric.ascent + metric.descent == 0:
+            metric.ascent = 0
+            metric.descent = 0
+            metric.right_side_bearing = metric.left_side_bearing
+            return metric
 
-            # Right
-            for i in range(self.width):
-                if any([bitmap_row[self.width - 1 - i] for bitmap_row in self.bitmap]) != 0:
-                    break
-                metric.right_side_bearing -= 1
+        # Bottom
+        for bitmap_row in reversed(self.bitmap):
+            if any(bitmap_row) != 0:
+                break
+            metric.descent -= 1
+
+        # Left
+        for i in range(self.width):
+            if any([bitmap_row[i] for bitmap_row in self.bitmap]) != 0:
+                break
+            metric.left_side_bearing += 1
+
+        # Right
+        for i in range(self.width):
+            if any([bitmap_row[self.width - 1 - i] for bitmap_row in self.bitmap]) != 0:
+                break
+            metric.right_side_bearing -= 1
 
         return metric
