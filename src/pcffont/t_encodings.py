@@ -1,5 +1,5 @@
 from collections import UserDict
-from typing import Final
+from typing import Final, Any
 
 import pcffont
 from pcffont.error import PcfOutOfRangeError
@@ -65,6 +65,13 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
             self.pop(code_point, None)
         else:
             super().__setitem__(code_point, glyph_index)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfBdfEncodings):
+            return False
+        return (self.table_format == other.table_format and
+                self.default_char == other.default_char and
+                UserDict.__eq__(self, other))
 
     def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         min_byte_2 = 0xFF

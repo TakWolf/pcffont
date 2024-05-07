@@ -1,5 +1,6 @@
 import re
 from collections import UserDict
+from typing import Any
 
 import pcffont
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
@@ -172,6 +173,12 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         else:
             _check_value(key, value)
             super().__setitem__(key, value)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfProperties):
+            return False
+        return (self.table_format == other.table_format and
+                UserDict.__eq__(self, other))
 
     @property
     def foundry(self) -> str | None:

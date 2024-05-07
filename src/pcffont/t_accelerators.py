@@ -1,3 +1,5 @@
+from typing import Any
+
 import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
@@ -102,6 +104,26 @@ class PcfAccelerators(PcfTable):
         self.ink_min_bounds = ink_min_bounds
         self.ink_max_bounds = ink_max_bounds
         self._compat_info: tuple[int, int, bytes] | None = None
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfAccelerators):
+            return False
+        return (self.table_format == other.table_format and
+                self.no_overlap == other.no_overlap and
+                self.constant_metrics == other.constant_metrics and
+                self.terminal_font == other.terminal_font and
+                self.constant_width == other.constant_width and
+                self.ink_inside == other.ink_inside and
+                self.ink_metrics == other.ink_metrics and
+                self.draw_right_to_left == other.draw_right_to_left and
+                self.font_ascent == other.font_ascent and
+                self.font_descent == other.font_descent and
+                self.max_overlap == other.max_overlap and
+                self.min_bounds == other.min_bounds and
+                self.max_bounds == other.max_bounds and
+                self.ink_min_bounds == other.ink_min_bounds and
+                self.ink_max_bounds == other.ink_max_bounds and
+                self._compat_info == other._compat_info)
 
     def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         buffer.seek(table_offset)

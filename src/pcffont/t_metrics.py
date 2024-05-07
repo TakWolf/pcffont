@@ -1,5 +1,6 @@
 from collections import UserList
 from copy import copy
+from typing import Any
 
 import pcffont
 from pcffont.format import PcfTableFormat
@@ -34,6 +35,12 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
             table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, metrics)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfMetrics):
+            return False
+        return (self.table_format == other.table_format and
+                UserList.__eq__(self, other))
 
     def calculate_min_bounds(self) -> PcfMetric:
         min_bounds = None

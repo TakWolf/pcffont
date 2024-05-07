@@ -1,4 +1,5 @@
 from enum import IntEnum
+from typing import Any
 
 from pcffont.error import PcfParseError
 from pcffont.format import PcfTableFormat
@@ -68,6 +69,14 @@ class PcfHeader:
         self.table_format = table_format
         self.table_size = table_size
         self.table_offset = table_offset
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfHeader):
+            return False
+        return (self.table_type == other.table_type and
+                self.table_format == other.table_format and
+                self.table_size == other.table_size and
+                self.table_offset == other.table_offset)
 
     def read_and_check_table_format(self, buffer: Buffer, strict_level: int) -> 'PcfTableFormat':
         buffer.seek(self.table_offset)

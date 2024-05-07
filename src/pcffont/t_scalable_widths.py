@@ -1,4 +1,5 @@
 from collections import UserList
+from typing import Any
 
 import pcffont
 from pcffont.format import PcfTableFormat
@@ -29,6 +30,12 @@ class PcfScalableWidths(PcfTable, UserList[int]):
             table_format = PcfTableFormat()
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, scalable_widths)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfScalableWidths):
+            return False
+        return (self.table_format == other.table_format and
+                UserList.__eq__(self, other))
 
     def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)

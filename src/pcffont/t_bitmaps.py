@@ -1,5 +1,6 @@
 import math
 from collections import UserList
+from typing import Any
 
 import pcffont
 from pcffont.format import PcfTableFormat
@@ -64,6 +65,13 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, bitmaps)
         self._compat_info: list[int] | None = None
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfBitmaps):
+            return False
+        return (self.table_format == other.table_format and
+                self._compat_info == other._compat_info and
+                UserList.__eq__(self, other))
 
     def _dump(self, buffer: Buffer, font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyph_pad = [1, 2, 4, 8][self.table_format.glyph_pad_index]
