@@ -11,10 +11,10 @@ from pcffont.table import PcfTable
 
 class PcfBdfEncodings(PcfTable, UserDict[int, int]):
     """
-    code_point -> glyph_index
+    encoding -> glyph_index
     """
 
-    MAX_CODE_POINT: Final[int] = 0xFFFF
+    MAX_ENCODING: Final[int] = 0xFFFF
     NO_GLYPH_INDEX: Final[int] = 0xFFFF
 
     @staticmethod
@@ -32,15 +32,15 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
 
         encodings = PcfBdfEncodings(table_format, default_char)
         if min_byte_1 == max_byte_1 == 0:
-            for code_point in range(min_byte_2, max_byte_2 + 1):
-                glyph_index = glyph_indices[code_point - min_byte_2]
-                encodings[code_point] = glyph_index
+            for encoding in range(min_byte_2, max_byte_2 + 1):
+                glyph_index = glyph_indices[encoding - min_byte_2]
+                encodings[encoding] = glyph_index
         else:
             for byte_1 in range(min_byte_1, max_byte_1 + 1):
                 for byte_2 in range(min_byte_2, max_byte_2 + 1):
-                    code_point = int.from_bytes(bytes([byte_1, byte_2]), 'big')
+                    encoding = int.from_bytes(bytes([byte_1, byte_2]), 'big')
                     glyph_index = glyph_indices[(byte_1 - min_byte_1) * (max_byte_2 - min_byte_2 + 1) + byte_2 - min_byte_2]
-                    encodings[code_point] = glyph_index
+                    encodings[encoding] = glyph_index
         return encodings
 
     def __init__(
@@ -55,16 +55,16 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         UserDict.__init__(self, encodings)
         self.default_char = default_char
 
-    def __setitem__(self, code_point: int, glyph_index: int | None):
-        if code_point < 0 or code_point > PcfBdfEncodings.MAX_CODE_POINT:
-            raise PcfOutOfRangeError(f'Code point must between [0, {PcfBdfEncodings.MAX_CODE_POINT}]')
+    def __setitem__(self, encoding: int, glyph_index: int | None):
+        if encoding < 0 or encoding > PcfBdfEncodings.MAX_ENCODING:
+            raise PcfOutOfRangeError(f'Encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
         if glyph_index < 0 or glyph_index > PcfBdfEncodings.NO_GLYPH_INDEX:
             raise PcfOutOfRangeError(f'Glyph index must between [0, {PcfBdfEncodings.NO_GLYPH_INDEX}]')
 
         if glyph_index is None or glyph_index == PcfBdfEncodings.NO_GLYPH_INDEX:
-            self.pop(code_point, None)
+            self.pop(encoding, None)
         else:
-            super().__setitem__(code_point, glyph_index)
+            super().__setitem__(encoding, glyph_index)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfBdfEncodings):
@@ -78,8 +78,8 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         max_byte_2 = 0
         min_byte_1 = 0xFF
         max_byte_1 = 0
-        for code_point in self:
-            bs = code_point.to_bytes(2, 'big')
+        for encoding in self:
+            bs = encoding.to_bytes(2, 'big')
             byte_1 = bs[0]
             byte_2 = bs[1]
             if byte_1 < min_byte_1:
@@ -100,14 +100,14 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         buffer.write_uint16(self.default_char, self.table_format.ms_byte_first)
 
         if min_byte_1 == max_byte_1 == 0:
-            for code_point in range(min_byte_2, max_byte_2 + 1):
-                glyph_index = self.get(code_point, PcfBdfEncodings.NO_GLYPH_INDEX)
+            for encoding in range(min_byte_2, max_byte_2 + 1):
+                glyph_index = self.get(encoding, PcfBdfEncodings.NO_GLYPH_INDEX)
                 buffer.write_uint16(glyph_index, self.table_format.ms_byte_first)
         else:
             for byte_1 in range(min_byte_1, max_byte_1 + 1):
                 for byte_2 in range(min_byte_2, max_byte_2 + 1):
-                    code_point = int.from_bytes(bytes([byte_1, byte_2]), 'big')
-                    glyph_index = self.get(code_point, PcfBdfEncodings.NO_GLYPH_INDEX)
+                    encoding = int.from_bytes(bytes([byte_1, byte_2]), 'big')
+                    glyph_index = self.get(encoding, PcfBdfEncodings.NO_GLYPH_INDEX)
                     buffer.write_uint16(glyph_index, self.table_format.ms_byte_first)
 
         table_size = buffer.tell() - table_offset

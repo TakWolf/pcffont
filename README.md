@@ -35,11 +35,11 @@ def main():
     print(f'ascent: {font.accelerators.font_ascent}')
     print(f'descent: {font.accelerators.font_descent}')
     print()
-    for code_point, glyph_index in sorted(font.bdf_encodings.items()):
+    for encoding, glyph_index in sorted(font.bdf_encodings.items()):
         glyph_name = font.glyph_names[glyph_index]
         metric = font.metrics[glyph_index]
         bitmap = font.bitmaps[glyph_index]
-        print(f'char: {chr(code_point)} ({code_point:04X})')
+        print(f'char: {chr(encoding)} ({encoding:04X})')
         print(f'glyph_name: {glyph_name}')
         print(f'advance_width: {metric.character_width}')
         print(f'dimensions: {metric.dimensions}')

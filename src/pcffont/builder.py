@@ -76,7 +76,7 @@ class PcfFontBuilder:
         )
 
         for glyph_index, glyph in enumerate(self.glyphs):
-            if 0 <= glyph.encoding <= PcfBdfEncodings.MAX_CODE_POINT:
+            if 0 <= glyph.encoding <= PcfBdfEncodings.MAX_ENCODING:
                 bdf_encodings[glyph.encoding] = glyph_index
             glyph_names.append(glyph.name)
             scalable_widths.append(glyph.scalable_width)
