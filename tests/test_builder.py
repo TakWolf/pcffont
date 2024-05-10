@@ -11,11 +11,11 @@ def _load_by_bdf(file_path: str) -> PcfFont:
     bdf_font = BdfFont.load(file_path)
 
     builder = PcfFontBuilder()
-    builder.configs.font_ascent = bdf_font.properties.font_ascent
-    builder.configs.font_descent = bdf_font.properties.font_descent
+    builder.config.font_ascent = bdf_font.properties.font_ascent
+    builder.config.font_descent = bdf_font.properties.font_descent
     if bdf_font.properties.default_char is not None:
-        builder.configs.default_char = bdf_font.properties.default_char
-    builder.configs.glyph_pad_index = 2
+        builder.config.default_char = bdf_font.properties.default_char
+    builder.config.glyph_pad_index = 2
 
     for bdf_glyph in bdf_font.glyphs:
         builder.glyphs.append(PcfGlyph(

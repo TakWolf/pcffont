@@ -12,8 +12,8 @@ def main():
     os.makedirs(outputs_dir)
 
     builder = PcfFontBuilder()
-    builder.configs.font_ascent = 14
-    builder.configs.font_descent = 2
+    builder.config.font_ascent = 14
+    builder.config.font_descent = 2
 
     builder.glyphs.append(PcfGlyph(
         name='A',

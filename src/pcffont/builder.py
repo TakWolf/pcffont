@@ -12,7 +12,7 @@ from pcffont.t_scalable_widths import PcfScalableWidths
 from pcffont.t_glyph_names import PcfGlyphNames
 
 
-class PcfFontConfigs:
+class PcfFontConfig:
     def __init__(
             self,
             font_ascent: int = 0,
@@ -47,7 +47,7 @@ class PcfFontBuilder:
             self,
             properties: PcfProperties = None,
             glyphs: list[PcfGlyph] = None,
-            configs: PcfFontConfigs = None,
+            config: PcfFontConfig = None,
     ):
         if properties is None:
             properties = PcfProperties()
@@ -55,24 +55,24 @@ class PcfFontBuilder:
         if glyphs is None:
             glyphs = list[PcfGlyph]()
         self.glyphs = glyphs
-        if configs is None:
-            configs = PcfFontConfigs()
-        self.configs = configs
+        if config is None:
+            config = PcfFontConfig()
+        self.config = config
 
     def build(self) -> PcfFont:
         bdf_encodings = PcfBdfEncodings(
-            self.configs.to_table_format(),
-            default_char=self.configs.default_char,
+            self.config.to_table_format(),
+            default_char=self.config.default_char,
         )
-        glyph_names = PcfGlyphNames(self.configs.to_table_format())
-        scalable_widths = PcfScalableWidths(self.configs.to_table_format())
-        metrics = PcfMetrics(self.configs.to_table_format())
-        bitmaps = PcfBitmaps(self.configs.to_table_format())
+        glyph_names = PcfGlyphNames(self.config.to_table_format())
+        scalable_widths = PcfScalableWidths(self.config.to_table_format())
+        metrics = PcfMetrics(self.config.to_table_format())
+        bitmaps = PcfBitmaps(self.config.to_table_format())
         accelerators = PcfAccelerators(
-            self.configs.to_table_format(),
-            draw_right_to_left=self.configs.draw_right_to_left,
-            font_ascent=self.configs.font_ascent,
-            font_descent=self.configs.font_descent,
+            self.config.to_table_format(),
+            draw_right_to_left=self.config.draw_right_to_left,
+            font_ascent=self.config.font_ascent,
+            font_descent=self.config.font_descent,
         )
 
         for glyph_index, glyph in enumerate(self.glyphs):
@@ -105,7 +105,7 @@ class PcfFontBuilder:
             accelerators.terminal_font = False
 
         if accelerators.constant_metrics:
-            ink_metrics = PcfMetrics(self.configs.to_table_format(), [glyph.create_metric(True) for glyph in self.glyphs])
+            ink_metrics = PcfMetrics(self.config.to_table_format(), [glyph.create_metric(True) for glyph in self.glyphs])
 
             accelerators.ink_min_bounds = ink_metrics.calculate_min_bounds()
             accelerators.ink_max_bounds = ink_metrics.calculate_max_bounds()
