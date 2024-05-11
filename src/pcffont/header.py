@@ -49,7 +49,7 @@ class PcfHeader:
             table_size = buffer.read_uint32()
             table_offset = buffer.read_uint32()
             headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
-        headers.sort(key=lambda header: _TABLE_PARSE_ORDER.index(header.table_type))
+        headers.sort(key=lambda x: _TABLE_PARSE_ORDER.index(x.table_type))
 
         return headers
 
