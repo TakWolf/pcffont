@@ -1,4 +1,4 @@
-import os
+from os import PathLike
 
 from pcffont.font import PcfFont
 from pcffont.format import PcfTableFormat
@@ -133,5 +133,5 @@ class PcfFontBuilder:
         font.properties = self.properties
         return font
 
-    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
+    def save(self, file_path: str | bytes | PathLike[str] | PathLike[bytes]):
         self.build().save(file_path)

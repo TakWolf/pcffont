@@ -1,4 +1,3 @@
-import os
 import shutil
 
 from examples import assets_dir, build_dir
@@ -6,12 +5,12 @@ from pcffont import PcfFont
 
 
 def main():
-    outputs_dir = os.path.join(build_dir, 'load')
-    if os.path.exists(outputs_dir):
+    outputs_dir = build_dir.joinpath('load')
+    if outputs_dir.exists():
         shutil.rmtree(outputs_dir)
-    os.makedirs(outputs_dir)
+    outputs_dir.mkdir(parents=True)
 
-    font = PcfFont.load(os.path.join(assets_dir, 'unifont', 'unifont-15.1.05.pcf'))
+    font = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.pcf'))
     print(f'name: {font.properties.font}')
     print(f'size: {font.properties.pixel_size}')
     print(f'ascent: {font.accelerators.font_ascent}')
@@ -30,7 +29,7 @@ def main():
             text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
             print(f'{text}*')
         print()
-    font.save(os.path.join(outputs_dir, 'unifont-15.1.05.pcf'))
+    font.save(outputs_dir.joinpath('unifont-15.1.05.pcf'))
 
 
 if __name__ == '__main__':

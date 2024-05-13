@@ -1,4 +1,3 @@
-import os
 import shutil
 
 from examples import build_dir
@@ -6,10 +5,10 @@ from pcffont import PcfFontBuilder, PcfGlyph
 
 
 def main():
-    outputs_dir = os.path.join(build_dir, 'create')
-    if os.path.exists(outputs_dir):
+    outputs_dir = build_dir.joinpath('create')
+    if outputs_dir.exists():
         shutil.rmtree(outputs_dir)
-    os.makedirs(outputs_dir)
+    outputs_dir.mkdir(parents=True)
 
     builder = PcfFontBuilder()
     builder.config.font_ascent = 14
@@ -64,7 +63,7 @@ def main():
     builder.properties.font_version = '1.0.0'
     builder.properties.copyright = 'Copyright (c) TakWolf'
 
-    builder.save(os.path.join(outputs_dir, 'my-font.pcf'))
+    builder.save(outputs_dir.joinpath('my-font.pcf'))
 
 
 if __name__ == '__main__':

@@ -1,14 +1,13 @@
-import os
 from pathlib import Path
 
 from pcffont import PcfFont
 
-project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def test_no_compat(tmp_path: Path):
-    load_file_path = os.path.join(project_root_dir, 'assets', 'unifont', 'unifont-15.1.05.pcf')
-    save_file_path = os.path.join(tmp_path, 'unifont-15.1.05.pcf')
+    load_file_path = project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf')
+    save_file_path = tmp_path.joinpath('unifont-15.1.05.pcf')
 
     font_1 = PcfFont.load(load_file_path)
     font_1.accelerators._compat_info = None

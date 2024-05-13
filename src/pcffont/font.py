@@ -1,5 +1,5 @@
-import os
 from collections import UserDict
+from os import PathLike
 from typing import BinaryIO
 
 from pcffont.error import PcfParseError, PcfTableTypeError
@@ -45,7 +45,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
 
     @staticmethod
     def load(
-            file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+            file_path: str | bytes | PathLike[str] | PathLike[bytes],
             strict_level: int = 1,
     ) -> 'PcfFont':
         with open(file_path, 'rb') as file:
@@ -146,6 +146,6 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
 
         PcfHeader.dump(buffer, headers)
 
-    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
+    def save(self, file_path: str | bytes | PathLike[str] | PathLike[bytes]):
         with open(file_path, 'wb') as file:
             self.dump(file)

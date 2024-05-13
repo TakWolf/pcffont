@@ -1,22 +1,22 @@
-import os
+from pathlib import Path
 
 from bdffont import BdfFont
 
 from pcffont import PcfFont
 
-project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def test_demo():
-    font_0 = BdfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo.bdf'))
-    font_1 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-lsbit-p4-u2.pcf'))
-    font_2 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-msbit-p4-u2.pcf'))
-    font_3 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-lsbit-p4-u2.pcf'))
-    font_4 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-msbit-p4-u2.pcf'))
-    font_5 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-lsbit-p2-u4.pcf'))
-    font_6 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-lsbyte-msbit-p2-u4.pcf'))
-    font_7 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-lsbit-p2-u4.pcf'))
-    font_8 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'demo', 'demo-msbyte-msbit-p2-u4.pcf'))
+    font_0 = BdfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo.bdf'))
+    font_1 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-lsbit-p4-u2.pcf'))
+    font_2 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-msbit-p4-u2.pcf'))
+    font_3 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-lsbit-p4-u2.pcf'))
+    font_4 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-msbit-p4-u2.pcf'))
+    font_5 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-lsbit-p2-u4.pcf'))
+    font_6 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-msbit-p2-u4.pcf'))
+    font_7 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-lsbit-p2-u4.pcf'))
+    font_8 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-msbit-p2-u4.pcf'))
 
     for glyph_index, glyph in enumerate(font_0.glyphs):
         glyph_name_1 = font_1.glyph_names[glyph_index]
@@ -54,8 +54,8 @@ def test_demo():
 
 
 def test_unifont():
-    font_1 = BdfFont.load(os.path.join(project_root_dir, 'assets', 'unifont', 'unifont-15.1.05.bdf'))
-    font_2 = PcfFont.load(os.path.join(project_root_dir, 'assets', 'unifont', 'unifont-15.1.05.pcf'))
+    font_1 = BdfFont.load(project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.bdf'))
+    font_2 = PcfFont.load(project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf'))
 
     for glyph_index, glyph in enumerate(font_1.glyphs):
         glyph_name = font_2.glyph_names[glyph_index]
