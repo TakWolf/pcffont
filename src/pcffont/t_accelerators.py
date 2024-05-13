@@ -37,11 +37,9 @@ class PcfAccelerators(PcfTable):
 
         # Compat
         if header.table_size > buffer.tell() - header.table_offset:
-            buffer.seek(header.table_offset + 4 + 8 + 4 * 3 + 2 * 6 * 2)
-            _compat_chunk_start = buffer.tell() - header.table_offset
-            _compat_chunk_size = header.table_size - _compat_chunk_start
-            _compat_chunk = buffer.read(_compat_chunk_size)
-            _compat_info = _compat_chunk_start, _compat_chunk_size, _compat_chunk
+            buffer.seek(header.table_offset)
+            raw_chunk = buffer.read(header.table_size)
+            _compat_info = raw_chunk, header.table_size
         else:
             _compat_info = None
 
@@ -103,7 +101,7 @@ class PcfAccelerators(PcfTable):
         self.max_bounds = max_bounds
         self.ink_min_bounds = ink_min_bounds
         self.ink_max_bounds = ink_max_bounds
-        self._compat_info: tuple[int, int, bytes] | None = None
+        self._compat_info: tuple[bytes, int] | None = None
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfAccelerators):
@@ -151,21 +149,8 @@ class PcfAccelerators(PcfTable):
 
         # Compat
         if self._compat_info is not None:
-            _compat_chunk_start, _compat_chunk_size, _compat_chunk = self._compat_info
-            _compat_chunk = bytearray(_compat_chunk)
-
-            ink_chunk_size = 2 * 6 * 2
-            if table_size == _compat_chunk_start + ink_chunk_size:
-                _compat_chunk_start += ink_chunk_size
-                _compat_chunk_size -= ink_chunk_size
-                for _ in range(ink_chunk_size):
-                    if len(_compat_chunk) == 0:
-                        break
-                    _compat_chunk.pop(0)
-            else:
-                assert table_size == _compat_chunk_start
-
-            buffer.write(_compat_chunk)
-            table_size += _compat_chunk_size
+            raw_chunk, raw_table_size = self._compat_info
+            buffer.write(raw_chunk[table_size::])
+            table_size = raw_table_size
 
         return table_size
