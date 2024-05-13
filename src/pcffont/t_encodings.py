@@ -66,6 +66,9 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
         else:
             super().__setitem__(encoding, glyph_index)
 
+    def __repr__(self) -> str:
+        return object.__repr__(self)
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfBdfEncodings):
             return False

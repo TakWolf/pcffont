@@ -9,9 +9,6 @@ class PcfTable:
     def __init__(self, table_format: PcfTableFormat):
         self.table_format = table_format
 
-    def __repr__(self) -> str:
-        return object.__repr__(self)
-
     @abstractmethod
     def _dump(self, buffer: Buffer, font: 'pcffont.PcfFont', table_offset: int) -> int:
         raise NotImplementedError

@@ -35,6 +35,9 @@ class PcfGlyphNames(PcfTable, UserList[str]):
         PcfTable.__init__(self, table_format)
         UserList.__init__(self, names)
 
+    def __repr__(self) -> str:
+        return object.__repr__(self)
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfGlyphNames):
             return False

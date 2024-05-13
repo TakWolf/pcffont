@@ -69,6 +69,9 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         UserList.__init__(self, bitmaps)
         self._compat_info: list[int] | None = None
 
+    def __repr__(self) -> str:
+        return object.__repr__(self)
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfBitmaps):
             return False

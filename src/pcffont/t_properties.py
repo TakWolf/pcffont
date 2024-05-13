@@ -174,6 +174,9 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             _check_value(key, value)
             super().__setitem__(key, value)
 
+    def __repr__(self) -> str:
+        return object.__repr__(self)
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfProperties):
             return False
