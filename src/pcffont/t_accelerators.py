@@ -123,7 +123,7 @@ class PcfAccelerators(PcfTable):
                 self.ink_max_bounds == other.ink_max_bounds and
                 self._compat_info == other._compat_info)
 
-    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         buffer.seek(table_offset)
         buffer.write_uint32(self.table_format.value)
         buffer.write_bool(self.no_overlap)
@@ -145,12 +145,12 @@ class PcfAccelerators(PcfTable):
             self.ink_min_bounds.dump(buffer, self.table_format.ms_byte_first, False)
             self.ink_max_bounds.dump(buffer, self.table_format.ms_byte_first, False)
 
-        table_size = buffer.tell() - table_offset
-
         # Compat
         if self._compat_info is not None:
-            raw_chunk, raw_table_size = self._compat_info
-            buffer.write(raw_chunk[table_size::])
-            table_size = raw_table_size
+            raw_chunk, table_size = self._compat_info
+            buffer.write(raw_chunk[buffer.tell() - table_offset::])
+        else:
+            buffer.align_to_bit32_with_nulls()
+            table_size = buffer.tell() - table_offset
 
         return table_size

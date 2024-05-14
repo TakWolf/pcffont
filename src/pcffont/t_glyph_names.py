@@ -44,7 +44,7 @@ class PcfGlyphNames(PcfTable, UserList[str]):
         return (self.table_format == other.table_format and
                 UserList.__eq__(self, other))
 
-    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
         strings_start = table_offset + 4 + 4 + 4 * glyphs_count + 4
@@ -61,6 +61,7 @@ class PcfGlyphNames(PcfTable, UserList[str]):
         buffer.write_uint32_list(name_offsets, self.table_format.ms_byte_first)
         buffer.write_uint32(strings_size, self.table_format.ms_byte_first)
         buffer.skip(strings_size)
+        buffer.align_to_bit32_with_nulls()
 
         table_size = buffer.tell() - table_offset
         return table_size

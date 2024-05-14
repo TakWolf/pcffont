@@ -79,7 +79,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
                 self._compat_info == other._compat_info and
                 UserList.__eq__(self, other))
 
-    def _dump(self, buffer: Buffer, font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyph_pad = PcfBitmaps.GLYPH_PAD_OPTIONS[self.table_format.glyph_pad_index]
         scan_unit = PcfBitmaps.SCAN_UNIT_OPTIONS[self.table_format.scan_unit_index]
 
@@ -121,6 +121,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
         buffer.write_uint32_list(bitmap_offsets, self.table_format.ms_byte_first)
         buffer.write_uint32_list(bitmaps_sizes, self.table_format.ms_byte_first)
         buffer.skip(bitmaps_size)
+        buffer.align_to_bit32_with_nulls()
 
         table_size = buffer.tell() - table_offset
         return table_size

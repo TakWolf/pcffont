@@ -77,7 +77,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
     def calculate_compressible(self) -> bool:
         return all([metric.compressible for metric in self])
 
-    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
@@ -88,6 +88,7 @@ class PcfMetrics(PcfTable, UserList[PcfMetric]):
             buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
         for metric in self:
             metric.dump(buffer, self.table_format.ms_byte_first, self.table_format.ink_or_compressed_metrics)
+        buffer.align_to_bit32_with_nulls()
 
         table_size = buffer.tell() - table_offset
         return table_size

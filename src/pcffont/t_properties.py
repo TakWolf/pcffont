@@ -368,7 +368,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
                     value = int(token)
             self[key] = value
 
-    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         props_count = len(self)
 
         # Pad to next int32 boundary
@@ -400,6 +400,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         buffer.write_nulls(padding)
         buffer.write_uint32(strings_size, self.table_format.ms_byte_first)
         buffer.skip(strings_size)
+        buffer.align_to_bit32_with_nulls()
 
         table_size = buffer.tell() - table_offset
         return table_size

@@ -76,7 +76,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
                 self.default_char == other.default_char and
                 UserDict.__eq__(self, other))
 
-    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         min_byte_2 = 0xFF
         max_byte_2 = 0
         min_byte_1 = 0xFF
@@ -112,6 +112,8 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
                     encoding = int.from_bytes(bytes([byte_1, byte_2]), 'big')
                     glyph_index = self.get(encoding, PcfBdfEncodings.NO_GLYPH_INDEX)
                     buffer.write_uint16(glyph_index, self.table_format.ms_byte_first)
+
+        buffer.align_to_bit32_with_nulls()
 
         table_size = buffer.tell() - table_offset
         return table_size

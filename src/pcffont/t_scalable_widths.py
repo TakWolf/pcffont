@@ -40,13 +40,14 @@ class PcfScalableWidths(PcfTable, UserList[int]):
         return (self.table_format == other.table_format and
                 UserList.__eq__(self, other))
 
-    def _dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
         buffer.seek(table_offset)
         buffer.write_uint32(self.table_format.value)
         buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
         buffer.write_int32_list(self, self.table_format.ms_byte_first)
+        buffer.align_to_bit32_with_nulls()
 
         table_size = buffer.tell() - table_offset
         return table_size
