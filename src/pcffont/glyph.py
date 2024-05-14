@@ -1,4 +1,4 @@
-from pcffont import PcfMetric
+from pcffont.metric import PcfMetric
 
 
 class PcfGlyph:
