@@ -6,10 +6,9 @@ from pcffont.error import PcfOutOfRangeError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
-from pcffont.table import PcfTable
 
 
-class PcfBdfEncodings(PcfTable, UserDict[int, int]):
+class PcfBdfEncodings(UserDict[int, int]):
     """
     encoding -> glyph_index
     """
@@ -49,10 +48,10 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
             default_char: int = NO_GLYPH_INDEX,
             encodings: dict[int, int] = None,
     ):
+        super().__init__(encodings)
         if table_format is None:
             table_format = PcfTableFormat()
-        PcfTable.__init__(self, table_format)
-        UserDict.__init__(self, encodings)
+        self.table_format = table_format
         self.default_char = default_char
 
     def __setitem__(self, encoding: int, glyph_index: int | None):
@@ -74,7 +73,7 @@ class PcfBdfEncodings(PcfTable, UserDict[int, int]):
             return False
         return (self.table_format == other.table_format and
                 self.default_char == other.default_char and
-                UserDict.__eq__(self, other))
+                super().__eq__(other))
 
     def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         min_byte_2 = 0xFF

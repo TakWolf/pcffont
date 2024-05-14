@@ -7,7 +7,6 @@ from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdE
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
-from pcffont.table import PcfTable
 
 _KEY_FOUNDRY = 'FOUNDRY'
 _KEY_FAMILY_NAME = 'FAMILY_NAME'
@@ -109,7 +108,7 @@ def _check_value(key: str, value: str | int):
             raise PcfPropValueError(key, value, f"contains illegal characters '{matched.group()}'")
 
 
-class PcfProperties(PcfTable, UserDict[str, str | int]):
+class PcfProperties(UserDict[str, str | int]):
     @staticmethod
     def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfProperties':
         table_format = header.read_and_check_table_format(buffer, strict_level)
@@ -155,10 +154,10 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
             table_format: PcfTableFormat = None,
             properties: dict[str, str | int] = None,
     ):
+        super().__init__(properties)
         if table_format is None:
             table_format = PcfTableFormat()
-        PcfTable.__init__(self, table_format)
-        UserDict.__init__(self, properties)
+        self.table_format = table_format
 
     def __getitem__(self, key: str) -> str | int:
         key = key.upper()
@@ -181,7 +180,7 @@ class PcfProperties(PcfTable, UserDict[str, str | int]):
         if not isinstance(other, PcfProperties):
             return False
         return (self.table_format == other.table_format and
-                UserDict.__eq__(self, other))
+                super().__eq__(other))
 
     @property
     def foundry(self) -> str | None:

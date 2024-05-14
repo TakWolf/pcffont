@@ -5,10 +5,9 @@ from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
 from pcffont.metric import PcfMetric
-from pcffont.table import PcfTable
 
 
-class PcfAccelerators(PcfTable):
+class PcfAccelerators:
     @staticmethod
     def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfAccelerators':
         table_format = header.read_and_check_table_format(buffer, strict_level)
@@ -86,7 +85,7 @@ class PcfAccelerators(PcfTable):
     ):
         if table_format is None:
             table_format = PcfTableFormat()
-        super().__init__(table_format)
+        self.table_format = table_format
         self.no_overlap = no_overlap
         self.constant_metrics = constant_metrics
         self.terminal_font = terminal_font

@@ -1,4 +1,4 @@
-from pcffont import PcfTableFormat, PcfMetric, PcfMetrics
+from pcffont import PcfTableFormat, PcfMetric, PcfTable, PcfProperties, PcfAccelerators, PcfMetrics, PcfBitmaps, PcfBdfEncodings, PcfScalableWidths, PcfGlyphNames
 
 
 def test_table_format_value():
@@ -102,6 +102,16 @@ def test_metric_compressible():
     assert not metric.compressible
     metric.descent = 127
     assert metric.compressible
+
+
+def test_table_isinstance():
+    assert isinstance(PcfProperties(), PcfTable)
+    assert isinstance(PcfAccelerators(), PcfTable)
+    assert isinstance(PcfMetrics(), PcfTable)
+    assert isinstance(PcfBitmaps(), PcfTable)
+    assert isinstance(PcfBdfEncodings(), PcfTable)
+    assert isinstance(PcfScalableWidths(), PcfTable)
+    assert isinstance(PcfGlyphNames(), PcfTable)
 
 
 def test_metrics_calculate():

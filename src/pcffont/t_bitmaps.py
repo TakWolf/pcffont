@@ -6,7 +6,6 @@ import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.buffer import Buffer
-from pcffont.table import PcfTable
 
 
 def _swap_fragments(fragments: list[list[int]], scan_unit: int):
@@ -18,7 +17,7 @@ def _swap_fragments(fragments: list[list[int]], scan_unit: int):
             fragments[i], fragments[i + 1], fragments[i + 2], fragments[i + 3] = fragments[i + 3], fragments[i + 2], fragments[i + 1], fragments[i]
 
 
-class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
+class PcfBitmaps(UserList[list[list[int]]]):
     GLYPH_PAD_OPTIONS: Final[list[int]] = [1, 2, 4, 8]
     SCAN_UNIT_OPTIONS: Final[list[int]] = [1, 2, 4, 8]
 
@@ -63,10 +62,10 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             table_format: PcfTableFormat = None,
             bitmaps: list[list[list[int]]] = None,
     ):
+        super().__init__(bitmaps)
         if table_format is None:
             table_format = PcfTableFormat()
-        PcfTable.__init__(self, table_format)
-        UserList.__init__(self, bitmaps)
+        self.table_format = table_format
         self._compat_info: list[int] | None = None
 
     def __repr__(self) -> str:
@@ -77,7 +76,7 @@ class PcfBitmaps(PcfTable, UserList[list[list[int]]]):
             return False
         return (self.table_format == other.table_format and
                 self._compat_info == other._compat_info and
-                UserList.__eq__(self, other))
+                super().__eq__(other))
 
     def dump(self, buffer: Buffer, font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyph_pad = PcfBitmaps.GLYPH_PAD_OPTIONS[self.table_format.glyph_pad_index]
