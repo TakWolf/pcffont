@@ -1,3 +1,5 @@
+from typing import Any
+
 
 class PcfError(Exception):
     pass
@@ -12,6 +14,9 @@ class PcfTableTypeError(PcfError):
 
 
 class PcfPropKeyError(PcfError):
+    key: str
+    reason: str
+
     def __init__(self, key: str, reason: str):
         super().__init__(f"'{key}': {reason}")
         self.key = key
@@ -19,7 +24,11 @@ class PcfPropKeyError(PcfError):
 
 
 class PcfPropValueError(PcfError):
-    def __init__(self, key: str, value: object, reason: str):
+    key: str
+    value: Any
+    reason: str
+
+    def __init__(self, key: str, value: Any, reason: str):
         super().__init__(f"'{key}': '{value}': {reason}")
         self.key = key
         self.value = value
@@ -27,6 +36,9 @@ class PcfPropValueError(PcfError):
 
 
 class PcfXlfdError(PcfError):
+    font_name: str
+    reason: str
+
     def __init__(self, font_name: str, reason: str):
         super().__init__(f"'{font_name}': {reason}")
         self.font_name = font_name

@@ -13,6 +13,15 @@ from pcffont.t_scalable_widths import PcfScalableWidths
 
 
 class PcfFontConfig:
+    font_ascent: int
+    font_descent: int
+    default_char: int
+    draw_right_to_left: bool
+    ms_byte_first: bool
+    ms_bit_first: bool
+    glyph_pad_index: int
+    scan_unit_index: int
+
     def __init__(
             self,
             font_ascent: int = 0,
@@ -43,6 +52,10 @@ class PcfFontConfig:
 
 
 class PcfFontBuilder:
+    properties: PcfProperties
+    glyphs: list[PcfGlyph]
+    config: PcfFontConfig
+
     def __init__(
             self,
             properties: PcfProperties = None,
@@ -53,7 +66,7 @@ class PcfFontBuilder:
             properties = PcfProperties()
         self.properties = properties
         if glyphs is None:
-            glyphs = list[PcfGlyph]()
+            glyphs = []
         self.glyphs = glyphs
         if config is None:
             config = PcfFontConfig()

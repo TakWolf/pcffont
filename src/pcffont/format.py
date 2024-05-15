@@ -25,6 +25,12 @@ class PcfTableFormat:
             scan_unit_index,
         )
 
+    ms_byte_first: bool
+    ms_bit_first: bool
+    ink_or_compressed_metrics: bool
+    glyph_pad_index: int
+    scan_unit_index: int
+
     def __init__(
             self,
             ms_byte_first: bool = True,

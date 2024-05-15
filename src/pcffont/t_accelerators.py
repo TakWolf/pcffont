@@ -65,6 +65,23 @@ class PcfAccelerators:
 
         return accelerators
 
+    table_format: PcfTableFormat
+    no_overlap: bool
+    constant_metrics: bool
+    terminal_font: bool
+    constant_width: bool
+    ink_inside: bool
+    ink_metrics: bool
+    draw_right_to_left: bool
+    font_ascent: int
+    font_descent: int
+    max_overlap: int
+    min_bounds: PcfMetric
+    max_bounds: PcfMetric
+    ink_min_bounds: PcfMetric
+    ink_max_bounds: PcfMetric
+    _compat_info: tuple[bytes, int] | None
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,
@@ -100,7 +117,7 @@ class PcfAccelerators:
         self.max_bounds = max_bounds
         self.ink_min_bounds = ink_min_bounds
         self.ink_max_bounds = ink_max_bounds
-        self._compat_info: tuple[bytes, int] | None = None
+        self._compat_info = None
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, PcfAccelerators):

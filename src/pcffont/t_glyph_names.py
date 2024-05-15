@@ -24,6 +24,8 @@ class PcfGlyphNames(UserList[str]):
             names.append(name)
         return names
 
+    table_format: PcfTableFormat
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,

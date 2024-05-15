@@ -57,6 +57,9 @@ class PcfBitmaps(UserList[list[list[int]]]):
 
         return bitmaps
 
+    table_format: PcfTableFormat
+    _compat_info: list[int] | None
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,
@@ -66,7 +69,7 @@ class PcfBitmaps(UserList[list[list[int]]]):
         if table_format is None:
             table_format = PcfTableFormat()
         self.table_format = table_format
-        self._compat_info: list[int] | None = None
+        self._compat_info = None
 
     def __repr__(self) -> str:
         return object.__repr__(self)

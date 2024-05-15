@@ -42,6 +42,9 @@ class PcfBdfEncodings(UserDict[int, int]):
                     encodings[encoding] = glyph_index
         return encodings
 
+    table_format: PcfTableFormat
+    default_char: int
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,

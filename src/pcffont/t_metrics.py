@@ -25,6 +25,8 @@ class PcfMetrics(UserList[PcfMetric]):
             metrics.append(metric)
         return metrics
 
+    table_format: PcfTableFormat
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,

@@ -20,6 +20,8 @@ class PcfScalableWidths(UserList[int]):
         )
         return scalable_widths
 
+    table_format: PcfTableFormat
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,

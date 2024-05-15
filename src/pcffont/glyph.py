@@ -2,6 +2,16 @@ from pcffont.metric import PcfMetric
 
 
 class PcfGlyph:
+    name: str
+    encoding: int
+    scalable_width: int
+    character_width: int
+    width: int
+    height: int
+    origin_x: int
+    origin_y: int
+    bitmap: list[list[int]]
+
     def __init__(
             self,
             name: str,
@@ -19,7 +29,7 @@ class PcfGlyph:
         self.width, self.height = dimensions
         self.origin_x, self.origin_y = origin
         if bitmap is None:
-            bitmap = list[list[int]]()
+            bitmap = []
         self.bitmap = bitmap
 
     @property

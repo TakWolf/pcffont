@@ -149,6 +149,8 @@ class PcfProperties(UserDict[str, str | int]):
                     raise e
         return properties
 
+    table_format: PcfTableFormat
+
     def __init__(
             self,
             table_format: PcfTableFormat = None,

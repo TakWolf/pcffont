@@ -3,6 +3,8 @@ from typing import BinaryIO
 
 
 class Buffer:
+    stream: BinaryIO
+
     def __init__(self, stream: BinaryIO):
         self.stream = stream
 

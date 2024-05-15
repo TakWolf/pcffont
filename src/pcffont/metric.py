@@ -29,6 +29,13 @@ class PcfMetric:
             attributes,
         )
 
+    left_side_bearing: int
+    right_side_bearing: int
+    character_width: int
+    ascent: int
+    descent: int
+    attributes: int
+
     def __init__(
             self,
             left_side_bearing: int,
