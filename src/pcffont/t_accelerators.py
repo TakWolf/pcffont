@@ -76,10 +76,10 @@ class PcfAccelerators:
     font_ascent: int
     font_descent: int
     max_overlap: int
-    min_bounds: PcfMetric
-    max_bounds: PcfMetric
-    ink_min_bounds: PcfMetric
-    ink_max_bounds: PcfMetric
+    min_bounds: PcfMetric | None
+    max_bounds: PcfMetric | None
+    ink_min_bounds: PcfMetric | None
+    ink_max_bounds: PcfMetric | None
     _compat_info: tuple[bytes, int] | None
 
     def __init__(
