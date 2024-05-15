@@ -7,8 +7,7 @@ project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def _file_sha256(file_path: Path) -> str:
-    with open(file_path, 'rb') as file:
-        return hashlib.sha256(file.read()).hexdigest()
+    return hashlib.sha256(file_path.read_bytes()).hexdigest()
 
 
 def test_unifont(tmp_path: Path):
