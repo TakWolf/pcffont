@@ -1,2 +1,2 @@
-pytest==8.2.0
-bdffont==0.0.24
+pytest==8.2.1
+bdffont==0.0.25
