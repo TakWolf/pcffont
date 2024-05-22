@@ -373,7 +373,7 @@ class PcfProperties(UserDict[str, str | int]):
         props_count = len(self)
 
         # Pad to next int32 boundary
-        padding = 3 - (((4 + 1 + 4) * props_count + 3) % 4)
+        padding = 3 - ((4 + 1 + 4) * props_count + 3) % 4
 
         strings_start = table_offset + 4 + 4 + (4 + 1 + 4) * props_count + padding + 4
         strings_size = 0

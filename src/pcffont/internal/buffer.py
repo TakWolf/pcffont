@@ -166,7 +166,4 @@ class Buffer:
         return self.stream.tell()
 
     def align_to_bit32_with_nulls(self) -> int:
-        padding = 4 - self.tell() % 4
-        if padding != 4:
-            return self.write_nulls(padding)
-        return 0
+        return self.write_nulls(3 - (self.tell() + 3) % 4)
