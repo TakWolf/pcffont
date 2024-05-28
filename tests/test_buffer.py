@@ -290,3 +290,12 @@ def test_skip():
     buffer.seek(25)
     buffer.skip(50)
     assert buffer.tell() == 75
+
+
+def test_align_to_bit32():
+    buffer = Buffer(BytesIO())
+    buffer.write(b'abc')
+    buffer.align_to_bit32_with_nulls()
+    assert buffer.tell() == 4
+    buffer.seek(0)
+    assert buffer.read(4) == b'abc\x00'
