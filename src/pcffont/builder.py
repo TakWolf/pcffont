@@ -58,9 +58,9 @@ class PcfFontBuilder:
 
     def __init__(
             self,
-            properties: PcfProperties = None,
-            glyphs: list[PcfGlyph] = None,
-            config: PcfFontConfig = None,
+            properties: PcfProperties | None = None,
+            glyphs: list[PcfGlyph] | None = None,
+            config: PcfFontConfig | None = None,
     ):
         if properties is None:
             properties = PcfProperties()

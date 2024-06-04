@@ -20,7 +20,7 @@ class PcfGlyph:
             character_width: int = 0,
             dimensions: tuple[int, int] = (0, 0),
             origin: tuple[int, int] = (0, 0),
-            bitmap: list[list[int]] = None,
+            bitmap: list[list[int]] | None = None,
     ):
         self.name = name
         self.encoding = encoding

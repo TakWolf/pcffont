@@ -84,7 +84,7 @@ class PcfAccelerators:
 
     def __init__(
             self,
-            table_format: PcfTableFormat = None,
+            table_format: PcfTableFormat | None = None,
             no_overlap: bool = False,
             constant_metrics: bool = False,
             terminal_font: bool = False,
@@ -95,10 +95,10 @@ class PcfAccelerators:
             font_ascent: int = 0,
             font_descent: int = 0,
             max_overlap: int = 0,
-            min_bounds: PcfMetric = None,
-            max_bounds: PcfMetric = None,
-            ink_min_bounds: PcfMetric = None,
-            ink_max_bounds: PcfMetric = None,
+            min_bounds: PcfMetric | None = None,
+            max_bounds: PcfMetric | None = None,
+            ink_min_bounds: PcfMetric | None = None,
+            ink_max_bounds: PcfMetric | None = None,
     ):
         if table_format is None:
             table_format = PcfTableFormat()

@@ -28,8 +28,8 @@ class PcfGlyphNames(UserList[str]):
 
     def __init__(
             self,
-            table_format: PcfTableFormat = None,
-            names: list[str] = None,
+            table_format: PcfTableFormat | None = None,
+            names: list[str] | None = None,
     ):
         super().__init__(names)
         if table_format is None:

@@ -24,8 +24,8 @@ class PcfScalableWidths(UserList[int]):
 
     def __init__(
             self,
-            table_format: PcfTableFormat = None,
-            scalable_widths: list[int] = None,
+            table_format: PcfTableFormat | None = None,
+            scalable_widths: list[int] | None = None,
     ):
         super().__init__(scalable_widths)
         if table_format is None:

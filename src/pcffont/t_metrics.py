@@ -29,8 +29,8 @@ class PcfMetrics(UserList[PcfMetric]):
 
     def __init__(
             self,
-            table_format: PcfTableFormat = None,
-            metrics: list[PcfMetric] = None,
+            table_format: PcfTableFormat | None = None,
+            metrics: list[PcfMetric] | None = None,
     ):
         super().__init__(metrics)
         if table_format is None:

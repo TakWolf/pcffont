@@ -153,8 +153,8 @@ class PcfProperties(UserDict[str, str | int]):
 
     def __init__(
             self,
-            table_format: PcfTableFormat = None,
-            properties: dict[str, str | int] = None,
+            table_format: PcfTableFormat | None = None,
+            properties: dict[str, str | int] | None = None,
     ):
         super().__init__(properties)
         if table_format is None:
