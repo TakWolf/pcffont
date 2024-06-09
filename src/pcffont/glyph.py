@@ -81,13 +81,13 @@ class PcfGlyph:
 
         # Left
         for i in range(self.width):
-            if any([bitmap_row[i] for bitmap_row in self.bitmap]) != 0:
+            if any(bitmap_row[i] for bitmap_row in self.bitmap) != 0:
                 break
             metric.left_side_bearing += 1
 
         # Right
         for i in range(self.width):
-            if any([bitmap_row[self.width - 1 - i] for bitmap_row in self.bitmap]) != 0:
+            if any(bitmap_row[self.width - 1 - i] for bitmap_row in self.bitmap) != 0:
                 break
             metric.right_side_bearing -= 1
 

@@ -73,10 +73,10 @@ class PcfMetrics(UserList[PcfMetric]):
         return max_bounds
 
     def calculate_max_overlap(self) -> int:
-        return max([metric.right_side_bearing - metric.character_width for metric in self])
+        return max(metric.right_side_bearing - metric.character_width for metric in self)
 
     def calculate_compressible(self) -> bool:
-        return all([metric.compressible for metric in self])
+        return all(metric.compressible for metric in self)
 
     def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
