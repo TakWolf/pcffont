@@ -101,18 +101,22 @@ class PcfFontBuilder:
         accelerators.max_overlap = metrics.calculate_max_overlap()
         accelerators.no_overlap = accelerators.max_overlap <= accelerators.min_bounds.left_side_bearing
         accelerators.constant_width = accelerators.min_bounds.character_width == accelerators.max_bounds.character_width
-        accelerators.ink_inside = (accelerators.max_overlap <= 0 <= accelerators.min_bounds.left_side_bearing and
-                                   accelerators.min_bounds.ascent >= -accelerators.font_descent and
-                                   accelerators.max_bounds.ascent <= accelerators.font_ascent and
-                                   -accelerators.min_bounds.descent <= accelerators.font_ascent and
-                                   accelerators.max_bounds.descent <= accelerators.font_descent)
+        accelerators.ink_inside = (
+                accelerators.max_overlap <= 0 <= accelerators.min_bounds.left_side_bearing and
+                accelerators.min_bounds.ascent >= -accelerators.font_descent and
+                accelerators.max_bounds.ascent <= accelerators.font_ascent and
+                -accelerators.min_bounds.descent <= accelerators.font_ascent and
+                accelerators.max_bounds.descent <= accelerators.font_descent
+        )
 
         if accelerators.min_bounds == accelerators.max_bounds:
             accelerators.constant_metrics = True
-            accelerators.terminal_font = (accelerators.min_bounds.left_side_bearing == 0 and
-                                          accelerators.min_bounds.right_side_bearing == accelerators.min_bounds.character_width and
-                                          accelerators.min_bounds.ascent == accelerators.font_ascent and
-                                          accelerators.min_bounds.descent == accelerators.font_descent)
+            accelerators.terminal_font = (
+                    accelerators.min_bounds.left_side_bearing == 0 and
+                    accelerators.min_bounds.right_side_bearing == accelerators.min_bounds.character_width and
+                    accelerators.min_bounds.ascent == accelerators.font_ascent and
+                    accelerators.min_bounds.descent == accelerators.font_descent
+            )
         else:
             accelerators.constant_metrics = False
             accelerators.terminal_font = False
