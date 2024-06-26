@@ -6,16 +6,16 @@ project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def test_no_compat(tmp_path: Path):
-    load_file_path = project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf')
-    save_file_path = tmp_path.joinpath('unifont-15.1.05.pcf')
+    load_path = project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf')
+    save_path = tmp_path.joinpath('unifont-15.1.05.pcf')
 
-    font_1 = PcfFont.load(load_file_path)
+    font_1 = PcfFont.load(load_path)
     font_1.accelerators._compat_info = None
     font_1.bdf_accelerators._compat_info = None
     font_1.bitmaps._compat_info = None
-    font_1.save(save_file_path)
+    font_1.save(save_path)
 
-    font_2 = PcfFont.load(save_file_path)
+    font_2 = PcfFont.load(save_path)
     assert font_2.accelerators._compat_info is None
     assert font_2.bdf_accelerators._compat_info is None
     font_2.bitmaps._compat_info = None
