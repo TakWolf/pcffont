@@ -2,11 +2,9 @@ from pathlib import Path
 
 from pcffont import PcfFont
 
-project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
-
-def test_no_compat(tmp_path: Path):
-    load_path = project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf')
+def test_no_compat(assets_dir: Path, tmp_path: Path):
+    load_path = assets_dir.joinpath('unifont', 'unifont-15.1.05.pcf')
     save_path = tmp_path.joinpath('unifont-15.1.05.pcf')
 
     font_1 = PcfFont.load(load_path)

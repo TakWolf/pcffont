@@ -4,19 +4,17 @@ from bdffont import BdfFont
 
 from pcffont import PcfFont
 
-project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
-
-def test_demo():
-    font_0 = BdfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo.bdf'))
-    font_1 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-lsbit-p4-u2.pcf'))
-    font_2 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-msbit-p4-u2.pcf'))
-    font_3 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-lsbit-p4-u2.pcf'))
-    font_4 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-msbit-p4-u2.pcf'))
-    font_5 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-lsbit-p2-u4.pcf'))
-    font_6 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-lsbyte-msbit-p2-u4.pcf'))
-    font_7 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-lsbit-p2-u4.pcf'))
-    font_8 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-msbyte-msbit-p2-u4.pcf'))
+def test_demo(assets_dir: Path):
+    font_0 = BdfFont.load(assets_dir.joinpath('demo', 'demo.bdf'))
+    font_1 = PcfFont.load(assets_dir.joinpath('demo', 'demo-lsbyte-lsbit-p4-u2.pcf'))
+    font_2 = PcfFont.load(assets_dir.joinpath('demo', 'demo-lsbyte-msbit-p4-u2.pcf'))
+    font_3 = PcfFont.load(assets_dir.joinpath('demo', 'demo-msbyte-lsbit-p4-u2.pcf'))
+    font_4 = PcfFont.load(assets_dir.joinpath('demo', 'demo-msbyte-msbit-p4-u2.pcf'))
+    font_5 = PcfFont.load(assets_dir.joinpath('demo', 'demo-lsbyte-lsbit-p2-u4.pcf'))
+    font_6 = PcfFont.load(assets_dir.joinpath('demo', 'demo-lsbyte-msbit-p2-u4.pcf'))
+    font_7 = PcfFont.load(assets_dir.joinpath('demo', 'demo-msbyte-lsbit-p2-u4.pcf'))
+    font_8 = PcfFont.load(assets_dir.joinpath('demo', 'demo-msbyte-msbit-p2-u4.pcf'))
 
     for glyph_index, glyph in enumerate(font_0.glyphs):
         glyph_name_1 = font_1.glyph_names[glyph_index]
@@ -53,9 +51,9 @@ def test_demo():
         assert glyph.bitmap == bitmap_1 == bitmap_2 == bitmap_3 == bitmap_4 == bitmap_5 == bitmap_6 == bitmap_7 == bitmap_8
 
 
-def test_unifont():
-    font_1 = BdfFont.load(project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.bdf'))
-    font_2 = PcfFont.load(project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf'))
+def test_unifont(assets_dir: Path):
+    font_1 = BdfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.bdf'))
+    font_2 = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.pcf'))
 
     for glyph_index, glyph in enumerate(font_1.glyphs):
         glyph_name = font_2.glyph_names[glyph_index]

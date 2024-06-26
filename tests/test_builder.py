@@ -4,8 +4,6 @@ from bdffont import BdfFont
 
 from pcffont import PcfFont, PcfFontBuilder, PcfGlyph
 
-project_root_dir = Path(__file__).parent.joinpath('..').resolve()
-
 
 def _load_pcf_by_bdf(file_path: Path) -> PcfFont:
     bdf_font = BdfFont.load(file_path)
@@ -33,12 +31,12 @@ def _load_pcf_by_bdf(file_path: Path) -> PcfFont:
     return builder.build()
 
 
-def test_unifont():
-    font_1 = PcfFont.load(project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.pcf'))
+def test_unifont(assets_dir: Path):
+    font_1 = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.pcf'))
     font_1.accelerators._compat_info = None
     font_1.bdf_accelerators._compat_info = None
     font_1.bitmaps._compat_info = None
-    font_2 = _load_pcf_by_bdf(project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.bdf'))
+    font_2 = _load_pcf_by_bdf(assets_dir.joinpath('unifont', 'unifont-15.1.05.bdf'))
 
     assert font_1.bdf_encodings == font_2.bdf_encodings
     assert font_1.glyph_names == font_2.glyph_names
@@ -51,12 +49,12 @@ def test_unifont():
     assert font_1.properties.generate_xlfd() == font_2.properties.generate_xlfd()
 
 
-def test_demo():
-    font_1 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo.pcf'))
+def test_demo(assets_dir: Path):
+    font_1 = PcfFont.load(assets_dir.joinpath('demo', 'demo.pcf'))
     font_1.accelerators._compat_info = None
     font_1.bdf_accelerators._compat_info = None
     font_1.bitmaps._compat_info = None
-    font_2 = _load_pcf_by_bdf(project_root_dir.joinpath('assets', 'demo', 'demo.bdf'))
+    font_2 = _load_pcf_by_bdf(assets_dir.joinpath('demo', 'demo.bdf'))
 
     assert font_1.bdf_encodings == font_2.bdf_encodings
     assert font_1.glyph_names == font_2.glyph_names
@@ -69,12 +67,12 @@ def test_demo():
     assert font_1.properties.generate_xlfd() == font_2.properties.generate_xlfd()
 
 
-def test_demo_2():
-    font_1 = PcfFont.load(project_root_dir.joinpath('assets', 'demo', 'demo-2.pcf'))
+def test_demo_2(assets_dir: Path):
+    font_1 = PcfFont.load(assets_dir.joinpath('demo', 'demo-2.pcf'))
     font_1.accelerators._compat_info = None
     font_1.bdf_accelerators._compat_info = None
     font_1.bitmaps._compat_info = None
-    font_2 = _load_pcf_by_bdf(project_root_dir.joinpath('assets', 'demo', 'demo-2.bdf'))
+    font_2 = _load_pcf_by_bdf(assets_dir.joinpath('demo', 'demo-2.bdf'))
 
     assert font_1.bdf_encodings == font_2.bdf_encodings
     assert font_1.glyph_names == font_2.glyph_names
