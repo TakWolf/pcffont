@@ -44,7 +44,7 @@ def main():
         print(f'dimensions: {metric.dimensions}')
         print(f'origin: {metric.origin}')
         for bitmap_row in bitmap:
-            text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
+            text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
             print(f'{text}*')
         print()
     font.save(outputs_dir.joinpath('unifont-15.1.05.pcf'))
