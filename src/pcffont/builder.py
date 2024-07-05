@@ -150,5 +150,5 @@ class PcfFontBuilder:
         font.properties = self.properties
         return font
 
-    def save(self, file_path: str | bytes | PathLike[str] | PathLike[bytes]):
+    def save(self, file_path: str | PathLike[str]):
         self.build().save(file_path)

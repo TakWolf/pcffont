@@ -44,10 +44,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         return font
 
     @staticmethod
-    def load(
-            file_path: str | bytes | PathLike[str] | PathLike[bytes],
-            strict_level: int = 1,
-    ) -> 'PcfFont':
+    def load(file_path: str | PathLike[str], strict_level: int = 1) -> 'PcfFont':
         with open(file_path, 'rb') as file:
             return PcfFont.parse(file, strict_level)
 
@@ -146,6 +143,6 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
 
         PcfHeader.dump(buffer, headers)
 
-    def save(self, file_path: str | bytes | PathLike[str] | PathLike[bytes]):
+    def save(self, file_path: str | PathLike[str]):
         with open(file_path, 'wb') as file:
             self.dump(file)
