@@ -1,8 +1,8 @@
 from collections import UserDict
 from os import PathLike
-from typing import BinaryIO
+from typing import Any, BinaryIO
 
-from pcffont.error import PcfParseError, PcfTableTypeError
+from pcffont.error import PcfParseError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.buffer import Buffer
 from pcffont.t_accelerators import PcfAccelerators
@@ -37,7 +37,7 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         font = PcfFont()
         for header in headers:
             if header.table_type in font and strict_level >= 1:
-                raise PcfParseError(f"Duplicate table '{header.table_type.name}'")
+                raise PcfParseError(f"duplicate table '{header.table_type.name}'")
             table = _TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, font, header, strict_level)
             font[header.table_type] = table
 
@@ -48,13 +48,18 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         with open(file_path, 'rb') as file:
             return PcfFont.parse(file, strict_level)
 
-    def __setitem__(self, table_type: PcfTableType, table: PcfTable | None):
+    def __setitem__(self, table_type: Any, table: Any):
+        if not isinstance(table_type, PcfTableType):
+            raise KeyError(table_type)
+
         if table is None:
             self.pop(table_type, None)
-        else:
-            if not isinstance(table, _TABLE_TYPE_REGISTRY[table_type]):
-                raise PcfTableTypeError(f"Mismatched table type: '{table_type.name}' -> '{type(table)}'")
-            super().__setitem__(table_type, table)
+            return
+
+        if not isinstance(table, _TABLE_TYPE_REGISTRY[table_type]):
+            raise ValueError(f"illegal value type: '{type(table).__name__}'")
+
+        super().__setitem__(table_type, table)
 
     def __repr__(self) -> str:
         return object.__repr__(self)

@@ -38,7 +38,7 @@ class PcfHeader:
     def parse(buffer: Buffer) -> list['PcfHeader']:
         buffer.seek(0)
         if buffer.read(4) != _FILE_VERSION:
-            raise PcfParseError('Not PCF format')
+            raise PcfParseError('data format not support')
 
         tables_count = buffer.read_uint32()
 
@@ -88,5 +88,5 @@ class PcfHeader:
         buffer.seek(self.table_offset)
         value = buffer.read_uint32()
         if value != self.table_format.value and strict_level >= 2:
-            raise PcfParseError(f"The table format definition is inconsistent with the header: type '{self.table_type.name}', offset {self.table_offset}")
+            raise PcfParseError(f"the table format definition is inconsistent with the header: type = '{self.table_type.name}', offset = {self.table_offset}")
         return self.table_format

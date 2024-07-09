@@ -87,27 +87,6 @@ _XLFD_FONT_NAME_KEYS_ORDER = [
 ]
 
 
-def _check_key(key: str):
-    if not key.replace('_', '').isalnum():
-        raise PcfPropKeyError(key, 'contains illegal characters')
-
-
-def _check_value(key: str, value: str | int):
-    if key in _STR_VALUE_KEYS:
-        if not isinstance(value, str):
-            raise PcfPropValueError(key, value, f"expected type 'str', got '{type(value).__name__}' instead")
-    elif key in _INT_VALUE_KEYS:
-        if not isinstance(value, int):
-            raise PcfPropValueError(key, value, f"expected type 'int', got '{type(value).__name__}' instead")
-    else:
-        if not isinstance(value, str) and not isinstance(value, int):
-            raise PcfPropValueError(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
-    if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
-        matched = re.search(r'[-?*,"]', value)
-        if matched is not None:
-            raise PcfPropValueError(key, value, f"contains illegal characters '{matched.group()}'")
-
-
 class PcfProperties(UserDict[str, str | int]):
     @staticmethod
     def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfProperties':
@@ -161,19 +140,43 @@ class PcfProperties(UserDict[str, str | int]):
             table_format = PcfTableFormat()
         self.table_format = table_format
 
-    def __getitem__(self, key: str) -> str | int:
-        key = key.upper()
-        _check_key(key)
+    def __contains__(self, key: Any) -> bool:
+        if isinstance(key, str):
+            key = key.upper()
+        return super().__contains__(key)
+
+    def __getitem__(self, key: Any) -> str | int:
+        if isinstance(key, str):
+            key = key.upper()
         return super().__getitem__(key)
 
-    def __setitem__(self, key: str, value: str | int | None):
+    def __setitem__(self, key: Any, value: Any):
+        if not isinstance(key, str):
+            raise KeyError(key)
+        if not key.replace('_', '').isalnum():
+            raise PcfPropKeyError(key, 'contains illegal characters')
         key = key.upper()
-        _check_key(key)
+
         if value is None:
             self.pop(key, None)
+            return
+
+        if key in _STR_VALUE_KEYS:
+            if not isinstance(value, str):
+                raise PcfPropValueError(key, value, f"expected type 'str', got '{type(value).__name__}' instead")
+        elif key in _INT_VALUE_KEYS:
+            if not isinstance(value, int):
+                raise PcfPropValueError(key, value, f"expected type 'int', got '{type(value).__name__}' instead")
         else:
-            _check_value(key, value)
-            super().__setitem__(key, value)
+            if not isinstance(value, str) and not isinstance(value, int):
+                raise PcfPropValueError(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
+
+        if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+            matched = re.search(r'[-?*,"]', value)
+            if matched is not None:
+                raise PcfPropValueError(key, value, f'contains illegal characters {repr(matched.group())}')
+
+        super().__setitem__(key, value)
 
     def __repr__(self) -> str:
         return object.__repr__(self)
@@ -356,7 +359,7 @@ class PcfProperties(UserDict[str, str | int]):
         if not self.font.startswith('-'):
             raise PcfXlfdError(self.font, "not starts with '-'")
         if self.font.count('-') != 14:
-            raise PcfXlfdError(self.font, "there could only be 14 '-' in the name")
+            raise PcfXlfdError(self.font, "must be 14 '-'")
         tokens = self.font.removeprefix('-').split('-')
         for index, token in enumerate(tokens):
             key = _XLFD_FONT_NAME_KEYS_ORDER[index]

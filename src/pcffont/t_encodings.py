@@ -57,16 +57,24 @@ class PcfBdfEncodings(UserDict[int, int]):
         self.table_format = table_format
         self.default_char = default_char
 
-    def __setitem__(self, encoding: int, glyph_index: int | None):
+    def __setitem__(self, encoding: Any, glyph_index: Any):
+        if not isinstance(encoding, int):
+            raise KeyError(encoding)
+
         if encoding < 0 or encoding > PcfBdfEncodings.MAX_ENCODING:
-            raise PcfOutOfRangeError(f'Encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
-        if glyph_index < 0 or glyph_index > PcfBdfEncodings.NO_GLYPH_INDEX:
-            raise PcfOutOfRangeError(f'Glyph index must between [0, {PcfBdfEncodings.NO_GLYPH_INDEX}]')
+            raise PcfOutOfRangeError(f'encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
 
         if glyph_index is None or glyph_index == PcfBdfEncodings.NO_GLYPH_INDEX:
             self.pop(encoding, None)
-        else:
-            super().__setitem__(encoding, glyph_index)
+            return
+
+        if not isinstance(glyph_index, int):
+            raise ValueError(f"illegal value type: '{type(glyph_index).__name__}'")
+
+        if glyph_index < 0 or glyph_index > PcfBdfEncodings.NO_GLYPH_INDEX:
+            raise PcfOutOfRangeError(f'glyph index must between [0, {PcfBdfEncodings.NO_GLYPH_INDEX}]')
+
+        super().__setitem__(encoding, glyph_index)
 
     def __repr__(self) -> str:
         return object.__repr__(self)
