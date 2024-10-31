@@ -32,11 +32,11 @@ def _load_pcf_by_bdf(file_path: Path) -> PcfFont:
 
 
 def test_unifont(assets_dir: Path):
-    font_1 = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.pcf'))
+    font_1 = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-16.0.02.pcf'))
     font_1.accelerators._compat_info = None
     font_1.bdf_accelerators._compat_info = None
     font_1.bitmaps._compat_info = None
-    font_2 = _load_pcf_by_bdf(assets_dir.joinpath('unifont', 'unifont-15.1.05.bdf'))
+    font_2 = _load_pcf_by_bdf(assets_dir.joinpath('unifont', 'unifont-16.0.02.bdf'))
 
     assert font_1.bdf_encodings == font_2.bdf_encodings
     assert font_1.glyph_names == font_2.glyph_names

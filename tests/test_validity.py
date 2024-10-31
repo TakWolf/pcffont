@@ -52,8 +52,8 @@ def test_demo(assets_dir: Path):
 
 
 def test_unifont(assets_dir: Path):
-    font_1 = BdfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.bdf'))
-    font_2 = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.pcf'))
+    font_1 = BdfFont.load(assets_dir.joinpath('unifont', 'unifont-16.0.02.bdf'))
+    font_2 = PcfFont.load(assets_dir.joinpath('unifont', 'unifont-16.0.02.pcf'))
 
     for glyph_index, glyph in enumerate(font_1.glyphs):
         glyph_name = font_2.glyph_names[glyph_index]
