@@ -18,8 +18,8 @@ def _swap_fragments(fragments: list[list[int]], scan_unit: int):
 
 
 class PcfBitmaps(UserList[list[list[int]]]):
-    GLYPH_PAD_OPTIONS: Final[list[int]] = [1, 2, 4, 8]
-    SCAN_UNIT_OPTIONS: Final[list[int]] = [1, 2, 4, 8]
+    GLYPH_PAD_OPTIONS: Final = [1, 2, 4, 8]
+    SCAN_UNIT_OPTIONS: Final = [1, 2, 4, 8]
 
     @staticmethod
     def parse(buffer: Buffer, font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBitmaps':
