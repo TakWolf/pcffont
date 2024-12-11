@@ -13,8 +13,8 @@ class PcfBdfEncodings(UserDict[int, int]):
     encoding -> glyph_index
     """
 
-    MAX_ENCODING: Final[int] = 0xFFFF
-    NO_GLYPH_INDEX: Final[int] = 0xFFFF
+    MAX_ENCODING: Final = 0xFFFF
+    NO_GLYPH_INDEX: Final = 0xFFFF
 
     @staticmethod
     def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBdfEncodings':
