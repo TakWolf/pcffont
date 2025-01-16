@@ -62,15 +62,9 @@ class PcfFontBuilder:
             glyphs: list[PcfGlyph] | None = None,
             config: PcfFontConfig | None = None,
     ):
-        if properties is None:
-            properties = PcfProperties()
-        self.properties = properties
-        if glyphs is None:
-            glyphs = []
-        self.glyphs = glyphs
-        if config is None:
-            config = PcfFontConfig()
-        self.config = config
+        self.properties = PcfProperties() if properties is None else properties
+        self.glyphs = [] if glyphs is None else glyphs
+        self.config = PcfFontConfig() if config is None else config
 
     def build(self) -> PcfFont:
         bdf_encodings = PcfBdfEncodings(

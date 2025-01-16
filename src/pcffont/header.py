@@ -70,7 +70,13 @@ class PcfHeader:
     table_size: int
     table_offset: int
 
-    def __init__(self, table_type: PcfTableType, table_format: PcfTableFormat, table_size: int, table_offset: int):
+    def __init__(
+            self,
+            table_type: PcfTableType,
+            table_format: PcfTableFormat,
+            table_size: int,
+            table_offset: int,
+    ):
         self.table_type = table_type
         self.table_format = table_format
         self.table_size = table_size

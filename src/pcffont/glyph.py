@@ -28,9 +28,7 @@ class PcfGlyph:
         self.character_width = character_width
         self.width, self.height = dimensions
         self.origin_x, self.origin_y = origin
-        if bitmap is None:
-            bitmap = []
-        self.bitmap = bitmap
+        self.bitmap = [] if bitmap is None else bitmap
 
     @property
     def dimensions(self) -> tuple[int, int]:

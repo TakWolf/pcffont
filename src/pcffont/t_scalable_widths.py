@@ -28,9 +28,7 @@ class PcfScalableWidths(UserList[int]):
             scalable_widths: list[int] | None = None,
     ):
         super().__init__(scalable_widths)
-        if table_format is None:
-            table_format = PcfTableFormat()
-        self.table_format = table_format
+        self.table_format = PcfTableFormat() if table_format is None else table_format
 
     def __repr__(self) -> str:
         return object.__repr__(self)
