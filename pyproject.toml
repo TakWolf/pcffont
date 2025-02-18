@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pcffont"
 version = "0.0.16"
-description = "A library for manipulating Portable Compiled Format (PCF) Fonts."
+description = "A library for manipulating Portable Compiled Format (PCF) Fonts"
 readme = "README.md"
 license = { text = "MIT License" }
 requires-python = ">=3.10"
