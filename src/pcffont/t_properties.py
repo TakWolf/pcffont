@@ -174,6 +174,9 @@ class PcfProperties(UserDict[str, str | int]):
             if matched is not None:
                 raise PcfPropValueError(key, value, f'contains illegal characters {repr(matched.group())}')
 
+        if isinstance(value, str) and '\n' in value:
+            raise PcfPropValueError(key, value, "contains illegal characters '\\n'")
+
         super().__setitem__(key, value)
 
     def __repr__(self) -> str:
