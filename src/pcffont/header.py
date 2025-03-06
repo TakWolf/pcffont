@@ -40,9 +40,8 @@ class PcfHeader:
         if stream.read(4) != _FILE_VERSION:
             raise PcfParseError('data format not support')
 
-        tables_count = stream.read_uint32()
-
         headers = []
+        tables_count = stream.read_uint32()
         for _ in range(tables_count):
             table_type = PcfTableType(stream.read_uint32())
             table_format = PcfTableFormat.parse(stream.read_uint32())
@@ -50,7 +49,6 @@ class PcfHeader:
             table_offset = stream.read_uint32()
             headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
         headers.sort(key=lambda x: _TABLE_PARSE_ORDER.index(x.table_type))
-
         return headers
 
     @staticmethod
