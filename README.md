@@ -101,7 +101,7 @@ def main():
     ))
 
     builder.properties.foundry = 'Pixel Font Studio'
-    builder.properties.family_name = 'Demo Pixel'
+    builder.properties.family_name = 'My Font'
     builder.properties.weight_name = 'Medium'
     builder.properties.slant = 'R'
     builder.properties.setwidth_name = 'Normal'
@@ -116,8 +116,8 @@ def main():
     builder.properties.charset_encoding = '1'
     builder.properties.generate_xlfd()
 
-    builder.properties.x_height = 5
-    builder.properties.cap_height = 7
+    builder.properties.x_height = 7
+    builder.properties.cap_height = 10
 
     builder.properties.font_version = '1.0.0'
     builder.properties.copyright = 'Copyright (c) TakWolf'
