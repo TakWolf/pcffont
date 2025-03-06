@@ -1,4 +1,5 @@
 from collections import UserDict
+from io import BytesIO
 from os import PathLike
 from typing import Any, BinaryIO
 
@@ -29,18 +30,18 @@ _TABLE_TYPE_REGISTRY = {
 
 class PcfFont(UserDict[PcfTableType, PcfTable]):
     @staticmethod
-    def parse(stream: BinaryIO, strict_level: int = 1) -> 'PcfFont':
+    def parse(stream: bytes | BinaryIO, strict_level: int = 1) -> 'PcfFont':
+        if isinstance(stream, bytes):
+            stream = BytesIO(stream)
         buffer = Buffer(stream)
 
-        headers = PcfHeader.parse(buffer)
-
         font = PcfFont()
+        headers = PcfHeader.parse(buffer)
         for header in headers:
             if header.table_type in font and strict_level >= 1:
                 raise PcfParseError(f"duplicate table '{header.table_type.name}'")
             table = _TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, font, header, strict_level)
             font[header.table_type] = table
-
         return font
 
     @staticmethod
@@ -147,6 +148,11 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
             table_offset += table_size
 
         PcfHeader.dump(buffer, headers)
+
+    def dump_to_bytes(self) -> bytes:
+        stream = BytesIO()
+        self.dump(stream)
+        return stream.getvalue()
 
     def save(self, file_path: str | PathLike[str]):
         with open(file_path, 'wb') as file:
