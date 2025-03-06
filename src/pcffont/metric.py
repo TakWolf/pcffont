@@ -1,25 +1,25 @@
 from typing import Any
 
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 
 
 class PcfMetric:
     @staticmethod
-    def parse(buffer: Buffer, ms_byte_first: bool, compressed: bool) -> 'PcfMetric':
+    def parse(stream: Stream, ms_byte_first: bool, compressed: bool) -> 'PcfMetric':
         if compressed:
-            left_side_bearing = buffer.read_uint8() - 0x80
-            right_side_bearing = buffer.read_uint8() - 0x80
-            character_width = buffer.read_uint8() - 0x80
-            ascent = buffer.read_uint8() - 0x80
-            descent = buffer.read_uint8() - 0x80
+            left_side_bearing = stream.read_uint8() - 0x80
+            right_side_bearing = stream.read_uint8() - 0x80
+            character_width = stream.read_uint8() - 0x80
+            ascent = stream.read_uint8() - 0x80
+            descent = stream.read_uint8() - 0x80
             attributes = 0
         else:
-            left_side_bearing = buffer.read_int16(ms_byte_first)
-            right_side_bearing = buffer.read_int16(ms_byte_first)
-            character_width = buffer.read_int16(ms_byte_first)
-            ascent = buffer.read_int16(ms_byte_first)
-            descent = buffer.read_int16(ms_byte_first)
-            attributes = buffer.read_uint16(ms_byte_first)
+            left_side_bearing = stream.read_int16(ms_byte_first)
+            right_side_bearing = stream.read_int16(ms_byte_first)
+            character_width = stream.read_int16(ms_byte_first)
+            ascent = stream.read_int16(ms_byte_first)
+            descent = stream.read_int16(ms_byte_first)
+            attributes = stream.read_uint16(ms_byte_first)
         return PcfMetric(
             left_side_bearing,
             right_side_bearing,
@@ -104,17 +104,17 @@ class PcfMetric:
                 -128 <= self.ascent <= 127 and
                 -128 <= self.descent <= 127)
 
-    def dump(self, buffer: Buffer, ms_byte_first: bool, compressed: bool):
+    def dump(self, stream: Stream, ms_byte_first: bool, compressed: bool):
         if compressed:
-            buffer.write_uint8(self.left_side_bearing + 0x80)
-            buffer.write_uint8(self.right_side_bearing + 0x80)
-            buffer.write_uint8(self.character_width + 0x80)
-            buffer.write_uint8(self.ascent + 0x80)
-            buffer.write_uint8(self.descent + 0x80)
+            stream.write_uint8(self.left_side_bearing + 0x80)
+            stream.write_uint8(self.right_side_bearing + 0x80)
+            stream.write_uint8(self.character_width + 0x80)
+            stream.write_uint8(self.ascent + 0x80)
+            stream.write_uint8(self.descent + 0x80)
         else:
-            buffer.write_int16(self.left_side_bearing, ms_byte_first)
-            buffer.write_int16(self.right_side_bearing, ms_byte_first)
-            buffer.write_int16(self.character_width, ms_byte_first)
-            buffer.write_int16(self.ascent, ms_byte_first)
-            buffer.write_int16(self.descent, ms_byte_first)
-            buffer.write_uint16(self.attributes, ms_byte_first)
+            stream.write_int16(self.left_side_bearing, ms_byte_first)
+            stream.write_int16(self.right_side_bearing, ms_byte_first)
+            stream.write_int16(self.character_width, ms_byte_first)
+            stream.write_int16(self.ascent, ms_byte_first)
+            stream.write_int16(self.descent, ms_byte_first)
+            stream.write_uint16(self.attributes, ms_byte_first)

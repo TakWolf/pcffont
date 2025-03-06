@@ -5,7 +5,7 @@ from typing import Any, BinaryIO
 
 from pcffont.error import PcfParseError
 from pcffont.header import PcfTableType, PcfHeader
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 from pcffont.t_accelerators import PcfAccelerators
 from pcffont.t_bitmaps import PcfBitmaps
 from pcffont.t_encodings import PcfBdfEncodings
@@ -33,14 +33,14 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
     def parse(stream: bytes | BinaryIO, strict_level: int = 1) -> 'PcfFont':
         if isinstance(stream, bytes):
             stream = BytesIO(stream)
-        buffer = Buffer(stream)
+        stream = Stream(stream)
 
         font = PcfFont()
-        headers = PcfHeader.parse(buffer)
+        headers = PcfHeader.parse(stream)
         for header in headers:
             if header.table_type in font and strict_level >= 1:
                 raise PcfParseError(f"duplicate table '{header.table_type.name}'")
-            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(buffer, font, header, strict_level)
+            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(stream, font, header, strict_level)
             font[header.table_type] = table
         return font
 
@@ -138,16 +138,16 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         self[PcfTableType.BDF_ACCELERATORS] = table
 
     def dump(self, stream: BinaryIO):
-        buffer = Buffer(stream)
+        stream = Stream(stream)
 
         headers = []
         table_offset = 4 + 4 + (4 * 4) * len(self)
         for table_type, table in sorted(self.items()):
-            table_size = table.dump(buffer, self, table_offset)
+            table_size = table.dump(stream, self, table_offset)
             headers.append(PcfHeader(table_type, table.table_format, table_size, table_offset))
             table_offset += table_size
 
-        PcfHeader.dump(buffer, headers)
+        PcfHeader.dump(stream, headers)
 
     def dump_to_bytes(self) -> bytes:
         stream = BytesIO()

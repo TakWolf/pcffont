@@ -3,7 +3,7 @@ from typing import Any
 
 from pcffont.error import PcfParseError
 from pcffont.format import PcfTableFormat
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 
 _FILE_VERSION = b'\x01fcp'
 
@@ -35,35 +35,35 @@ _TABLE_PARSE_ORDER = [
 
 class PcfHeader:
     @staticmethod
-    def parse(buffer: Buffer) -> list['PcfHeader']:
-        buffer.seek(0)
-        if buffer.read(4) != _FILE_VERSION:
+    def parse(stream: Stream) -> list['PcfHeader']:
+        stream.seek(0)
+        if stream.read(4) != _FILE_VERSION:
             raise PcfParseError('data format not support')
 
-        tables_count = buffer.read_uint32()
+        tables_count = stream.read_uint32()
 
         headers = []
         for _ in range(tables_count):
-            table_type = PcfTableType(buffer.read_uint32())
-            table_format = PcfTableFormat.parse(buffer.read_uint32())
-            table_size = buffer.read_uint32()
-            table_offset = buffer.read_uint32()
+            table_type = PcfTableType(stream.read_uint32())
+            table_format = PcfTableFormat.parse(stream.read_uint32())
+            table_size = stream.read_uint32()
+            table_offset = stream.read_uint32()
             headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
         headers.sort(key=lambda x: _TABLE_PARSE_ORDER.index(x.table_type))
 
         return headers
 
     @staticmethod
-    def dump(buffer: Buffer, headers: list['PcfHeader']):
-        buffer.seek(0)
-        buffer.write(_FILE_VERSION)
+    def dump(stream: Stream, headers: list['PcfHeader']):
+        stream.seek(0)
+        stream.write(_FILE_VERSION)
 
-        buffer.write_uint32(len(headers))
+        stream.write_uint32(len(headers))
         for header in headers:
-            buffer.write_uint32(header.table_type)
-            buffer.write_uint32(header.table_format.value)
-            buffer.write_uint32(header.table_size)
-            buffer.write_uint32(header.table_offset)
+            stream.write_uint32(header.table_type)
+            stream.write_uint32(header.table_format.value)
+            stream.write_uint32(header.table_size)
+            stream.write_uint32(header.table_offset)
 
     table_type: PcfTableType
     table_format: PcfTableFormat
@@ -90,9 +90,9 @@ class PcfHeader:
                 self.table_size == other.table_size and
                 self.table_offset == other.table_offset)
 
-    def read_and_check_table_format(self, buffer: Buffer, strict_level: int) -> 'PcfTableFormat':
-        buffer.seek(self.table_offset)
-        value = buffer.read_uint32()
+    def read_and_check_table_format(self, stream: Stream, strict_level: int) -> 'PcfTableFormat':
+        stream.seek(self.table_offset)
+        value = stream.read_uint32()
         if value != self.table_format.value and strict_level >= 2:
             raise PcfParseError(f"the table format definition is inconsistent with the header: type = '{self.table_type.name}', offset = {self.table_offset}")
         return self.table_format

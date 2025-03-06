@@ -5,23 +5,23 @@ from typing import Any
 import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 from pcffont.metric import PcfMetric
 
 
 class PcfMetrics(UserList[PcfMetric]):
     @staticmethod
-    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfMetrics':
-        table_format = header.read_and_check_table_format(buffer, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfMetrics':
+        table_format = header.read_and_check_table_format(stream, strict_level)
 
         if table_format.ink_or_compressed_metrics:
-            glyphs_count = buffer.read_uint16(table_format.ms_byte_first)
+            glyphs_count = stream.read_uint16(table_format.ms_byte_first)
         else:
-            glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
+            glyphs_count = stream.read_uint32(table_format.ms_byte_first)
 
         metrics = PcfMetrics(table_format)
         for _ in range(glyphs_count):
-            metric = PcfMetric.parse(buffer, table_format.ms_byte_first, table_format.ink_or_compressed_metrics)
+            metric = PcfMetric.parse(stream, table_format.ms_byte_first, table_format.ink_or_compressed_metrics)
             metrics.append(metric)
         return metrics
 
@@ -76,18 +76,18 @@ class PcfMetrics(UserList[PcfMetric]):
     def calculate_compressible(self) -> bool:
         return all(metric.compressible for metric in self)
 
-    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, stream: Stream, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
-        buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format.value)
+        stream.seek(table_offset)
+        stream.write_uint32(self.table_format.value)
         if self.table_format.ink_or_compressed_metrics:
-            buffer.write_uint16(glyphs_count, self.table_format.ms_byte_first)
+            stream.write_uint16(glyphs_count, self.table_format.ms_byte_first)
         else:
-            buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
+            stream.write_uint32(glyphs_count, self.table_format.ms_byte_first)
         for metric in self:
-            metric.dump(buffer, self.table_format.ms_byte_first, self.table_format.ink_or_compressed_metrics)
-        buffer.align_to_bit32_with_nulls()
+            metric.dump(stream, self.table_format.ms_byte_first, self.table_format.ink_or_compressed_metrics)
+        stream.align_to_bit32_with_nulls()
 
-        table_size = buffer.tell() - table_offset
+        table_size = stream.tell() - table_offset
         return table_size

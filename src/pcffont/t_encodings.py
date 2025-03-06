@@ -5,7 +5,7 @@ import pcffont
 from pcffont.error import PcfOutOfRangeError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 
 
 class PcfBdfEncodings(UserDict[int, int]):
@@ -17,17 +17,17 @@ class PcfBdfEncodings(UserDict[int, int]):
     NO_GLYPH_INDEX: Final = 0xFFFF
 
     @staticmethod
-    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBdfEncodings':
-        table_format = header.read_and_check_table_format(buffer, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBdfEncodings':
+        table_format = header.read_and_check_table_format(stream, strict_level)
 
-        min_byte_2 = buffer.read_uint16(table_format.ms_byte_first)
-        max_byte_2 = buffer.read_uint16(table_format.ms_byte_first)
-        min_byte_1 = buffer.read_uint16(table_format.ms_byte_first)
-        max_byte_1 = buffer.read_uint16(table_format.ms_byte_first)
-        default_char = buffer.read_uint16(table_format.ms_byte_first)
+        min_byte_2 = stream.read_uint16(table_format.ms_byte_first)
+        max_byte_2 = stream.read_uint16(table_format.ms_byte_first)
+        min_byte_1 = stream.read_uint16(table_format.ms_byte_first)
+        max_byte_1 = stream.read_uint16(table_format.ms_byte_first)
+        default_char = stream.read_uint16(table_format.ms_byte_first)
 
         glyphs_count = (max_byte_2 - min_byte_2 + 1) * (max_byte_1 - min_byte_1 + 1)
-        glyph_indices = buffer.read_uint16_list(glyphs_count, table_format.ms_byte_first)
+        glyph_indices = stream.read_uint16_list(glyphs_count, table_format.ms_byte_first)
 
         encodings = PcfBdfEncodings(table_format, default_char)
         if min_byte_1 == max_byte_1 == 0:
@@ -84,7 +84,7 @@ class PcfBdfEncodings(UserDict[int, int]):
                 self.default_char == other.default_char and
                 super().__eq__(other))
 
-    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, stream: Stream, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         min_byte_2 = 0xFF
         max_byte_2 = 0
         min_byte_1 = 0xFF
@@ -102,26 +102,26 @@ class PcfBdfEncodings(UserDict[int, int]):
             if byte_2 > max_byte_2:
                 max_byte_2 = byte_2
 
-        buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format.value)
-        buffer.write_uint16(min_byte_2, self.table_format.ms_byte_first)
-        buffer.write_uint16(max_byte_2, self.table_format.ms_byte_first)
-        buffer.write_uint16(min_byte_1, self.table_format.ms_byte_first)
-        buffer.write_uint16(max_byte_1, self.table_format.ms_byte_first)
-        buffer.write_uint16(self.default_char, self.table_format.ms_byte_first)
+        stream.seek(table_offset)
+        stream.write_uint32(self.table_format.value)
+        stream.write_uint16(min_byte_2, self.table_format.ms_byte_first)
+        stream.write_uint16(max_byte_2, self.table_format.ms_byte_first)
+        stream.write_uint16(min_byte_1, self.table_format.ms_byte_first)
+        stream.write_uint16(max_byte_1, self.table_format.ms_byte_first)
+        stream.write_uint16(self.default_char, self.table_format.ms_byte_first)
 
         if min_byte_1 == max_byte_1 == 0:
             for encoding in range(min_byte_2, max_byte_2 + 1):
                 glyph_index = self.get(encoding, PcfBdfEncodings.NO_GLYPH_INDEX)
-                buffer.write_uint16(glyph_index, self.table_format.ms_byte_first)
+                stream.write_uint16(glyph_index, self.table_format.ms_byte_first)
         else:
             for byte_1 in range(min_byte_1, max_byte_1 + 1):
                 for byte_2 in range(min_byte_2, max_byte_2 + 1):
                     encoding = int.from_bytes(bytes([byte_1, byte_2]), 'big')
                     glyph_index = self.get(encoding, PcfBdfEncodings.NO_GLYPH_INDEX)
-                    buffer.write_uint16(glyph_index, self.table_format.ms_byte_first)
+                    stream.write_uint16(glyph_index, self.table_format.ms_byte_first)
 
-        buffer.align_to_bit32_with_nulls()
+        stream.align_to_bit32_with_nulls()
 
-        table_size = buffer.tell() - table_offset
+        table_size = stream.tell() - table_offset
         return table_size

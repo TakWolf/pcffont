@@ -2,14 +2,14 @@ from collections.abc import Iterable
 from typing import BinaryIO
 
 
-class Buffer:
-    stream: BinaryIO
+class Stream:
+    buffer: BinaryIO
 
-    def __init__(self, stream: BinaryIO):
-        self.stream = stream
+    def __init__(self, buffer: BinaryIO):
+        self.buffer = buffer
 
     def read(self, size: int) -> bytes:
-        return self.stream.read(size)
+        return self.buffer.read(size)
 
     def read_int(self, size: int, ms_byte_first: bool = False) -> int:
         return int.from_bytes(self.read(size), 'big' if ms_byte_first else 'little', signed=True)
@@ -84,7 +84,7 @@ class Buffer:
         return self.read(1) != b'\x00'
 
     def write(self, data: bytes) -> int:
-        return self.stream.write(data)
+        return self.buffer.write(data)
 
     def write_int(self, data: int, size: int, ms_byte_first: bool = False) -> int:
         return self.write(data.to_bytes(size, 'big' if ms_byte_first else 'little', signed=True))
@@ -160,10 +160,10 @@ class Buffer:
         self.seek(self.tell() + size)
 
     def seek(self, offset: int):
-        self.stream.seek(offset)
+        self.buffer.seek(offset)
 
     def tell(self) -> int:
-        return self.stream.tell()
+        return self.buffer.tell()
 
     def align_to_bit32_with_nulls(self) -> int:
         return self.write_nulls(3 - (self.tell() + 3) % 4)

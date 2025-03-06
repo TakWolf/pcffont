@@ -4,19 +4,19 @@ from typing import Any
 import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 
 
 class PcfScalableWidths(UserList[int]):
     @staticmethod
-    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfScalableWidths':
-        table_format = header.read_and_check_table_format(buffer, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfScalableWidths':
+        table_format = header.read_and_check_table_format(stream, strict_level)
 
-        glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
+        glyphs_count = stream.read_uint32(table_format.ms_byte_first)
 
         scalable_widths = PcfScalableWidths(
             table_format,
-            buffer.read_int32_list(glyphs_count, table_format.ms_byte_first),
+            stream.read_int32_list(glyphs_count, table_format.ms_byte_first),
         )
         return scalable_widths
 
@@ -39,14 +39,14 @@ class PcfScalableWidths(UserList[int]):
         return (self.table_format == other.table_format and
                 super().__eq__(other))
 
-    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, stream: Stream, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
-        buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format.value)
-        buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
-        buffer.write_int32_list(self, self.table_format.ms_byte_first)
-        buffer.align_to_bit32_with_nulls()
+        stream.seek(table_offset)
+        stream.write_uint32(self.table_format.value)
+        stream.write_uint32(glyphs_count, self.table_format.ms_byte_first)
+        stream.write_int32_list(self, self.table_format.ms_byte_first)
+        stream.align_to_bit32_with_nulls()
 
-        table_size = buffer.tell() - table_offset
+        table_size = stream.tell() - table_offset
         return table_size

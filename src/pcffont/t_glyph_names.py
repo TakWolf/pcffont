@@ -4,23 +4,23 @@ from typing import Any
 import pcffont
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 
 
 class PcfGlyphNames(UserList[str]):
     @staticmethod
-    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfGlyphNames':
-        table_format = header.read_and_check_table_format(buffer, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfGlyphNames':
+        table_format = header.read_and_check_table_format(stream, strict_level)
 
-        glyphs_count = buffer.read_uint32(table_format.ms_byte_first)
-        name_offsets = buffer.read_uint32_list(glyphs_count, table_format.ms_byte_first)
-        buffer.skip(4)  # strings_size
-        strings_start = buffer.tell()
+        glyphs_count = stream.read_uint32(table_format.ms_byte_first)
+        name_offsets = stream.read_uint32_list(glyphs_count, table_format.ms_byte_first)
+        stream.skip(4)  # strings_size
+        strings_start = stream.tell()
 
         names = PcfGlyphNames(table_format)
         for name_offset in name_offsets:
-            buffer.seek(strings_start + name_offset)
-            name = buffer.read_string()
+            stream.seek(strings_start + name_offset)
+            name = stream.read_string()
             names.append(name)
         return names
 
@@ -43,24 +43,24 @@ class PcfGlyphNames(UserList[str]):
         return (self.table_format == other.table_format and
                 super().__eq__(other))
 
-    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, stream: Stream, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         glyphs_count = len(self)
 
         strings_start = table_offset + 4 + 4 + 4 * glyphs_count + 4
         strings_size = 0
         name_offsets = []
-        buffer.seek(strings_start)
+        stream.seek(strings_start)
         for name in self:
             name_offsets.append(strings_size)
-            strings_size += buffer.write_string(name)
+            strings_size += stream.write_string(name)
 
-        buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format.value)
-        buffer.write_uint32(glyphs_count, self.table_format.ms_byte_first)
-        buffer.write_uint32_list(name_offsets, self.table_format.ms_byte_first)
-        buffer.write_uint32(strings_size, self.table_format.ms_byte_first)
-        buffer.skip(strings_size)
-        buffer.align_to_bit32_with_nulls()
+        stream.seek(table_offset)
+        stream.write_uint32(self.table_format.value)
+        stream.write_uint32(glyphs_count, self.table_format.ms_byte_first)
+        stream.write_uint32_list(name_offsets, self.table_format.ms_byte_first)
+        stream.write_uint32(strings_size, self.table_format.ms_byte_first)
+        stream.skip(strings_size)
+        stream.align_to_bit32_with_nulls()
 
-        table_size = buffer.tell() - table_offset
+        table_size = stream.tell() - table_offset
         return table_size

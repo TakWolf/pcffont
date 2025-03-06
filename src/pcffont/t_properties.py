@@ -6,7 +6,7 @@ import pcffont
 from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
-from pcffont.internal.buffer import Buffer
+from pcffont.internal.stream import Stream
 
 _KEY_FOUNDRY = 'FOUNDRY'
 _KEY_FAMILY_NAME = 'FAMILY_NAME'
@@ -89,36 +89,36 @@ _XLFD_FONT_NAME_KEYS_ORDER = [
 
 class PcfProperties(UserDict[str, str | int]):
     @staticmethod
-    def parse(buffer: Buffer, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfProperties':
-        table_format = header.read_and_check_table_format(buffer, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfProperties':
+        table_format = header.read_and_check_table_format(stream, strict_level)
 
-        props_count = buffer.read_uint32(table_format.ms_byte_first)
+        props_count = stream.read_uint32(table_format.ms_byte_first)
 
         prop_infos = []
         for _ in range(props_count):
-            key_offset = buffer.read_uint32(table_format.ms_byte_first)
-            is_string_prop = buffer.read_bool()
+            key_offset = stream.read_uint32(table_format.ms_byte_first)
+            is_string_prop = stream.read_bool()
             if is_string_prop:
-                value_offset = buffer.read_uint32(table_format.ms_byte_first)
+                value_offset = stream.read_uint32(table_format.ms_byte_first)
                 prop_infos.append((key_offset, is_string_prop, value_offset))
             else:
-                value = buffer.read_int32(table_format.ms_byte_first)
+                value = stream.read_int32(table_format.ms_byte_first)
                 prop_infos.append((key_offset, is_string_prop, value))
 
         # Pad to next int32 boundary
         padding = 3 - (((4 + 1 + 4) * props_count + 3) % 4)
-        buffer.skip(padding)
+        stream.skip(padding)
 
-        buffer.skip(4)  # strings_size
-        strings_start = buffer.tell()
+        stream.skip(4)  # strings_size
+        strings_start = stream.tell()
 
         properties = PcfProperties(table_format)
         for key_offset, is_string_prop, value in prop_infos:
-            buffer.seek(strings_start + key_offset)
-            key = buffer.read_string()
+            stream.seek(strings_start + key_offset)
+            key = stream.read_string()
             if is_string_prop:
-                buffer.seek(strings_start + value)
-                value = buffer.read_string()
+                stream.seek(strings_start + value)
+                value = stream.read_string()
             else:
                 value = int(value)
             try:
@@ -373,7 +373,7 @@ class PcfProperties(UserDict[str, str | int]):
                     value = int(token)
             self[key] = value
 
-    def dump(self, buffer: Buffer, _font: 'pcffont.PcfFont', table_offset: int) -> int:
+    def dump(self, stream: Stream, _font: 'pcffont.PcfFont', table_offset: int) -> int:
         props_count = len(self)
 
         # Pad to next int32 boundary
@@ -382,30 +382,30 @@ class PcfProperties(UserDict[str, str | int]):
         strings_start = table_offset + 4 + 4 + (4 + 1 + 4) * props_count + padding + 4
         strings_size = 0
         prop_infos = []
-        buffer.seek(strings_start)
+        stream.seek(strings_start)
         for key, value in self.items():
             key_offset = strings_size
-            strings_size += buffer.write_string(key)
+            strings_size += stream.write_string(key)
             value_offset = strings_size
             if isinstance(value, str):
-                strings_size += buffer.write_string(value)
+                strings_size += stream.write_string(value)
             prop_infos.append((key, key_offset, value, value_offset))
 
-        buffer.seek(table_offset)
-        buffer.write_uint32(self.table_format.value)
-        buffer.write_uint32(props_count, self.table_format.ms_byte_first)
+        stream.seek(table_offset)
+        stream.write_uint32(self.table_format.value)
+        stream.write_uint32(props_count, self.table_format.ms_byte_first)
         for key, key_offset, value, value_offset in prop_infos:
-            buffer.write_uint32(key_offset, self.table_format.ms_byte_first)
+            stream.write_uint32(key_offset, self.table_format.ms_byte_first)
             if isinstance(value, str):
-                buffer.write_bool(True)
-                buffer.write_uint32(value_offset, self.table_format.ms_byte_first)
+                stream.write_bool(True)
+                stream.write_uint32(value_offset, self.table_format.ms_byte_first)
             else:
-                buffer.write_bool(False)
-                buffer.write_int32(value, self.table_format.ms_byte_first)
-        buffer.write_nulls(padding)
-        buffer.write_uint32(strings_size, self.table_format.ms_byte_first)
-        buffer.skip(strings_size)
-        buffer.align_to_bit32_with_nulls()
+                stream.write_bool(False)
+                stream.write_int32(value, self.table_format.ms_byte_first)
+        stream.write_nulls(padding)
+        stream.write_uint32(strings_size, self.table_format.ms_byte_first)
+        stream.skip(strings_size)
+        stream.align_to_bit32_with_nulls()
 
-        table_size = buffer.tell() - table_offset
+        table_size = stream.tell() - table_offset
         return table_size
