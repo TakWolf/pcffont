@@ -78,7 +78,7 @@ class Stream:
             if b == b'\x00' or b == b'':
                 break
             data.extend(b)
-        return data.decode('utf-8')
+        return data.decode()
 
     def read_string_list(self, length: int) -> list[str]:
         return [self.read_string() for _ in range(length)]
@@ -146,7 +146,7 @@ class Stream:
         return sum([self.write_binary(value, ms_bit_first) for value in data])
 
     def write_string(self, data: str) -> int:
-        return self.write(data.encode('utf-8')) + self.write_nulls(1)
+        return self.write(data.encode()) + self.write_nulls(1)
 
     def write_string_list(self, data: Iterable[str]) -> int:
         return sum([self.write_string(value) for value in data])
