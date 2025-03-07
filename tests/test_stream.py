@@ -1,6 +1,8 @@
 import random
 from io import BytesIO
 
+import pytest
+
 from pcffont.internal.stream import Stream
 
 
@@ -14,6 +16,13 @@ def test_byte():
     assert stream.read(11) == b'Hello World'
     assert stream.read(4) == b'\x00\x00\x00\x00'
     assert stream.tell() == size
+
+
+def test_eof():
+    stream = Stream(BytesIO())
+    with pytest.raises(EOFError):
+        stream.read(1)
+    stream.read(1, ignore_eof=True)
 
 
 def test_int8():

@@ -37,7 +37,7 @@ class PcfAccelerators:
         # Compat
         if header.table_size > stream.tell() - header.table_offset:
             stream.seek(header.table_offset)
-            raw_chunk = stream.read(header.table_size)
+            raw_chunk = stream.read(header.table_size, ignore_eof=True)
             _compat_info = raw_chunk, header.table_size
         else:
             _compat_info = None

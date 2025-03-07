@@ -8,8 +8,11 @@ class Stream:
     def __init__(self, buffer: BinaryIO):
         self.buffer = buffer
 
-    def read(self, size: int) -> bytes:
-        return self.buffer.read(size)
+    def read(self, size: int, ignore_eof: bool = False) -> bytes:
+        data = self.buffer.read(size)
+        if len(data) < size and not ignore_eof:
+            raise EOFError()
+        return data
 
     def read_int(self, size: int, ms_byte_first: bool = False) -> int:
         return int.from_bytes(self.read(size), 'big' if ms_byte_first else 'little', signed=True)
