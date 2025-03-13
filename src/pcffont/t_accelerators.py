@@ -9,8 +9,8 @@ from pcffont.metric import PcfMetric
 
 class PcfAccelerators:
     @staticmethod
-    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfAccelerators':
-        table_format = header.read_and_check_table_format(stream, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfAccelerators':
+        table_format = header.read_and_check_table_format(stream)
 
         no_overlap = stream.read_bool()
         constant_metrics = stream.read_bool()

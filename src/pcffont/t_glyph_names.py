@@ -9,8 +9,8 @@ from pcffont.internal.stream import Stream
 
 class PcfGlyphNames(UserList[str]):
     @staticmethod
-    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfGlyphNames':
-        table_format = header.read_and_check_table_format(stream, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfGlyphNames':
+        table_format = header.read_and_check_table_format(stream)
 
         glyphs_count = stream.read_uint32(table_format.ms_byte_first)
         name_offsets = stream.read_uint32_list(glyphs_count, table_format.ms_byte_first)

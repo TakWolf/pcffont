@@ -9,8 +9,8 @@ from pcffont.internal.stream import Stream
 
 class PcfScalableWidths(UserList[int]):
     @staticmethod
-    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfScalableWidths':
-        table_format = header.read_and_check_table_format(stream, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfScalableWidths':
+        table_format = header.read_and_check_table_format(stream)
 
         glyphs_count = stream.read_uint32(table_format.ms_byte_first)
 

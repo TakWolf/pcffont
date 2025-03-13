@@ -40,15 +40,17 @@ class PcfHeader:
         if stream.read(4) != _FILE_VERSION:
             raise PcfParseError('data format not support')
 
-        headers = []
+        headers = {}
         tables_count = stream.read_uint32()
         for _ in range(tables_count):
             table_type = PcfTableType(stream.read_uint32())
+            if table_type in headers:
+                raise PcfParseError(f"duplicate table '{table_type.name}'")
             table_format = PcfTableFormat.parse(stream.read_uint32())
             table_size = stream.read_uint32()
             table_offset = stream.read_uint32()
-            headers.append(PcfHeader(table_type, table_format, table_size, table_offset))
-        headers.sort(key=lambda x: _TABLE_PARSE_ORDER.index(x.table_type))
+            headers[table_type] = PcfHeader(table_type, table_format, table_size, table_offset)
+        headers = [header for _, header in sorted(headers.items())]
         return headers
 
     @staticmethod
@@ -88,9 +90,9 @@ class PcfHeader:
                 self.table_size == other.table_size and
                 self.table_offset == other.table_offset)
 
-    def read_and_check_table_format(self, stream: Stream, strict_level: int) -> 'PcfTableFormat':
+    def read_and_check_table_format(self, stream: Stream) -> 'PcfTableFormat':
         stream.seek(self.table_offset)
         value = stream.read_uint32()
-        if value != self.table_format.value and strict_level >= 2:
+        if value != self.table_format.value:
             raise PcfParseError(f"the table format definition is inconsistent with the header: type = '{self.table_type.name}', offset = {self.table_offset}")
         return self.table_format

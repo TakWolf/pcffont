@@ -3,7 +3,6 @@ from io import BytesIO
 from os import PathLike
 from typing import Any, BinaryIO
 
-from pcffont.error import PcfParseError
 from pcffont.header import PcfTableType, PcfHeader
 from pcffont.internal.stream import Stream
 from pcffont.t_accelerators import PcfAccelerators
@@ -30,7 +29,7 @@ _TABLE_TYPE_REGISTRY = {
 
 class PcfFont(UserDict[PcfTableType, PcfTable]):
     @staticmethod
-    def parse(stream: bytes | BinaryIO, strict_level: int = 1) -> 'PcfFont':
+    def parse(stream: bytes | BinaryIO) -> 'PcfFont':
         if isinstance(stream, bytes):
             stream = BytesIO(stream)
         stream = Stream(stream)
@@ -38,16 +37,14 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
         font = PcfFont()
         headers = PcfHeader.parse(stream)
         for header in headers:
-            if header.table_type in font and strict_level >= 1:
-                raise PcfParseError(f"duplicate table '{header.table_type.name}'")
-            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(stream, font, header, strict_level)
+            table = _TABLE_TYPE_REGISTRY[header.table_type].parse(stream, font, header)
             font[header.table_type] = table
         return font
 
     @staticmethod
-    def load(file_path: str | PathLike[str], strict_level: int = 1) -> 'PcfFont':
+    def load(file_path: str | PathLike[str]) -> 'PcfFont':
         with open(file_path, 'rb') as file:
-            return PcfFont.parse(file, strict_level)
+            return PcfFont.parse(file)
 
     def __setitem__(self, table_type: Any, table: Any):
         if not isinstance(table_type, PcfTableType):

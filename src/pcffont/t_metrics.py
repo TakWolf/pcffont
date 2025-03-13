@@ -11,8 +11,8 @@ from pcffont.metric import PcfMetric
 
 class PcfMetrics(UserList[PcfMetric]):
     @staticmethod
-    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfMetrics':
-        table_format = header.read_and_check_table_format(stream, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfMetrics':
+        table_format = header.read_and_check_table_format(stream)
 
         if table_format.ink_or_compressed_metrics:
             glyphs_count = stream.read_uint16(table_format.ms_byte_first)

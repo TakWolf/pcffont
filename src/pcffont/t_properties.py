@@ -89,8 +89,8 @@ _XLFD_FONT_NAME_KEYS_ORDER = [
 
 class PcfProperties(UserDict[str, str | int]):
     @staticmethod
-    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfProperties':
-        table_format = header.read_and_check_table_format(stream, strict_level)
+    def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfProperties':
+        table_format = header.read_and_check_table_format(stream)
 
         props_count = stream.read_uint32(table_format.ms_byte_first)
 
@@ -121,11 +121,7 @@ class PcfProperties(UserDict[str, str | int]):
                 value = stream.read_string()
             else:
                 value = int(value)
-            try:
-                properties[key] = value
-            except (PcfPropKeyError, PcfPropValueError) as e:
-                if strict_level >= 1:
-                    raise e
+            properties[key] = value
         return properties
 
     table_format: PcfTableFormat

@@ -22,8 +22,8 @@ class PcfBitmaps(UserList[list[list[int]]]):
     SCAN_UNIT_OPTIONS: Final = [1, 2, 4, 8]
 
     @staticmethod
-    def parse(stream: Stream, font: 'pcffont.PcfFont', header: PcfHeader, strict_level: int) -> 'PcfBitmaps':
-        table_format = header.read_and_check_table_format(stream, strict_level)
+    def parse(stream: Stream, font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfBitmaps':
+        table_format = header.read_and_check_table_format(stream)
 
         glyph_pad = PcfBitmaps.GLYPH_PAD_OPTIONS[table_format.glyph_pad_index]
         scan_unit = PcfBitmaps.SCAN_UNIT_OPTIONS[table_format.scan_unit_index]
