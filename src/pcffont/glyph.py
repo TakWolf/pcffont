@@ -8,8 +8,8 @@ class PcfGlyph:
     character_width: int
     width: int
     height: int
-    origin_x: int
-    origin_y: int
+    offset_x: int
+    offset_y: int
     bitmap: list[list[int]]
 
     def __init__(
@@ -19,7 +19,7 @@ class PcfGlyph:
             scalable_width: int = 0,
             character_width: int = 0,
             dimensions: tuple[int, int] = (0, 0),
-            origin: tuple[int, int] = (0, 0),
+            offset: tuple[int, int] = (0, 0),
             bitmap: list[list[int]] | None = None,
     ):
         self.name = name
@@ -27,7 +27,7 @@ class PcfGlyph:
         self.scalable_width = scalable_width
         self.character_width = character_width
         self.width, self.height = dimensions
-        self.origin_x, self.origin_y = origin
+        self.offset_x, self.offset_y = offset
         self.bitmap = [] if bitmap is None else bitmap
 
     @property
@@ -39,20 +39,20 @@ class PcfGlyph:
         self.width, self.height = value
 
     @property
-    def origin(self) -> tuple[int, int]:
-        return self.origin_x, self.origin_y
+    def offset(self) -> tuple[int, int]:
+        return self.offset_x, self.offset_y
 
-    @origin.setter
-    def origin(self, value: tuple[int, int]):
-        self.origin_x, self.origin_y = value
+    @offset.setter
+    def offset(self, value: tuple[int, int]):
+        self.offset_x, self.offset_y = value
 
     def create_metric(self, is_ink: bool) -> PcfMetric:
         metric = PcfMetric(
-            left_side_bearing=self.origin_x,
-            right_side_bearing=self.origin_x + self.width,
+            left_side_bearing=self.offset_x,
+            right_side_bearing=self.offset_x + self.width,
             character_width=self.character_width,
-            ascent=self.origin_y + self.height,
-            descent=-self.origin_y,
+            ascent=self.offset_y + self.height,
+            descent=-self.offset_y,
         )
 
         if not is_ink:

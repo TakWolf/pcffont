@@ -20,7 +20,7 @@ def main():
         scalable_width=500,
         character_width=8,
         dimensions=(8, 16),
-        origin=(0, -2),
+        offset=(0, -2),
         bitmap=[
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],

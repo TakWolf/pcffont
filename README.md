@@ -42,7 +42,7 @@ def main():
         print(f'glyph_name: {glyph_name}')
         print(f'advance_width: {metric.character_width}')
         print(f'dimensions: {metric.dimensions}')
-        print(f'origin: {metric.origin}')
+        print(f'offset: {metric.offset}')
         for bitmap_row in bitmap:
             text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
             print(f'{text}*')
@@ -79,7 +79,7 @@ def main():
         scalable_width=500,
         character_width=8,
         dimensions=(8, 16),
-        origin=(0, -2),
+        offset=(0, -2),
         bitmap=[
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],

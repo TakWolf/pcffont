@@ -22,7 +22,7 @@ def _load_pcf_by_bdf(file_path: Path) -> PcfFont:
             scalable_width=bdf_glyph.scalable_width_x,
             character_width=bdf_glyph.device_width_x,
             dimensions=bdf_glyph.dimensions,
-            origin=bdf_glyph.origin,
+            offset=bdf_glyph.offset,
             bitmap=bdf_glyph.bitmap,
         ))
 

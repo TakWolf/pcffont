@@ -85,16 +85,16 @@ class PcfMetric:
         return self.width, self.height
 
     @property
-    def origin_x(self) -> int:
+    def offset_x(self) -> int:
         return self.left_side_bearing
 
     @property
-    def origin_y(self) -> int:
+    def offset_y(self) -> int:
         return -self.descent
 
     @property
-    def origin(self) -> tuple[int, int]:
-        return self.origin_x, self.origin_y
+    def offset(self) -> tuple[int, int]:
+        return self.offset_x, self.offset_y
 
     @property
     def compressible(self) -> bool:

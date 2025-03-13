@@ -38,7 +38,7 @@ def test_demo(assets_dir: Path):
         assert metric_1 == metric_2 == metric_3 == metric_4 == metric_5 == metric_6 == metric_7 == metric_8
         assert glyph.device_width_x == metric_1.character_width == metric_2.character_width == metric_3.character_width == metric_4.character_width == metric_5.character_width == metric_6.character_width == metric_7.character_width == metric_8.character_width
         assert glyph.dimensions == metric_1.dimensions == metric_2.dimensions == metric_3.dimensions == metric_4.dimensions == metric_5.dimensions == metric_6.dimensions == metric_7.dimensions == metric_8.dimensions
-        assert glyph.origin == metric_1.origin == metric_2.origin == metric_3.origin == metric_4.origin == metric_5.origin == metric_6.origin == metric_7.origin == metric_8.origin
+        assert glyph.offset == metric_1.offset == metric_2.offset == metric_3.offset == metric_4.offset == metric_5.offset == metric_6.offset == metric_7.offset == metric_8.offset
 
         bitmap_1 = font_1.bitmaps[glyph_index]
         bitmap_2 = font_2.bitmaps[glyph_index]
@@ -62,7 +62,7 @@ def test_unifont(assets_dir: Path):
         metric = font_2.metrics[glyph_index]
         assert glyph.device_width_x == metric.character_width
         assert glyph.dimensions == metric.dimensions
-        assert glyph.origin == metric.origin
+        assert glyph.offset == metric.offset
 
         bitmap = font_2.bitmaps[glyph_index]
         assert glyph.bitmap == bitmap
