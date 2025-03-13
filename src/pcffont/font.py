@@ -65,6 +65,11 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
     def __repr__(self) -> str:
         return object.__repr__(self)
 
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfFont):
+            return False
+        return super().__eq__(other)
+
     @property
     def properties(self) -> PcfProperties | None:
         return self.get(PcfTableType.PROPERTIES, None)

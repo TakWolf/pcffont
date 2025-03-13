@@ -1,3 +1,5 @@
+from typing import Any
+
 from pcffont.metric import PcfMetric
 
 
@@ -29,6 +31,19 @@ class PcfGlyph:
         self.width, self.height = dimensions
         self.offset_x, self.offset_y = offset
         self.bitmap = [] if bitmap is None else bitmap
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PcfGlyph):
+            return False
+        return (self.name == other.name and
+                self.encoding == other.encoding and
+                self.scalable_width == other.scalable_width and
+                self.character_width == other.character_width and
+                self.width == other.width and
+                self.height == other.height and
+                self.offset_x == other.offset_x and
+                self.offset_y == other.offset_y and
+                self.bitmap == other.bitmap)
 
     @property
     def dimensions(self) -> tuple[int, int]:
