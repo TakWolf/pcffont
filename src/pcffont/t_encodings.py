@@ -56,7 +56,7 @@ class PcfBdfEncodings(UserDict[int, int]):
 
     def __setitem__(self, encoding: Any, glyph_index: Any):
         if not isinstance(encoding, int):
-            raise KeyError(encoding)
+            raise KeyError(f"expected type 'int', got '{type(encoding).__name__}' instead")
 
         if encoding < 0 or encoding > PcfBdfEncodings.MAX_ENCODING:
             raise KeyError(f'encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
