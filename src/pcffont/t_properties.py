@@ -3,7 +3,7 @@ from collections import UserDict
 from typing import Any
 
 import pcffont
-from pcffont.error import PcfError, PcfPropKeyError, PcfPropValueError, PcfXlfdError
+from pcffont.error import PcfPropKeyError, PcfPropValueError, PcfXlfdError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.stream import Stream
@@ -352,11 +352,11 @@ class PcfProperties(UserDict[str, str | int]):
 
     def update_by_xlfd(self):
         if self.font is None:
-            raise PcfError(f"'{_KEY_FONT}' not set")
+            raise PcfXlfdError(f"'{_KEY_FONT}' not set")
         if not self.font.startswith('-'):
-            raise PcfXlfdError(self.font, "not starts with '-'")
+            raise PcfXlfdError("not starts with '-'")
         if self.font.count('-') != 14:
-            raise PcfXlfdError(self.font, "must be 14 '-'")
+            raise PcfXlfdError("must be 14 '-'")
         tokens = self.font.removeprefix('-').split('-')
         for index, token in enumerate(tokens):
             key = _XLFD_FONT_NAME_KEYS_ORDER[index]
