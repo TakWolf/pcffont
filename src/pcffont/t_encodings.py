@@ -2,7 +2,6 @@ from collections import UserDict
 from typing import Final, Any
 
 import pcffont
-from pcffont.error import PcfOutOfRangeError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.stream import Stream
@@ -60,7 +59,7 @@ class PcfBdfEncodings(UserDict[int, int]):
             raise KeyError(encoding)
 
         if encoding < 0 or encoding > PcfBdfEncodings.MAX_ENCODING:
-            raise PcfOutOfRangeError(f'encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
+            raise KeyError(f'encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
 
         if glyph_index is None or glyph_index == PcfBdfEncodings.NO_GLYPH_INDEX:
             self.pop(encoding, None)
@@ -70,7 +69,7 @@ class PcfBdfEncodings(UserDict[int, int]):
             raise ValueError(f"illegal value type: '{type(glyph_index).__name__}'")
 
         if glyph_index < 0 or glyph_index > PcfBdfEncodings.NO_GLYPH_INDEX:
-            raise PcfOutOfRangeError(f'glyph index must between [0, {PcfBdfEncodings.NO_GLYPH_INDEX}]')
+            raise ValueError(f'glyph index must between [0, {PcfBdfEncodings.NO_GLYPH_INDEX}]')
 
         super().__setitem__(encoding, glyph_index)
 

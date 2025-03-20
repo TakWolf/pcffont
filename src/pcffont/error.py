@@ -9,7 +9,3 @@ class PcfParseError(PcfError):
 
 class PcfXlfdError(PcfError):
     pass
-
-
-class PcfOutOfRangeError(PcfError):
-    pass
