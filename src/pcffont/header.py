@@ -94,5 +94,5 @@ class PcfHeader:
         stream.seek(self.table_offset)
         value = stream.read_uint32()
         if value != self.table_format.value:
-            raise PcfParseError(f"the table format definition is inconsistent with the header: type = '{self.table_type.name}', offset = {self.table_offset}")
+            raise PcfParseError(f"inconsistent table format: '{self.table_type.name}'")
         return self.table_format
