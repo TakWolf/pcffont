@@ -1,5 +1,3 @@
-from typing import Any
-
 
 class PcfError(Exception):
     pass
@@ -7,32 +5,6 @@ class PcfError(Exception):
 
 class PcfParseError(PcfError):
     pass
-
-
-class PcfPropKeyError(PcfError):
-    key: Any
-    reason: str
-
-    def __init__(self, key: Any, reason: str):
-        self.key = key
-        self.reason = reason
-
-    def __str__(self) -> str:
-        return f'{self.reason}: key = {repr(self.key)}'
-
-
-class PcfPropValueError(PcfError):
-    key: str
-    value: Any
-    reason: str
-
-    def __init__(self, key: str, value: Any, reason: str):
-        self.key = key
-        self.value = value
-        self.reason = reason
-
-    def __str__(self) -> str:
-        return f'{self.reason}: key = {repr(self.key)}, value = {repr(self.value)}'
 
 
 class PcfXlfdError(PcfError):

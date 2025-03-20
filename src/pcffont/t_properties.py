@@ -3,7 +3,7 @@ from collections import UserDict
 from typing import Any
 
 import pcffont
-from pcffont.error import PcfPropKeyError, PcfPropValueError, PcfXlfdError
+from pcffont.error import PcfXlfdError
 from pcffont.format import PcfTableFormat
 from pcffont.header import PcfHeader
 from pcffont.internal.stream import Stream
@@ -146,9 +146,9 @@ class PcfProperties(UserDict[str, str | int]):
 
     def __setitem__(self, key: Any, value: Any):
         if not isinstance(key, str):
-            raise KeyError(key)
+            raise KeyError(f"expected type 'str', got '{type(key).__name__}' instead")
         if not key.replace('_', '').isalnum():
-            raise PcfPropKeyError(key, 'contains illegal characters')
+            raise KeyError('contains illegal characters')
         key = key.upper()
 
         if value is None:
@@ -157,21 +157,21 @@ class PcfProperties(UserDict[str, str | int]):
 
         if key in _STR_VALUE_KEYS:
             if not isinstance(value, str):
-                raise PcfPropValueError(key, value, f"expected type 'str', got '{type(value).__name__}' instead")
+                raise ValueError(f"expected type 'str', got '{type(value).__name__}' instead")
         elif key in _INT_VALUE_KEYS:
             if not isinstance(value, int):
-                raise PcfPropValueError(key, value, f"expected type 'int', got '{type(value).__name__}' instead")
+                raise ValueError(f"expected type 'int', got '{type(value).__name__}' instead")
         else:
             if not isinstance(value, str) and not isinstance(value, int):
-                raise PcfPropValueError(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
+                raise ValueError(f"expected type 'str | int', got '{type(value).__name__}' instead")
 
         if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
             matched = re.search(r'[-?*,"]', value)
             if matched is not None:
-                raise PcfPropValueError(key, value, f'contains illegal characters {repr(matched.group())}')
+                raise ValueError(f'contains illegal characters {repr(matched.group())}')
 
         if isinstance(value, str) and '\n' in value:
-            raise PcfPropValueError(key, value, "contains illegal characters '\\n'")
+            raise ValueError("contains illegal characters '\\n'")
 
         super().__setitem__(key, value)
 
