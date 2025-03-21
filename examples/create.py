@@ -16,7 +16,7 @@ def main():
 
     builder.glyphs.append(PcfGlyph(
         name='A',
-        encoding=ord('A'),
+        encoding=65,
         scalable_width=500,
         character_width=8,
         dimensions=(8, 16),

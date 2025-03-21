@@ -26,7 +26,7 @@ def main():
         print(f'dimensions: {metric.dimensions}')
         print(f'offset: {metric.offset}')
         for bitmap_row in bitmap:
-            text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
+            text = ''.join('  ' if color == 0 else '██' for color in bitmap_row)
             print(f'{text}*')
         print()
     font.save(outputs_dir.joinpath('unifont-16.0.02.pcf'))
