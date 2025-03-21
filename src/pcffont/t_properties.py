@@ -57,7 +57,7 @@ _INT_VALUE_KEYS = {
     _KEY_X_HEIGHT,
 }
 
-_XLFD_FONT_NAME_STR_VALUE_KEYS = {
+_XLFD_STR_VALUE_KEYS = {
     _KEY_FOUNDRY,
     _KEY_FAMILY_NAME,
     _KEY_WEIGHT_NAME,
@@ -69,7 +69,7 @@ _XLFD_FONT_NAME_STR_VALUE_KEYS = {
     _KEY_CHARSET_ENCODING,
 }
 
-_XLFD_FONT_NAME_KEYS_ORDER = [
+_XLFD_KEYS_ORDER = [
     _KEY_FOUNDRY,
     _KEY_FAMILY_NAME,
     _KEY_WEIGHT_NAME,
@@ -165,7 +165,7 @@ class PcfProperties(UserDict[str, str | int]):
             if not isinstance(value, str) and not isinstance(value, int):
                 raise ValueError(f"expected type 'str | int', got '{type(value).__name__}' instead")
 
-        if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+        if key in _XLFD_STR_VALUE_KEYS:
             matched = re.search(r'[-?*,"]', value)
             if matched is not None:
                 raise ValueError(f'contains illegal characters {repr(matched.group())}')
@@ -343,7 +343,7 @@ class PcfProperties(UserDict[str, str | int]):
 
     def generate_xlfd(self):
         tokens = ['']
-        for key in _XLFD_FONT_NAME_KEYS_ORDER:
+        for key in _XLFD_KEYS_ORDER:
             tokens.append(str(self.get(key, '')))
         self.font = '-'.join(tokens)
 
@@ -356,11 +356,11 @@ class PcfProperties(UserDict[str, str | int]):
             raise PcfXlfdError("must be 14 '-'")
         tokens = self.font.removeprefix('-').split('-')
         for index, token in enumerate(tokens):
-            key = _XLFD_FONT_NAME_KEYS_ORDER[index]
+            key = _XLFD_KEYS_ORDER[index]
             if token == '':
                 value = None
             else:
-                if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+                if key in _XLFD_STR_VALUE_KEYS:
                     value = token
                 else:
                     value = int(token)
