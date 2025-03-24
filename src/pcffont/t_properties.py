@@ -355,8 +355,7 @@ class PcfProperties(UserDict[str, str | int]):
         if self.font.count('-') != 14:
             raise PcfXlfdError("must be 14 '-'")
         tokens = self.font.removeprefix('-').split('-')
-        for index, token in enumerate(tokens):
-            key = _XLFD_KEYS_ORDER[index]
+        for key, token in zip(_XLFD_KEYS_ORDER, tokens):
             if token == '':
                 value = None
             else:
