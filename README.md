@@ -1,4 +1,4 @@
-# PcfFont
+# PcfFont.Python
 
 [![Python](https://img.shields.io/badge/python-3.10-brightgreen)](https://www.python.org)
 [![PyPI](https://img.shields.io/pypi/v/pcffont)](https://pypi.org/project/pcffont/)

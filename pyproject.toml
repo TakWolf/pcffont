@@ -23,9 +23,9 @@ classifiers = [
 ]
 
 [project.urls]
-homepage = "https://github.com/TakWolf/pcffont"
-source = "https://github.com/TakWolf/pcffont"
-issues = "https://github.com/TakWolf/pcffont/issues"
+homepage = "https://github.com/TakWolf/pcffont-python"
+source = "https://github.com/TakWolf/pcffont-python"
+issues = "https://github.com/TakWolf/pcffont-python/issues"
 
 [tool.pytest.ini_options]
 pythonpath = "src"
