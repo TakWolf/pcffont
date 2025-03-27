@@ -55,15 +55,15 @@ class PcfBdfEncodings(UserDict[int, int]):
         self.default_char = default_char
 
     def __setitem__(self, encoding: Any, glyph_index: Any):
+        if glyph_index is None or glyph_index == PcfBdfEncodings.NO_GLYPH_INDEX:
+            self.pop(encoding, None)
+            return
+
         if not isinstance(encoding, int):
             raise KeyError(f"expected type 'int', got '{type(encoding).__name__}' instead")
 
         if encoding < 0 or encoding > PcfBdfEncodings.MAX_ENCODING:
             raise KeyError(f'encoding must between [0, {PcfBdfEncodings.MAX_ENCODING}]')
-
-        if glyph_index is None or glyph_index == PcfBdfEncodings.NO_GLYPH_INDEX:
-            self.pop(encoding, None)
-            return
 
         if not isinstance(glyph_index, int):
             raise ValueError(f"illegal value type: '{type(glyph_index).__name__}'")

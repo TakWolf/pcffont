@@ -47,12 +47,12 @@ class PcfFont(UserDict[PcfTableType, PcfTable]):
             return PcfFont.parse(file)
 
     def __setitem__(self, table_type: Any, table: Any):
-        if not isinstance(table_type, PcfTableType):
-            raise KeyError(f"expected type 'PcfTableType', got '{type(table_type).__name__}' instead")
-
         if table is None:
             self.pop(table_type, None)
             return
+
+        if not isinstance(table_type, PcfTableType):
+            raise KeyError(f"expected type 'PcfTableType', got '{type(table_type).__name__}' instead")
 
         if not isinstance(table, _TABLE_TYPE_REGISTRY[table_type]):
             raise ValueError(f"illegal value type: '{type(table).__name__}'")
