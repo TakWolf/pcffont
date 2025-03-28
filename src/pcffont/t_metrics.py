@@ -14,14 +14,14 @@ class PcfMetrics(UserList[PcfMetric]):
     def parse(stream: Stream, _font: 'pcffont.PcfFont', header: PcfHeader) -> 'PcfMetrics':
         table_format = header.read_and_check_table_format(stream)
 
-        if table_format.ink_or_compressed_metrics:
+        if table_format.ink_bounds_or_compressed_metrics:
             glyphs_count = stream.read_uint16(table_format.ms_byte_first)
         else:
             glyphs_count = stream.read_uint32(table_format.ms_byte_first)
 
         metrics = PcfMetrics(table_format)
         for _ in range(glyphs_count):
-            metric = PcfMetric.parse(stream, table_format.ms_byte_first, table_format.ink_or_compressed_metrics)
+            metric = PcfMetric.parse(stream, table_format.ms_byte_first, table_format.ink_bounds_or_compressed_metrics)
             metrics.append(metric)
         return metrics
 
@@ -81,12 +81,12 @@ class PcfMetrics(UserList[PcfMetric]):
 
         stream.seek(table_offset)
         stream.write_uint32(self.table_format.value)
-        if self.table_format.ink_or_compressed_metrics:
+        if self.table_format.ink_bounds_or_compressed_metrics:
             stream.write_uint16(glyphs_count, self.table_format.ms_byte_first)
         else:
             stream.write_uint32(glyphs_count, self.table_format.ms_byte_first)
         for metric in self:
-            metric.dump(stream, self.table_format.ms_byte_first, self.table_format.ink_or_compressed_metrics)
+            metric.dump(stream, self.table_format.ms_byte_first, self.table_format.ink_bounds_or_compressed_metrics)
         stream.align_to_bit32_with_nulls()
 
         table_size = stream.tell() - table_offset

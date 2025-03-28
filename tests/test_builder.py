@@ -13,6 +13,8 @@ def _load_pcf_by_bdf(file_path: Path) -> PcfFont:
     builder.config.font_descent = bdf_font.properties.font_descent
     if bdf_font.properties.default_char is not None:
         builder.config.default_char = bdf_font.properties.default_char
+    builder.config.ms_byte_first = True
+    builder.config.ms_bit_first = True
     builder.config.glyph_pad_index = 2
 
     for bdf_glyph in bdf_font.glyphs:

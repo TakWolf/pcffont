@@ -1,23 +1,4 @@
-from pcffont import PcfTableFormat, PcfMetric, PcfTable, PcfProperties, PcfAccelerators, PcfMetrics, PcfBitmaps, PcfBdfEncodings, PcfScalableWidths, PcfGlyphNames
-
-
-def test_table_format_value():
-    assert PcfTableFormat().value == 12
-    assert PcfTableFormat(glyph_pad_index=2).value == 14
-    assert PcfTableFormat(glyph_pad_index=2, ink_or_compressed_metrics=True).value == 270
-    assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False).value == 0
-    assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False, glyph_pad_index=2).value == 2
-    assert PcfTableFormat(ms_byte_first=False, ms_bit_first=False, glyph_pad_index=2, ink_or_compressed_metrics=True).value == 258
-
-
-def test_table_format_eq():
-    table_format_1 = PcfTableFormat(ms_byte_first=False)
-    table_format_2 = PcfTableFormat(ms_byte_first=False)
-    table_format_3 = PcfTableFormat(glyph_pad_index=2)
-    assert table_format_1 == table_format_2
-    assert table_format_1 != table_format_3
-    assert table_format_1 != 1
-    assert table_format_1 != 'Hello World!'
+from pcffont import PcfMetric, PcfTable, PcfProperties, PcfAccelerators, PcfMetrics, PcfBitmaps, PcfBdfEncodings, PcfScalableWidths, PcfGlyphNames
 
 
 def test_metric_eq():

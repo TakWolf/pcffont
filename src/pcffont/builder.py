@@ -28,8 +28,8 @@ class PcfFontConfig:
             font_descent: int = 0,
             default_char: int = PcfBdfEncodings.NO_GLYPH_INDEX,
             draw_right_to_left: bool = False,
-            ms_byte_first: bool = True,
-            ms_bit_first: bool = True,
+            ms_byte_first: bool = False,
+            ms_bit_first: bool = False,
             glyph_pad_index: int = 0,
             scan_unit_index: int = 0,
     ):
@@ -120,17 +120,17 @@ class PcfFontBuilder:
 
             accelerators.ink_min_bounds = ink_metrics.calculate_min_bounds()
             accelerators.ink_max_bounds = ink_metrics.calculate_max_bounds()
-            accelerators.table_format.ink_or_compressed_metrics = True
+            accelerators.table_format.ink_bounds_or_compressed_metrics = True
             accelerators.ink_metrics = True
         else:
             ink_metrics = None
 
-            accelerators.table_format.ink_or_compressed_metrics = False
+            accelerators.table_format.ink_bounds_or_compressed_metrics = False
             accelerators.ink_metrics = False
 
-        metrics.table_format.ink_or_compressed_metrics = metrics.calculate_compressible()
+        metrics.table_format.ink_bounds_or_compressed_metrics = metrics.calculate_compressible()
         if ink_metrics is not None:
-            ink_metrics.table_format.ink_or_compressed_metrics = ink_metrics.calculate_compressible()
+            ink_metrics.table_format.ink_bounds_or_compressed_metrics = ink_metrics.calculate_compressible()
 
         font = PcfFont()
         font.bdf_encodings = bdf_encodings
